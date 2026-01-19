@@ -10,17 +10,29 @@
   }
   body { font-family: 'Hiragino Sans', sans-serif; margin: 0; background: var(--bg); color: #333; touch-action: manipulation; }
 
-  /* --- Dashboard --- */
-  #dashboard { padding: 50px; text-align: center; }
-  .project-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; padding: 20px; }
+  /* --- Dashboard (Folders & Hierarchy) --- */
+  #dashboard { padding: 40px 20px; max-width: 1000px; margin: 0 auto; }
+  .dash-header { text-align: center; margin-bottom: 40px; }
+  
+  .folder-container { background: #fff; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); overflow: hidden; border-left: 8px solid var(--p1); }
+  .folder-header { padding: 15px 25px; display: flex; align-items: center; cursor: pointer; background: #fafbfc; transition: 0.2s; }
+  .folder-header:hover { background: #f1f5f9; }
+  .folder-icon { font-size: 24px; margin-right: 15px; }
+  .folder-name { flex-grow: 1; font-weight: bold; font-size: 18px; outline: none; }
+  .folder-controls { display: flex; align-items: center; gap: 10px; }
+  
+  .color-picker { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px #ddd; cursor: pointer; padding: 0; }
+  
+  .project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; padding: 20px; background: #fff; border-top: 1px solid #eee; }
   .project-card { 
-    background: #fff; padding: 25px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
-    cursor: pointer; position: relative; border: 2px solid transparent; transition: 0.3s;
+    background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; cursor: pointer; position: relative; transition: 0.3s;
   }
-  .project-card:hover { border-color: var(--p1); transform: translateY(-5px); }
-  .delete-proj { position: absolute; top: 12px; right: 12px; color: #ddd; border: none; background: none; font-size: 20px; cursor: pointer; z-index: 5; }
-  .delete-proj:hover { color: #ff4d4d; }
-  .new-btn { background: linear-gradient(135deg, var(--p1), var(--p5)); color: #fff; border: none; padding: 14px 40px; border-radius: 50px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(79,172,254,0.4); }
+  .project-card:hover { transform: translateY(-3px); border-color: var(--p1); background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+  .delete-item { color: #ccc; border: none; background: none; cursor: pointer; font-size: 16px; }
+  .delete-item:hover { color: #ff4d4d; }
+
+  .add-btn-main { background: #333; color: #fff; border: none; padding: 12px 25px; border-radius: 50px; font-weight: bold; cursor: pointer; font-size: 14px; margin-bottom: 20px; }
+  .add-project-in-folder { background: #eee; border: 2px dashed #ccc; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #888; font-weight: bold; cursor: pointer; min-height: 80px; }
 
   /* --- Editor --- */
   #editor { display: none; padding: 10px; }
@@ -38,15 +50,12 @@
 
   .child-container { position: absolute; display: flex; flex-direction: column; align-items: center; z-index: 20; transition: left 0.3s ease, top 0.3s ease; }
   .child-label { font-size: 8px; font-weight: bold; color: #888; margin-bottom: 2px; outline: none; border-bottom: 1px dashed transparent; }
-  .child-label:hover { border-bottom-color: #aaa; cursor: text; }
   .child-bubble {
     width: 55px; height: 55px; border-radius: 50%; background: #fff; border: 1.5px solid #ddd;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08); cursor: move; display: flex; align-items: center; justify-content: center;
-    position: relative;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08); cursor: move; display: flex; align-items: center; justify-content: center; position: relative;
   }
   .child-text { font-size: 9px; width: 85%; text-align: center; border: none; outline: none; background: transparent; font-weight: 500; }
 
-  /* ハンドルとボタンの位置を修正 */
   .resize-handle {
     position: absolute; right: -8px; bottom: -8px; width: 24px; height: 24px;
     background: #fff; border: 2px solid #cbd5e0; border-radius: 50%; cursor: nwse-resize; z-index: 30;
@@ -60,7 +69,6 @@
     font-size: 18px; color: #666; display: flex; align-items: center; justify-content: center; 
     opacity: 0.8; transition: 0.2s; z-index: 40; 
   }
-  .quick-add-btn:hover { opacity: 1; background: #ddd; }
 
   .section-title { font-size: 11px; font-weight: bold; color: #444; border-left: 4px solid #333; padding-left: 8px; margin: 10px 0 5px; }
   table { width: 100%; border-collapse: separate; border-spacing: 2px; font-size: 9px; }
@@ -79,26 +87,23 @@
 </head>
 <body>
 
-<div id="toast">プロジェクトを保存しました</div>
+<div id="toast">保存しました</div>
 
 <div id="dashboard">
-  <h1 style="font-weight: 900;">Video Strategy Canvas</h1>
-  <button class="new-btn" onclick="createNewProject()">+ Create New Strategy</button>
-  <div id="project-list" class="project-list"></div>
+  <div class="dash-header">
+    <h1 style="font-weight: 900; font-size: 32px; margin-bottom: 10px;">Video Strategy Canvas</h1>
+    <button class="add-btn-main" onclick="createNewFolder()">📁 新しいフォルダを作成</button>
+  </div>
+  <div id="folder-list"></div>
 </div>
 
 <div id="editor">
   <div class="no-print" style="max-width:210mm; margin:10px auto; display:flex; justify-content:space-between; align-items:center;">
-    <button onclick="goBackToDashboard()" style="cursor:pointer; background:none; border:none; color:var(--p1); font-weight:bold;">← 一覧へ戻る</button>
-    <div>
-      <button class="save-btn" onclick="manualSave()">💾 保存</button>
-      <button class="new-btn" onclick="window.print()" style="padding:10px 30px; font-size:12px; margin-left:10px;">PDF</button>
-    </div>
+    <button onclick="goBackToDashboard()" style="cursor:pointer; background:none; border:none; color:var(--p1); font-weight:bold;">← ダッシュボードへ戻る</button>
+    <div><button class="save-btn" onclick="manualSave()">💾 保存</button><button class="save-btn" onclick="window.print()" style="background:#666;">PDF出力</button></div>
   </div>
-
   <div class="page">
-    <h1 id="editable-title" contenteditable="true" style="text-align:center; outline:none; margin:0; font-size:22px;">New Project</h1>
-
+    <h1 id="editable-title" contenteditable="true" style="text-align:center; outline:none; margin:0; font-size:22px;">Project Name</h1>
     <section class="canvas-section" id="canvas">
       <div class="center-line"></div>
       <div id="b-theme" class="parent-bubble" style="top:30px; left:50px; border-color:var(--p1);"><span class="bubble-title">課題分析 (THEME)</span><button class="quick-add-btn no-print" onclick="smartAdd('b-theme')">+</button><div class="resize-handle"></div></div>
@@ -108,52 +113,22 @@
       <div id="b-weapon" class="parent-bubble" style="top:320px; right:60px; border-color:var(--p4);"><span class="bubble-title">武器 (WEAPON)</span><button class="quick-add-btn no-print" onclick="smartAdd('b-weapon')">+</button><div class="resize-handle"></div></div>
       <div id="b-scheme" class="parent-bubble" style="top:180px; right:160px; border-color:var(--p2);"><span class="bubble-title">スキーム (SCHEME)</span><button class="quick-add-btn no-print" onclick="smartAdd('b-scheme')">+</button><div class="resize-handle"></div></div>
     </section>
-
-    <section class="flow-container">
-      <div class="flow-card" style="border-color:var(--p1)"><span style="font-size:10px; font-weight:bold;">① タイトル</span><div class="flow-input" contenteditable="true"></div></div>
-      <div class="flow-card" style="border-color:var(--p5)"><span style="font-size:10px; font-weight:bold;">② 導入</span><div class="flow-input" contenteditable="true"></div></div>
-      <div class="flow-card" style="border-color:var(--p1)"><span style="font-size:10px; font-weight:bold;">③ 現状分析</span><div class="flow-input" contenteditable="true"></div></div>
-      <div class="flow-card" style="border-color:var(--p3)"><span style="font-size:10px; font-weight:bold;">④ 解決策</span><div class="flow-input" contenteditable="true"></div></div>
-      <div class="flow-card" style="border-color:var(--p2)"><span style="font-size:10px; font-weight:bold;">⑤ 検証</span><div class="flow-input" contenteditable="true"></div></div>
-      <div class="flow-card" style="border-color:#333"><span style="font-size:10px; font-weight:bold;">⑥ ビジョン</span><div class="flow-input" contenteditable="true"></div></div>
-    </section>
-
-    <section>
-      <div class="section-title">🎬 動画制作工程表 (全6話構成)</div>
-      <table>
-        <thead><tr><th>話数</th><th>テーマ・撮影内容</th><th>撮影時期</th><th>場所</th><th>出演者</th><th>機材</th><th>備考</th></tr></thead>
-        <tbody id="video-tbody"></tbody>
-      </table>
-    </section>
-
-    <section>
-      <div class="section-title">📅 実行タスクスケジュール</div>
-      <table>
-        <thead><tr><th style="width: 120px;">要素</th><th>WHAT</th><th>WHO</th><th>WHEN</th><th>WHERE</th><th>WHY</th><th>HOW</th></tr></thead>
-        <tbody id="task-tbody">
-          <tr><td style="font-weight:bold; border-left:4px solid var(--p1);">①インタビュー</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
-          <tr><td style="font-weight:bold; border-left:4px solid var(--p4);">②ウエポン制作</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
-          <tr><td style="font-weight:bold; border-left:4px solid var(--p2);">③イベント</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
-        </tbody>
-      </table>
-    </section>
+    <section class="flow-container"><div class="flow-card" style="border-color:var(--p1)"><span style="font-size:10px; font-weight:bold;">① タイトル</span><div class="flow-input" contenteditable="true"></div></div><div class="flow-card" style="border-color:var(--p5)"><span style="font-size:10px; font-weight:bold;">② 導入</span><div class="flow-input" contenteditable="true"></div></div><div class="flow-card" style="border-color:var(--p1)"><span style="font-size:10px; font-weight:bold;">③ 現状分析</span><div class="flow-input" contenteditable="true"></div></div><div class="flow-card" style="border-color:var(--p3)"><span style="font-size:10px; font-weight:bold;">④ 解決策</span><div class="flow-input" contenteditable="true"></div></div><div class="flow-card" style="border-color:var(--p2)"><span style="font-size:10px; font-weight:bold;">⑤ 検証</span><div class="flow-input" contenteditable="true"></div></div><div class="flow-card" style="border-color:#333"><span style="font-size:10px; font-weight:bold;">⑥ ビジョン</span><div class="flow-input" contenteditable="true"></div></div></section>
+    <section><div class="section-title">🎬 動画制作工程表 (全6話構成)</div><table><thead><tr><th>話数</th><th>テーマ・撮影内容</th><th>撮影時期</th><th>場所</th><th>出演者</th><th>機材</th><th>備考</th></tr></thead><tbody id="video-tbody"></tbody></table></section>
+    <section><div class="section-title">📅 実行タスクスケジュール</div><table><thead><tr><th style="width: 120px;">要素</th><th>WHAT</th><th>WHO</th><th>WHEN</th><th>WHERE</th><th>WHY</th><th>HOW</th></tr></thead><tbody id="task-tbody"><tr><td style="font-weight:bold; border-left:4px solid var(--p1);">①インタビュー</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr><tr><td style="font-weight:bold; border-left:4px solid var(--p4);">②ウエポン制作</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr><tr><td style="font-weight:bold; border-left:4px solid var(--p2);">③イベント</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr></tbody></table></section>
   </div>
 </div>
 
 <script>
-  let projects = JSON.parse(localStorage.getItem('bubbleVideoV12')) || [];
+  let data = JSON.parse(localStorage.getItem('bubbleStrategyV14')) || { folders: [] };
   let currentId = null;
   let activeElem = null;
   let resizeElem = null;
   let offset = { x: 0, y: 0 };
 
   const masterConfig = {
-    'b-theme': ['社会問題', '課題'],
-    'b-action': ['インタビュー', 'イベント'],
-    'b-idea': ['1', '2', '3'],
-    'b-story': ['好きなモノ', '経験', '夢'],
-    'b-scheme': ['協力者', 'パトロン', '顧客'],
-    'b-weapon': ['スキル', 'サービス', 'アプリ', '商品']
+    'b-theme': ['社会問題', '課題'], 'b-action': ['インタビュー', 'イベント'], 'b-idea': ['1', '2', '3'],
+    'b-story': ['好きなモノ', '経験', '夢'], 'b-scheme': ['協力者', 'パトロン', '顧客'], 'b-weapon': ['スキル', 'サービス', 'アプリ', '商品']
   };
 
   const vt = document.getElementById('video-tbody');
@@ -166,139 +141,86 @@
     return { x: e.clientX, y: e.clientY };
   }
 
-  function createChildDOM(label, text = "", size = 55, x = 0, y = 0) {
-    const container = document.createElement('div'); container.className = 'child-container';
-    container.innerHTML = `<div class="child-label" contenteditable="true">${label}</div><div class="child-bubble" style="width:${size}px; height:${size}px;"><input class="child-text" value="${text}"><div class="resize-handle"></div></div>`;
-    container.style.left = x + 'px'; container.style.top = y + 'px';
-    
-    container.oncontextmenu = (e) => { e.preventDefault(); const p = container.parentElement; container.remove(); if(p) organizePolygon(p.id); save(); };
-    
-    const startAction = (e) => {
-      const coords = getClientCoords(e);
-      if(e.target.classList.contains('resize-handle')) { resizeElem = container.querySelector('.child-bubble'); e.stopPropagation(); return; }
-      if(e.target.hasAttribute('contenteditable') || e.target.tagName === 'INPUT') return;
-      activeElem = container; e.stopPropagation();
-      const r = container.getBoundingClientRect(); offset.x = coords.x - r.left; offset.y = coords.y - r.top;
-      container.style.transition = 'none';
-    };
-    container.onmousedown = startAction;
-    container.ontouchstart = startAction;
-
-    return container;
+  /* --- Dashboard Functions --- */
+  function createNewFolder() {
+    const folder = { id: Date.now().toString(), name: "新しいフォルダ", color: "#4facfe", projects: [], isOpen: true };
+    data.folders.push(folder);
+    saveToStorage();
+    renderDashboard();
   }
 
-  function organizePolygon(parentId) {
-    const pb = document.getElementById(parentId);
-    const children = Array.from(pb.querySelectorAll('.child-container'));
-    const total = children.length;
-    if (total === 0) return;
-    const centerX = pb.offsetWidth / 2 - 27;
-    const centerY = pb.offsetHeight / 2 - 27;
-    const radius = total === 1 ? 0 : 45;
-    children.forEach((child, i) => {
-      const angle = (i * 2 * Math.PI / total) - (Math.PI / 2);
-      const posX = centerX + radius * Math.cos(angle);
-      const posY = centerY + radius * Math.sin(angle);
-      child.style.transition = 'left 0.3s ease, top 0.3s ease';
-      child.style.left = posX + 'px';
-      child.style.top = posY + 'px';
+  function renderDashboard() {
+    const list = document.getElementById('folder-list');
+    list.innerHTML = '';
+    data.folders.forEach(folder => {
+      const container = document.createElement('div');
+      container.className = 'folder-container';
+      container.style.borderLeftColor = folder.color;
+      
+      container.innerHTML = `
+        <div class="folder-header" onclick="toggleFolder('${folder.id}')">
+          <span class="folder-icon">${folder.isOpen ? '📂' : '📁'}</span>
+          <div class="folder-name" contenteditable="true" onclick="event.stopPropagation()" onblur="updateFolderName('${folder.id}', this.innerText)">${folder.name}</div>
+          <div class="folder-controls" onclick="event.stopPropagation()">
+            <input type="color" class="color-picker" value="${folder.color}" onchange="updateFolderColor('${folder.id}', this.value)">
+            <button class="delete-item" onclick="deleteFolder('${folder.id}')">🗑️</button>
+          </div>
+        </div>
+        <div class="project-grid" style="display: ${folder.isOpen ? 'grid' : 'none'}">
+          ${folder.projects.map(p => `
+            <div class="project-card" onclick="openProject('${p.id}')">
+              <button class="delete-item" style="position:absolute; top:5px; right:5px;" onclick="deleteProject('${p.id}', event)">×</button>
+              <div style="font-weight:bold; font-size:14px; margin-top:10px;">${p.title}</div>
+            </div>
+          `).join('')}
+          <div class="add-project-in-folder" onclick="createNewProject('${folder.id}')">+ 新規作成</div>
+        </div>
+      `;
+      list.appendChild(container);
     });
   }
 
-  function smartAdd(parentId) {
-    const pb = document.getElementById(parentId);
-    const existingLabels = Array.from(pb.querySelectorAll('.child-label')).map(el => el.innerText);
-    const defaults = masterConfig[parentId];
-    const missingDefault = defaults.find(label => !existingLabels.includes(label));
-    const label = missingDefault || '新しい項目';
-    pb.appendChild(createChildDOM(label, "", 55, 50, 50));
-    organizePolygon(parentId);
-    save();
+  function toggleFolder(id) {
+    const f = data.folders.find(f => f.id === id);
+    if(f) { f.isOpen = !f.isOpen; saveToStorage(); renderDashboard(); }
   }
 
-  const globalStart = (e) => {
-    const coords = getClientCoords(e);
-    if(e.target.classList.contains('resize-handle')) { resizeElem = e.target.parentElement; e.stopPropagation(); return; }
-    const pb = e.target.closest('.parent-bubble');
-    if(pb && !e.target.classList.contains('quick-add-btn')) { 
-      activeElem = pb; const r = pb.getBoundingClientRect(); offset.x = coords.x - r.left; offset.y = coords.y - r.top; 
-    }
-  };
-  document.onmousedown = globalStart;
-  document.ontouchstart = globalStart;
-
-  const globalMove = (e) => {
-    if (!activeElem && !resizeElem) return;
-    const coords = getClientCoords(e);
-    if(resizeElem) {
-      const rect = resizeElem.getBoundingClientRect();
-      const newSize = Math.max(40, coords.x - rect.left);
-      resizeElem.style.width = resizeElem.style.height = newSize + 'px';
-      e.preventDefault();
-      return;
-    }
-    const canvas = document.getElementById('canvas').getBoundingClientRect();
-    if(activeElem.classList.contains('child-container')) {
-      const p = activeElem.parentElement.getBoundingClientRect();
-      activeElem.style.left = (coords.x - p.left - offset.x) + 'px';
-      activeElem.style.top = (coords.y - p.top - offset.y) + 'px';
-    } else {
-      activeElem.style.left = (coords.x - canvas.left - offset.x) + 'px';
-      activeElem.style.top = (coords.y - canvas.top - offset.y) + 'px';
-    }
-    e.preventDefault();
-  };
-  document.onmousemove = globalMove;
-  document.ontouchmove = globalMove;
-
-  const globalEnd = () => { if(activeElem || resizeElem) save(); activeElem = null; resizeElem = null; };
-  document.onmouseup = globalEnd;
-  document.ontouchend = globalEnd;
-
-  function save() {
-    if(!currentId) return;
-    const projectIndex = projects.findIndex(x => x.id === currentId);
-    if(projectIndex === -1) return;
-    const p = projects[projectIndex];
-    p.title = document.getElementById('editable-title').innerText;
-    p.bubbles = {};
-    document.querySelectorAll('.parent-bubble').forEach(pb => {
-      p.bubbles[pb.id] = {
-        x: pb.style.left, y: pb.style.top, w: pb.style.width, h: pb.style.height,
-        children: Array.from(pb.querySelectorAll('.child-container')).map(c => ({
-          label: c.querySelector('.child-label').innerText,
-          text: c.querySelector('.child-text').value,
-          x: parseInt(c.style.left), y: parseInt(c.style.top),
-          size: c.querySelector('.child-bubble').offsetWidth
-        }))
-      };
-    });
-    p.flow = Array.from(document.querySelectorAll('.flow-input')).map(i => i.innerText);
-    p.video = Array.from(document.querySelectorAll('#video-tbody td[contenteditable]')).map(td => td.innerText);
-    p.task = Array.from(document.querySelectorAll('#task-tbody td[contenteditable]')).map(td => td.innerText);
-    localStorage.setItem('bubbleVideoV12', JSON.stringify(projects));
+  function updateFolderName(id, name) {
+    const f = data.folders.find(f => f.id === id);
+    if(f) { f.name = name; saveToStorage(); }
   }
 
-  function manualSave() { save(); toast(); }
-  function toast() { const t = document.getElementById('toast'); t.style.opacity = "1"; setTimeout(() => t.style.opacity = "0", 1500); }
+  function updateFolderColor(id, color) {
+    const f = data.folders.find(f => f.id === id);
+    if(f) { f.color = color; saveToStorage(); renderDashboard(); }
+  }
 
-  function createNewProject() {
+  function deleteFolder(id) {
+    if(!confirm("フォルダ内のすべてのプロジェクトも削除されます。よろしいですか？")) return;
+    data.folders = data.folders.filter(f => f.id !== id);
+    saveToStorage(); renderDashboard();
+  }
+
+  function createNewProject(folderId) {
     const id = Date.now().toString();
-    projects.push({ id, title: "新規プロジェクト", bubbles: {} });
+    const newProj = { id, title: "新規プロジェクト", bubbles: {} };
+    const f = data.folders.find(f => f.id === folderId);
+    f.projects.push(newProj);
     currentId = id;
     showEditor();
-    document.getElementById('editable-title').innerText = "新規プロジェクト";
-    document.querySelectorAll('.child-container').forEach(c => c.remove());
-    document.querySelectorAll('[contenteditable]').forEach(el => el.innerText = "");
+    resetEditorFields();
     Object.keys(masterConfig).forEach(bid => {
       masterConfig[bid].forEach(label => document.getElementById(bid).appendChild(createChildDOM(label, "", 55, 50, 50)));
       organizePolygon(bid);
     });
-    save();
+    saveEditorData();
   }
 
+  /* --- Editor Core --- */
   function openProject(id) {
-    currentId = id; const p = projects.find(x => x.id === id);
+    currentId = id;
+    let p = null;
+    data.folders.forEach(f => { const found = f.projects.find(x => x.id === id); if(found) p = found; });
     if(!p) return;
     showEditor();
     document.getElementById('editable-title').innerText = p.title;
@@ -315,27 +237,124 @@
   }
 
   function deleteProject(id, e) {
-    e.stopPropagation(); if(!confirm("削除しますか？")) return;
-    projects = projects.filter(p => p.id !== id);
-    localStorage.setItem('bubbleVideoV12', JSON.stringify(projects));
-    renderList();
+    e.stopPropagation(); if(!confirm("プロジェクトを削除しますか？")) return;
+    data.folders.forEach(f => { f.projects = f.projects.filter(p => p.id !== id); });
+    saveToStorage(); renderDashboard();
   }
 
-  function renderList() {
-    const l = document.getElementById('project-list'); l.innerHTML = '';
-    projects.forEach(p => {
-      const card = document.createElement('div'); card.className = 'project-card';
-      card.innerHTML = `<button class="delete-proj" onclick="deleteProject('${p.id}', event)">×</button><h3>${p.title}</h3>`;
-      card.onclick = () => openProject(p.id);
-      l.appendChild(card);
+  function saveEditorData() {
+    if(!currentId) return;
+    let p = null;
+    data.folders.forEach(f => { const found = f.projects.find(x => x.id === currentId); if(found) p = found; });
+    if(!p) return;
+    p.title = document.getElementById('editable-title').innerText;
+    p.bubbles = {};
+    document.querySelectorAll('.parent-bubble').forEach(pb => {
+      p.bubbles[pb.id] = {
+        x: pb.style.left, y: pb.style.top, w: pb.style.width, h: pb.style.height,
+        children: Array.from(pb.querySelectorAll('.child-container')).map(c => ({
+          label: c.querySelector('.child-label').innerText,
+          text: c.querySelector('.child-text').value,
+          x: parseInt(c.style.left), y: parseInt(c.style.top),
+          size: c.querySelector('.child-bubble').offsetWidth
+        }))
+      };
+    });
+    p.flow = Array.from(document.querySelectorAll('.flow-input')).map(i => i.innerText);
+    p.video = Array.from(document.querySelectorAll('#video-tbody td[contenteditable]')).map(td => td.innerText);
+    p.task = Array.from(document.querySelectorAll('#task-tbody td[contenteditable]')).map(td => td.innerText);
+    saveToStorage();
+  }
+
+  /* --- Bubble Logic (Intact) --- */
+  function organizePolygon(parentId) {
+    const pb = document.getElementById(parentId);
+    const children = Array.from(pb.querySelectorAll('.child-container'));
+    const total = children.length; if (total === 0) return;
+    const centerX = pb.offsetWidth / 2 - 27; const centerY = pb.offsetHeight / 2 - 27;
+    const radius = total === 1 ? 0 : 45;
+    children.forEach((child, i) => {
+      const angle = (i * 2 * Math.PI / total) - (Math.PI / 2);
+      child.style.left = (centerX + radius * Math.cos(angle)) + 'px';
+      child.style.top = (centerY + radius * Math.sin(angle)) + 'px';
     });
   }
 
-  function goBackToDashboard() { save(); showDashboard(); }
-  function showEditor() { document.getElementById('dashboard').style.display='none'; document.getElementById('editor').style.display='block'; }
-  function showDashboard() { document.getElementById('dashboard').style.display='block'; document.getElementById('editor').style.display='none'; renderList(); }
+  function createChildDOM(label, text = "", size = 55, x = 0, y = 0) {
+    const container = document.createElement('div'); container.className = 'child-container';
+    container.innerHTML = `<div class="child-label" contenteditable="true">${label}</div><div class="child-bubble" style="width:${size}px; height:${size}px;"><input class="child-text" value="${text}"><div class="resize-handle"></div></div>`;
+    container.style.left = x + 'px'; container.style.top = y + 'px';
+    const startAction = (e) => {
+      const coords = getClientCoords(e);
+      if(e.target.classList.contains('resize-handle')) { resizeElem = container.querySelector('.child-bubble'); e.stopPropagation(); return; }
+      if(e.target.hasAttribute('contenteditable') || e.target.tagName === 'INPUT') return;
+      activeElem = container; e.stopPropagation();
+      const r = container.getBoundingClientRect(); offset.x = coords.x - r.left; offset.y = coords.y - r.top;
+      container.style.transition = 'none';
+    };
+    container.onmousedown = startAction; container.ontouchstart = startAction;
+    return container;
+  }
 
-  window.onload = renderList;
+  function smartAdd(parentId) {
+    const pb = document.getElementById(parentId);
+    const existingLabels = Array.from(pb.querySelectorAll('.child-label')).map(el => el.innerText);
+    const label = masterConfig[parentId].find(l => !existingLabels.includes(l)) || '新規';
+    pb.appendChild(createChildDOM(label, "", 55, 50, 50));
+    organizePolygon(parentId); saveEditorData();
+  }
+
+  const globalStart = (e) => {
+    const coords = getClientCoords(e);
+    if(e.target.classList.contains('resize-handle')) { resizeElem = e.target.parentElement; e.stopPropagation(); return; }
+    const pb = e.target.closest('.parent-bubble');
+    if(pb && !e.target.classList.contains('quick-add-btn')) { 
+      activeElem = pb; const r = pb.getBoundingClientRect(); offset.x = coords.x - r.left; offset.y = coords.y - r.top; 
+    }
+  };
+  document.onmousedown = globalStart; document.ontouchstart = globalStart;
+
+  const globalMove = (e) => {
+    if (!activeElem && !resizeElem) return;
+    const coords = getClientCoords(e);
+    if(resizeElem) {
+      const r = resizeElem.getBoundingClientRect();
+      resizeElem.style.width = resizeElem.style.height = Math.max(40, coords.x - r.left) + 'px';
+      e.preventDefault(); return;
+    }
+    const canvas = document.getElementById('canvas').getBoundingClientRect();
+    if(activeElem.classList.contains('child-container')) {
+      const p = activeElem.parentElement.getBoundingClientRect();
+      activeElem.style.left = (coords.x - p.left - offset.x) + 'px';
+      activeElem.style.top = (coords.y - p.top - offset.y) + 'px';
+    } else {
+      activeElem.style.left = (coords.x - canvas.left - offset.x) + 'px';
+      activeElem.style.top = (coords.y - canvas.top - offset.y) + 'px';
+    }
+    e.preventDefault();
+  };
+  document.onmousemove = globalMove; document.ontouchmove = globalMove;
+
+  document.onmouseup = document.ontouchend = () => { if(activeElem || resizeElem) saveEditorData(); activeElem = null; resizeElem = null; };
+
+  /* --- Utils --- */
+  function saveToStorage() { localStorage.setItem('bubbleStrategyV14', JSON.stringify(data)); }
+  function manualSave() { saveEditorData(); toast(); }
+  function toast() { const t = document.getElementById('toast'); t.style.opacity = "1"; setTimeout(() => t.style.opacity = "0", 1500); }
+  function showEditor() { document.getElementById('dashboard').style.display='none'; document.getElementById('editor').style.display='block'; }
+  function showDashboard() { document.getElementById('dashboard').style.display='block'; document.getElementById('editor').style.display='none'; renderDashboard(); }
+  function goBackToDashboard() { saveEditorData(); showDashboard(); }
+  function resetEditorFields() {
+    document.querySelectorAll('.flow-input').forEach(el => el.innerText = "");
+    document.querySelectorAll('#video-tbody td[contenteditable]').forEach(el => el.innerText = "");
+    document.querySelectorAll('#task-tbody td[contenteditable]').forEach(el => el.innerText = "");
+    document.querySelectorAll('.child-container').forEach(c => c.remove());
+  }
+
+  window.onload = () => {
+    if(data.folders.length === 0) createNewFolder(); // 初期表示
+    renderDashboard();
+  };
 </script>
 </body>
 </html>
