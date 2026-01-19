@@ -8,7 +8,7 @@
     --p1: #4facfe; --p2: #43e97b; --p3: #fa709a; --p4: #f6d365; --p5: #a18cd1;
     --bg: #f0f2f5;
   }
-  body { font-family: 'Hiragino Sans', sans-serif; margin: 0; background: var(--bg); color: #333; }
+  body { font-family: 'Hiragino Sans', sans-serif; margin: 0; background: var(--bg); color: #333; touch-action: manipulation; }
 
   /* --- Dashboard --- */
   #dashboard { padding: 50px; text-align: center; }
@@ -36,7 +36,7 @@
   }
   .bubble-title { position: absolute; top: -22px; font-size: 11px; font-weight: bold; white-space: nowrap; }
 
-  .child-container { position: absolute; display: flex; flex-direction: column; align-items: center; z-index: 20; }
+  .child-container { position: absolute; display: flex; flex-direction: column; align-items: center; z-index: 20; transition: left 0.3s ease, top 0.3s ease; }
   .child-label { font-size: 8px; font-weight: bold; color: #888; margin-bottom: 2px; outline: none; border-bottom: 1px dashed transparent; }
   .child-label:hover { border-bottom-color: #aaa; cursor: text; }
   .child-bubble {
@@ -46,12 +46,20 @@
   }
   .child-text { font-size: 9px; width: 85%; text-align: center; border: none; outline: none; background: transparent; font-weight: 500; }
 
+  /* ハンドルとボタンの位置を修正 */
   .resize-handle {
-    position: absolute; right: 5px; bottom: 5px; width: 12px; height: 12px;
-    background: #e2e8f0; border-radius: 50%; cursor: nwse-resize; z-index: 30; border: 1px solid #cbd5e0;
+    position: absolute; right: -8px; bottom: -8px; width: 24px; height: 24px;
+    background: #fff; border: 2px solid #cbd5e0; border-radius: 50%; cursor: nwse-resize; z-index: 30;
+    display: flex; align-items: center; justify-content: center;
   }
+  .resize-handle::after { content: "↘"; font-size: 12px; color: #666; }
 
-  .quick-add-btn { position: absolute; bottom: 5px; right: 5px; width: 22px; height: 22px; background: #eee; border-radius: 50%; border: none; cursor: pointer; font-size: 16px; color: #666; display: flex; align-items: center; justify-content: center; opacity: 0.5; transition: 0.2s; }
+  .quick-add-btn { 
+    position: absolute; bottom: -8px; left: -8px; width: 24px; height: 24px; 
+    background: #eee; border-radius: 50%; border: 2px solid #ddd; cursor: pointer; 
+    font-size: 18px; color: #666; display: flex; align-items: center; justify-content: center; 
+    opacity: 0.8; transition: 0.2s; z-index: 40; 
+  }
   .quick-add-btn:hover { opacity: 1; background: #ddd; }
 
   .section-title { font-size: 11px; font-weight: bold; color: #444; border-left: 4px solid #333; padding-left: 8px; margin: 10px 0 5px; }
@@ -83,8 +91,8 @@
   <div class="no-print" style="max-width:210mm; margin:10px auto; display:flex; justify-content:space-between; align-items:center;">
     <button onclick="goBackToDashboard()" style="cursor:pointer; background:none; border:none; color:var(--p1); font-weight:bold;">← 一覧へ戻る</button>
     <div>
-      <button class="save-btn" onclick="manualSave()">💾 プロジェクトを保存</button>
-      <button class="new-btn" onclick="window.print()" style="padding:10px 30px; font-size:12px; margin-left:10px;">PDF出力</button>
+      <button class="save-btn" onclick="manualSave()">💾 保存</button>
+      <button class="new-btn" onclick="window.print()" style="padding:10px 30px; font-size:12px; margin-left:10px;">PDF</button>
     </div>
   </div>
 
@@ -133,7 +141,7 @@
 </div>
 
 <script>
-  let projects = JSON.parse(localStorage.getItem('bubbleVideoV10')) || [];
+  let projects = JSON.parse(localStorage.getItem('bubbleVideoV12')) || [];
   let currentId = null;
   let activeElem = null;
   let resizeElem = null;
@@ -153,18 +161,48 @@
     vt.innerHTML += `<tr><td style="text-align:center; font-weight:bold;">第 ${i} 話</td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>`;
   }
 
+  function getClientCoords(e) {
+    if (e.touches && e.touches.length > 0) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    return { x: e.clientX, y: e.clientY };
+  }
+
   function createChildDOM(label, text = "", size = 55, x = 0, y = 0) {
     const container = document.createElement('div'); container.className = 'child-container';
     container.innerHTML = `<div class="child-label" contenteditable="true">${label}</div><div class="child-bubble" style="width:${size}px; height:${size}px;"><input class="child-text" value="${text}"><div class="resize-handle"></div></div>`;
     container.style.left = x + 'px'; container.style.top = y + 'px';
-    container.oncontextmenu = (e) => { e.preventDefault(); container.remove(); save(); };
-    container.onmousedown = (e) => {
+    
+    container.oncontextmenu = (e) => { e.preventDefault(); const p = container.parentElement; container.remove(); if(p) organizePolygon(p.id); save(); };
+    
+    const startAction = (e) => {
+      const coords = getClientCoords(e);
       if(e.target.classList.contains('resize-handle')) { resizeElem = container.querySelector('.child-bubble'); e.stopPropagation(); return; }
       if(e.target.hasAttribute('contenteditable') || e.target.tagName === 'INPUT') return;
       activeElem = container; e.stopPropagation();
-      const r = container.getBoundingClientRect(); offset.x = e.clientX - r.left; offset.y = e.clientY - r.top;
+      const r = container.getBoundingClientRect(); offset.x = coords.x - r.left; offset.y = coords.y - r.top;
+      container.style.transition = 'none';
     };
+    container.onmousedown = startAction;
+    container.ontouchstart = startAction;
+
     return container;
+  }
+
+  function organizePolygon(parentId) {
+    const pb = document.getElementById(parentId);
+    const children = Array.from(pb.querySelectorAll('.child-container'));
+    const total = children.length;
+    if (total === 0) return;
+    const centerX = pb.offsetWidth / 2 - 27;
+    const centerY = pb.offsetHeight / 2 - 27;
+    const radius = total === 1 ? 0 : 45;
+    children.forEach((child, i) => {
+      const angle = (i * 2 * Math.PI / total) - (Math.PI / 2);
+      const posX = centerX + radius * Math.cos(angle);
+      const posY = centerY + radius * Math.sin(angle);
+      child.style.transition = 'left 0.3s ease, top 0.3s ease';
+      child.style.left = posX + 'px';
+      child.style.top = posY + 'px';
+    });
   }
 
   function smartAdd(parentId) {
@@ -172,57 +210,50 @@
     const existingLabels = Array.from(pb.querySelectorAll('.child-label')).map(el => el.innerText);
     const defaults = masterConfig[parentId];
     const missingDefault = defaults.find(label => !existingLabels.includes(label));
-    if (missingDefault) { spawnChild(parentId, missingDefault); } 
-    else { spawnChild(parentId, '新しい項目'); }
-  }
-
-  function spawnChild(parentId, label, text="", x=null, y=null, size=55) {
-    const pb = document.getElementById(parentId);
-    const count = pb.querySelectorAll('.child-container').length;
-    
-    // 重ならない配置ロジック
-    let posX, posY;
-    if (x !== null && y !== null) {
-      posX = x; posY = y;
-    } else {
-      const radius = 42; // 親の中心からの距離
-      const centerX = pb.offsetWidth / 2 - 27;
-      const centerY = pb.offsetHeight / 2 - 27;
-      // 重ならないように角度を分散 (最大8個程度まで想定)
-      const angle = (count * 75) * (Math.PI / 180); 
-      posX = centerX + radius * Math.cos(angle);
-      posY = centerY + radius * Math.sin(angle);
-    }
-
-    pb.appendChild(createChildDOM(label, text, size, posX, posY));
+    const label = missingDefault || '新しい項目';
+    pb.appendChild(createChildDOM(label, "", 55, 50, 50));
+    organizePolygon(parentId);
     save();
   }
 
-  document.onmousedown = (e) => {
+  const globalStart = (e) => {
+    const coords = getClientCoords(e);
     if(e.target.classList.contains('resize-handle')) { resizeElem = e.target.parentElement; e.stopPropagation(); return; }
     const pb = e.target.closest('.parent-bubble');
     if(pb && !e.target.classList.contains('quick-add-btn')) { 
-      activeElem = pb; const r = pb.getBoundingClientRect(); offset.x = e.clientX - r.left; offset.y = e.clientY - r.top; 
+      activeElem = pb; const r = pb.getBoundingClientRect(); offset.x = coords.x - r.left; offset.y = coords.y - r.top; 
     }
   };
-  document.onmousemove = (e) => {
+  document.onmousedown = globalStart;
+  document.ontouchstart = globalStart;
+
+  const globalMove = (e) => {
+    if (!activeElem && !resizeElem) return;
+    const coords = getClientCoords(e);
     if(resizeElem) {
       const rect = resizeElem.getBoundingClientRect();
-      resizeElem.style.width = resizeElem.style.height = Math.max(40, e.clientX - rect.left) + 'px';
+      const newSize = Math.max(40, coords.x - rect.left);
+      resizeElem.style.width = resizeElem.style.height = newSize + 'px';
+      e.preventDefault();
       return;
     }
-    if(!activeElem) return;
     const canvas = document.getElementById('canvas').getBoundingClientRect();
     if(activeElem.classList.contains('child-container')) {
       const p = activeElem.parentElement.getBoundingClientRect();
-      activeElem.style.left = (e.clientX - p.left - offset.x) + 'px';
-      activeElem.style.top = (e.clientY - p.top - offset.y) + 'px';
+      activeElem.style.left = (coords.x - p.left - offset.x) + 'px';
+      activeElem.style.top = (coords.y - p.top - offset.y) + 'px';
     } else {
-      activeElem.style.left = (e.clientX - canvas.left - offset.x) + 'px';
-      activeElem.style.top = (e.clientY - canvas.top - offset.y) + 'px';
+      activeElem.style.left = (coords.x - canvas.left - offset.x) + 'px';
+      activeElem.style.top = (coords.y - canvas.top - offset.y) + 'px';
     }
+    e.preventDefault();
   };
-  document.onmouseup = () => { if(activeElem || resizeElem) save(); activeElem = null; resizeElem = null; };
+  document.onmousemove = globalMove;
+  document.ontouchmove = globalMove;
+
+  const globalEnd = () => { if(activeElem || resizeElem) save(); activeElem = null; resizeElem = null; };
+  document.onmouseup = globalEnd;
+  document.ontouchend = globalEnd;
 
   function save() {
     if(!currentId) return;
@@ -245,7 +276,7 @@
     p.flow = Array.from(document.querySelectorAll('.flow-input')).map(i => i.innerText);
     p.video = Array.from(document.querySelectorAll('#video-tbody td[contenteditable]')).map(td => td.innerText);
     p.task = Array.from(document.querySelectorAll('#task-tbody td[contenteditable]')).map(td => td.innerText);
-    localStorage.setItem('bubbleVideoV10', JSON.stringify(projects));
+    localStorage.setItem('bubbleVideoV12', JSON.stringify(projects));
   }
 
   function manualSave() { save(); toast(); }
@@ -260,7 +291,8 @@
     document.querySelectorAll('.child-container').forEach(c => c.remove());
     document.querySelectorAll('[contenteditable]').forEach(el => el.innerText = "");
     Object.keys(masterConfig).forEach(bid => {
-      masterConfig[bid].forEach((label) => spawnChild(bid, label));
+      masterConfig[bid].forEach(label => document.getElementById(bid).appendChild(createChildDOM(label, "", 55, 50, 50)));
+      organizePolygon(bid);
     });
     save();
   }
@@ -275,7 +307,7 @@
       const pb = document.getElementById(bid); const d = p.bubbles[bid];
       if(!pb || !d) return;
       pb.style.left = d.x; pb.style.top = d.y; pb.style.width = d.w; pb.style.height = d.h;
-      (d.children || []).forEach(c => spawnChild(bid, c.label, c.text, c.x, c.y, c.size));
+      (d.children || []).forEach(c => pb.appendChild(createChildDOM(c.label, c.text, c.size, c.x, c.y)));
     });
     if(p.flow) document.querySelectorAll('.flow-input').forEach((el, i) => el.innerText = p.flow[i] || "");
     if(p.video) document.querySelectorAll('#video-tbody td[contenteditable]').forEach((el, i) => el.innerText = p.video[i] || "");
@@ -285,7 +317,7 @@
   function deleteProject(id, e) {
     e.stopPropagation(); if(!confirm("削除しますか？")) return;
     projects = projects.filter(p => p.id !== id);
-    localStorage.setItem('bubbleVideoV10', JSON.stringify(projects));
+    localStorage.setItem('bubbleVideoV12', JSON.stringify(projects));
     renderList();
   }
 
