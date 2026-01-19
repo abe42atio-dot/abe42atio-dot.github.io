@@ -49,7 +49,12 @@
   .bubble-title { position: absolute; top: -22px; font-size: 11px; font-weight: bold; white-space: nowrap; }
 
   .child-container { position: absolute; display: flex; flex-direction: column; align-items: center; z-index: 20; transition: left 0.3s ease, top 0.3s ease; }
-  .child-label { font-size: 8px; font-weight: bold; color: #888; margin-bottom: 2px; outline: none; border-bottom: 1px dashed transparent; }
+  .child-label-wrap { display: flex; align-items: center; gap: 4px; }
+  .child-label { font-size: 8px; font-weight: bold; color: #888; outline: none; border-bottom: 1px dashed transparent; }
+  /* 子バブル削除ボタン */
+  .child-del-btn { font-size: 10px; color: #ccc; cursor: pointer; border: none; background: none; padding: 0; line-height: 1; }
+  .child-del-btn:hover { color: #ff4d4d; }
+
   .child-bubble {
     width: 55px; height: 55px; border-radius: 50%; background: #fff; border: 1.5px solid #ddd;
     box-shadow: 0 4px 10px rgba(0,0,0,0.08); cursor: move; display: flex; align-items: center; justify-content: center; position: relative;
@@ -91,7 +96,7 @@
 
 <div id="dashboard">
   <div class="dash-header">
-    <h1 style="font-weight: 900; font-size: 32px; margin-bottom: 10px;">Projects Strategy Canvas</h1>
+    <h1 style="font-weight: 900; font-size: 32px; margin-bottom: 10px;">Video Strategy Canvas</h1>
     <button class="add-btn-main" onclick="createNewFolder()">📁 新しいフォルダを作成</button>
   </div>
   <div id="folder-list"></div>
@@ -145,8 +150,7 @@
   function createNewFolder() {
     const folder = { id: Date.now().toString(), name: "新しいフォルダ", color: "#4facfe", projects: [], isOpen: true };
     data.folders.push(folder);
-    saveToStorage();
-    renderDashboard();
+    saveToStorage(); renderDashboard();
   }
 
   function renderDashboard() {
@@ -156,7 +160,6 @@
       const container = document.createElement('div');
       container.className = 'folder-container';
       container.style.borderLeftColor = folder.color;
-      
       container.innerHTML = `
         <div class="folder-header" onclick="toggleFolder('${folder.id}')">
           <span class="folder-icon">${folder.isOpen ? '📂' : '📁'}</span>
@@ -180,35 +183,17 @@
     });
   }
 
-  function toggleFolder(id) {
-    const f = data.folders.find(f => f.id === id);
-    if(f) { f.isOpen = !f.isOpen; saveToStorage(); renderDashboard(); }
-  }
-
-  function updateFolderName(id, name) {
-    const f = data.folders.find(f => f.id === id);
-    if(f) { f.name = name; saveToStorage(); }
-  }
-
-  function updateFolderColor(id, color) {
-    const f = data.folders.find(f => f.id === id);
-    if(f) { f.color = color; saveToStorage(); renderDashboard(); }
-  }
-
-  function deleteFolder(id) {
-    if(!confirm("フォルダ内のすべてのプロジェクトも削除されます。よろしいですか？")) return;
-    data.folders = data.folders.filter(f => f.id !== id);
-    saveToStorage(); renderDashboard();
-  }
+  function toggleFolder(id) { const f = data.folders.find(f => f.id === id); if(f) { f.isOpen = !f.isOpen; saveToStorage(); renderDashboard(); } }
+  function updateFolderName(id, name) { const f = data.folders.find(f => f.id === id); if(f) { f.name = name; saveToStorage(); } }
+  function updateFolderColor(id, color) { const f = data.folders.find(f => f.id === id); if(f) { f.color = color; saveToStorage(); renderDashboard(); } }
+  function deleteFolder(id) { if(!confirm("フォルダ内のすべてのプロジェクトも削除されます。よろしいですか？")) return; data.folders = data.folders.filter(f => f.id !== id); saveToStorage(); renderDashboard(); }
 
   function createNewProject(folderId) {
     const id = Date.now().toString();
     const newProj = { id, title: "新規プロジェクト", bubbles: {} };
     const f = data.folders.find(f => f.id === folderId);
     f.projects.push(newProj);
-    currentId = id;
-    showEditor();
-    resetEditorFields();
+    currentId = id; showEditor(); resetEditorFields();
     Object.keys(masterConfig).forEach(bid => {
       masterConfig[bid].forEach(label => document.getElementById(bid).appendChild(createChildDOM(label, "", 55, 50, 50)));
       organizePolygon(bid);
@@ -216,10 +201,8 @@
     saveEditorData();
   }
 
-  /* --- Editor Core --- */
   function openProject(id) {
-    currentId = id;
-    let p = null;
+    currentId = id; let p = null;
     data.folders.forEach(f => { const found = f.projects.find(x => x.id === id); if(found) p = found; });
     if(!p) return;
     showEditor();
@@ -236,11 +219,7 @@
     if(p.task) document.querySelectorAll('#task-tbody td[contenteditable]').forEach((el, i) => el.innerText = p.task[i] || "");
   }
 
-  function deleteProject(id, e) {
-    e.stopPropagation(); if(!confirm("プロジェクトを削除しますか？")) return;
-    data.folders.forEach(f => { f.projects = f.projects.filter(p => p.id !== id); });
-    saveToStorage(); renderDashboard();
-  }
+  function deleteProject(id, e) { e.stopPropagation(); if(!confirm("プロジェクトを削除しますか？")) return; data.folders.forEach(f => { f.projects = f.projects.filter(p => p.id !== id); }); saveToStorage(); renderDashboard(); }
 
   function saveEditorData() {
     if(!currentId) return;
@@ -266,7 +245,7 @@
     saveToStorage();
   }
 
-  /* --- Bubble Logic (Intact) --- */
+  /* --- Bubble Logic --- */
   function organizePolygon(parentId) {
     const pb = document.getElementById(parentId);
     const children = Array.from(pb.querySelectorAll('.child-container'));
@@ -282,18 +261,38 @@
 
   function createChildDOM(label, text = "", size = 55, x = 0, y = 0) {
     const container = document.createElement('div'); container.className = 'child-container';
-    container.innerHTML = `<div class="child-label" contenteditable="true">${label}</div><div class="child-bubble" style="width:${size}px; height:${size}px;"><input class="child-text" value="${text}"><div class="resize-handle"></div></div>`;
+    container.innerHTML = `
+      <div class="child-label-wrap">
+        <div class="child-label" contenteditable="true">${label}</div>
+        <button class="child-del-btn no-print" onclick="deleteChildBubble(this)">×</button>
+      </div>
+      <div class="child-bubble" style="width:${size}px; height:${size}px;">
+        <input class="child-text" value="${text}">
+        <div class="resize-handle"></div>
+      </div>`;
     container.style.left = x + 'px'; container.style.top = y + 'px';
+    
+    // デスクトップ用：右クリック削除も復活
+    container.oncontextmenu = (e) => { e.preventDefault(); deleteChildBubble(container.querySelector('.child-del-btn')); };
+
     const startAction = (e) => {
       const coords = getClientCoords(e);
       if(e.target.classList.contains('resize-handle')) { resizeElem = container.querySelector('.child-bubble'); e.stopPropagation(); return; }
-      if(e.target.hasAttribute('contenteditable') || e.target.tagName === 'INPUT') return;
+      if(e.target.hasAttribute('contenteditable') || e.target.tagName === 'INPUT' || e.target.classList.contains('child-del-btn')) return;
       activeElem = container; e.stopPropagation();
       const r = container.getBoundingClientRect(); offset.x = coords.x - r.left; offset.y = coords.y - r.top;
       container.style.transition = 'none';
     };
     container.onmousedown = startAction; container.ontouchstart = startAction;
     return container;
+  }
+
+  function deleteChildBubble(btn) {
+    const container = btn.closest('.child-container');
+    const parentId = container.parentElement.id;
+    container.remove();
+    if(parentId) organizePolygon(parentId);
+    saveEditorData();
   }
 
   function smartAdd(parentId) {
@@ -334,7 +333,6 @@
     e.preventDefault();
   };
   document.onmousemove = globalMove; document.ontouchmove = globalMove;
-
   document.onmouseup = document.ontouchend = () => { if(activeElem || resizeElem) saveEditorData(); activeElem = null; resizeElem = null; };
 
   /* --- Utils --- */
@@ -351,11 +349,7 @@
     document.querySelectorAll('.child-container').forEach(c => c.remove());
   }
 
-  window.onload = () => {
-    if(data.folders.length === 0) createNewFolder(); // 初期表示
-    renderDashboard();
-  };
+  window.onload = () => { if(data.folders.length === 0) createNewFolder(); renderDashboard(); };
 </script>
 </body>
 </html>
-
