@@ -32,7 +32,7 @@
   .parent-bubble {
     position: absolute; border-radius: 50%; border: 3px solid; 
     background: rgba(255,255,255,0.9); z-index: 10; cursor: grab;
-    min-width: 100px; min-height: 100px; display: flex; align-items: center; justify-content: center;
+    min-width: 150px; min-height: 150px; display: flex; align-items: center; justify-content: center;
   }
   .bubble-title { position: absolute; top: -22px; font-size: 11px; font-weight: bold; white-space: nowrap; }
 
@@ -93,20 +93,20 @@
 
     <section class="canvas-section" id="canvas">
       <div class="center-line"></div>
-      <div id="b-theme" class="parent-bubble" style="top:30px; left:50px; border-color:var(--p1); width:150px; height:150px;"><span class="bubble-title">課題分析 (THEME)</span><button class="quick-add-btn no-print" onclick="smartAdd('b-theme')">+</button><div class="resize-handle"></div></div>
-      <div id="b-idea" class="parent-bubble" style="top:320px; left:60px; border-color:var(--p3); width:150px; height:150px;"><span class="bubble-title">解決策 (IDEA)</span><button class="quick-add-btn no-print" onclick="smartAdd('b-idea')">+</button><div class="resize-handle"></div></div>
-      <div id="b-action" class="parent-bubble" style="top:180px; left:160px; border-color:var(--p2); width:150px; height:150px;"><span class="bubble-title">検証 (ACTION)</span><button class="quick-add-btn no-print" onclick="smartAdd('b-action')">+</button><div class="resize-handle"></div></div>
-      <div id="b-story" class="parent-bubble" style="top:30px; right:50px; border-color:var(--p5); width:150px; height:150px;"><span class="bubble-title">導入 (STORY)</span><button class="quick-add-btn no-print" onclick="smartAdd('b-story')">+</button><div class="resize-handle"></div></div>
-      <div id="b-weapon" class="parent-bubble" style="top:320px; right:60px; border-color:var(--p4); width:150px; height:150px;"><span class="bubble-title">武器 (WEAPON)</span><button class="quick-add-btn no-print" onclick="smartAdd('b-weapon')">+</button><div class="resize-handle"></div></div>
-      <div id="b-scheme" class="parent-bubble" style="top:180px; right:160px; border-color:var(--p2); width:150px; height:150px;"><span class="bubble-title">スキーム (SCHEME)</span><button class="quick-add-btn no-print" onclick="smartAdd('b-scheme')">+</button><div class="resize-handle"></div></div>
+      <div id="b-theme" class="parent-bubble" style="top:30px; left:50px; border-color:var(--p1);"><span class="bubble-title">課題分析 (THEME)</span><button class="quick-add-btn no-print" onclick="smartAdd('b-theme')">+</button><div class="resize-handle"></div></div>
+      <div id="b-idea" class="parent-bubble" style="top:320px; left:60px; border-color:var(--p3);"><span class="bubble-title">解決策 (IDEA)</span><button class="quick-add-btn no-print" onclick="smartAdd('b-idea')">+</button><div class="resize-handle"></div></div>
+      <div id="b-action" class="parent-bubble" style="top:180px; left:160px; border-color:var(--p2);"><span class="bubble-title">検証 (ACTION)</span><button class="quick-add-btn no-print" onclick="smartAdd('b-action')">+</button><div class="resize-handle"></div></div>
+      <div id="b-story" class="parent-bubble" style="top:30px; right:50px; border-color:var(--p5);"><span class="bubble-title">導入 (STORY)</span><button class="quick-add-btn no-print" onclick="smartAdd('b-story')">+</button><div class="resize-handle"></div></div>
+      <div id="b-weapon" class="parent-bubble" style="top:320px; right:60px; border-color:var(--p4);"><span class="bubble-title">武器 (WEAPON)</span><button class="quick-add-btn no-print" onclick="smartAdd('b-weapon')">+</button><div class="resize-handle"></div></div>
+      <div id="b-scheme" class="parent-bubble" style="top:180px; right:160px; border-color:var(--p2);"><span class="bubble-title">スキーム (SCHEME)</span><button class="quick-add-btn no-print" onclick="smartAdd('b-scheme')">+</button><div class="resize-handle"></div></div>
     </section>
 
     <section class="flow-container">
       <div class="flow-card" style="border-color:var(--p1)"><span style="font-size:10px; font-weight:bold;">① タイトル</span><div class="flow-input" contenteditable="true"></div></div>
-      <div class="flow-card" style="border-color:var(--p5)"><span style="font-size:10px; font-weight:bold;">② 導入</span><div id="sync-story" class="flow-input" contenteditable="true"></div></div>
-      <div class="flow-card" style="border-color:var(--p1)"><span style="font-size:10px; font-weight:bold;">③ 現状分析</span><div id="sync-theme" class="flow-input" contenteditable="true"></div></div>
-      <div class="flow-card" style="border-color:var(--p3)"><span style="font-size:10px; font-weight:bold;">④ 解決策</span><div id="sync-idea" class="flow-input" contenteditable="true"></div></div>
-      <div class="flow-card" style="border-color:var(--p2)"><span style="font-size:10px; font-weight:bold;">⑤ 検証</span><div id="sync-action" class="flow-input" contenteditable="true"></div></div>
+      <div class="flow-card" style="border-color:var(--p5)"><span style="font-size:10px; font-weight:bold;">② 導入</span><div class="flow-input" contenteditable="true"></div></div>
+      <div class="flow-card" style="border-color:var(--p1)"><span style="font-size:10px; font-weight:bold;">③ 現状分析</span><div class="flow-input" contenteditable="true"></div></div>
+      <div class="flow-card" style="border-color:var(--p3)"><span style="font-size:10px; font-weight:bold;">④ 解決策</span><div class="flow-input" contenteditable="true"></div></div>
+      <div class="flow-card" style="border-color:var(--p2)"><span style="font-size:10px; font-weight:bold;">⑤ 検証</span><div class="flow-input" contenteditable="true"></div></div>
       <div class="flow-card" style="border-color:#333"><span style="font-size:10px; font-weight:bold;">⑥ ビジョン</span><div class="flow-input" contenteditable="true"></div></div>
     </section>
 
@@ -133,7 +133,7 @@
 </div>
 
 <script>
-  let projects = JSON.parse(localStorage.getItem('bubbleVideoV9')) || [];
+  let projects = JSON.parse(localStorage.getItem('bubbleVideoV10')) || [];
   let currentId = null;
   let activeElem = null;
   let resizeElem = null;
@@ -179,8 +179,21 @@
   function spawnChild(parentId, label, text="", x=null, y=null, size=55) {
     const pb = document.getElementById(parentId);
     const count = pb.querySelectorAll('.child-container').length;
-    const posX = x !== null ? x : (pb.offsetWidth / 2 - 25 + Math.cos(count) * 55);
-    const posY = y !== null ? y : (pb.offsetHeight / 2 - 25 + Math.sin(count) * 55);
+    
+    // 重ならない配置ロジック
+    let posX, posY;
+    if (x !== null && y !== null) {
+      posX = x; posY = y;
+    } else {
+      const radius = 42; // 親の中心からの距離
+      const centerX = pb.offsetWidth / 2 - 27;
+      const centerY = pb.offsetHeight / 2 - 27;
+      // 重ならないように角度を分散 (最大8個程度まで想定)
+      const angle = (count * 75) * (Math.PI / 180); 
+      posX = centerX + radius * Math.cos(angle);
+      posY = centerY + radius * Math.sin(angle);
+    }
+
     pb.appendChild(createChildDOM(label, text, size, posX, posY));
     save();
   }
@@ -215,7 +228,6 @@
     if(!currentId) return;
     const projectIndex = projects.findIndex(x => x.id === currentId);
     if(projectIndex === -1) return;
-    
     const p = projects[projectIndex];
     p.title = document.getElementById('editable-title').innerText;
     p.bubbles = {};
@@ -233,7 +245,7 @@
     p.flow = Array.from(document.querySelectorAll('.flow-input')).map(i => i.innerText);
     p.video = Array.from(document.querySelectorAll('#video-tbody td[contenteditable]')).map(td => td.innerText);
     p.task = Array.from(document.querySelectorAll('#task-tbody td[contenteditable]')).map(td => td.innerText);
-    localStorage.setItem('bubbleVideoV9', JSON.stringify(projects));
+    localStorage.setItem('bubbleVideoV10', JSON.stringify(projects));
   }
 
   function manualSave() { save(); toast(); }
@@ -248,10 +260,7 @@
     document.querySelectorAll('.child-container').forEach(c => c.remove());
     document.querySelectorAll('[contenteditable]').forEach(el => el.innerText = "");
     Object.keys(masterConfig).forEach(bid => {
-      masterConfig[bid].forEach((label, i) => {
-        const ang = i * (Math.PI * 2 / masterConfig[bid].length);
-        spawnChild(bid, label, "", 75 + Math.cos(ang) * 45, 75 + Math.sin(ang) * 45);
-      });
+      masterConfig[bid].forEach((label) => spawnChild(bid, label));
     });
     save();
   }
@@ -266,11 +275,7 @@
       const pb = document.getElementById(bid); const d = p.bubbles[bid];
       if(!pb || !d) return;
       pb.style.left = d.x; pb.style.top = d.y; pb.style.width = d.w; pb.style.height = d.h;
-      (d.children || []).forEach(c => {
-        const posX = isNaN(c.x) ? null : c.x;
-        const posY = isNaN(c.y) ? null : c.y;
-        pb.appendChild(createChildDOM(c.label, c.text, c.size, posX, posY));
-      });
+      (d.children || []).forEach(c => spawnChild(bid, c.label, c.text, c.x, c.y, c.size));
     });
     if(p.flow) document.querySelectorAll('.flow-input').forEach((el, i) => el.innerText = p.flow[i] || "");
     if(p.video) document.querySelectorAll('#video-tbody td[contenteditable]').forEach((el, i) => el.innerText = p.video[i] || "");
@@ -280,7 +285,7 @@
   function deleteProject(id, e) {
     e.stopPropagation(); if(!confirm("削除しますか？")) return;
     projects = projects.filter(p => p.id !== id);
-    localStorage.setItem('bubbleVideoV9', JSON.stringify(projects));
+    localStorage.setItem('bubbleVideoV10', JSON.stringify(projects));
     renderList();
   }
 
