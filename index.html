@@ -640,6 +640,8 @@
     <div class="doc-actions no-print" style="margin-top:10px;">
       <button class="mini-btn primary" onclick="autoDraftVideo()">🔄 自動下書き</button>
       <button class="mini-btn" onclick="manualSave()">💾 保存</button>
+      <!-- ✅追加：テロップExcel出力 -->
+      <button class="mini-btn" onclick="exportVideoTelopsXlsx()">⬇️ Excel（テロップ）</button>
     </div>
 
     <div class="section-title" style="margin-top:12px;">🗂️ 台本 & 進捗（表形式）</div>
@@ -885,6 +887,56 @@
     window.addEventListener('afterprint', cleanup);
 
     window.print();
+  }
+
+  /* -------------------------
+     ✅ 追加：テロップをExcel（.xlsx）出力（SheetJS）
+  ------------------------- */
+  function exportVideoTelopsXlsx(){
+    if(typeof XLSX === "undefined"){
+      alert("Excel出力ライブラリ（xlsx）が読み込めていません。HTML末尾のCDN追加を確認してください。");
+      return;
+    }
+
+    const title = (document.getElementById('editable-title')?.innerText || "project").trim() || "project";
+    const tbody = document.getElementById('video-script-tbody');
+    if(!tbody){
+      alert("動画台本テーブルが見つかりません。");
+      return;
+    }
+
+    // ヘッダ（テロップ単体）
+    const rows = [["話", "カット", "テロップ（1文）"]];
+
+    // 全48行を出力（空欄も含む）
+    const trs = Array.from(tbody.querySelectorAll('tr'));
+    trs.forEach(tr=>{
+      const ep = tr.getAttribute('data-ep') || "";
+      const cut = (tr.querySelectorAll('td')[1]?.innerText || "").trim();
+      const telop = (tr.querySelector('[data-vs="text"]')?.innerText || "").replace(/\r?\n/g, "\n").trim();
+      rows.push([ep, cut, telop]);
+    });
+
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+
+    // 見やすさ：列幅
+    ws['!cols'] = [
+      { wch: 4 },   // 話
+      { wch: 6 },   // カット
+      { wch: 60 }   // テロップ
+    ];
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "テロップ");
+
+    // ファイル名：ProjectTitle_YYYYMMDD_telops.xlsx
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,'0');
+    const da = String(d.getDate()).padStart(2,'0');
+    const filename = `${title}_${y}${m}${da}_telops.xlsx`;
+
+    XLSX.writeFile(wb, filename);
   }
 
   /* -------------------------
@@ -2067,5 +2119,8 @@
     setPlanLineHeight(1.45, false);
   };
 </script>
+
+<!-- ✅追加：SheetJS（Excel .xlsx 出力用） -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </body>
 </html>
