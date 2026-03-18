@@ -209,6 +209,16 @@
     body.print-section .print-target .scenario-template,
     body.print-section .print-target .doc-area,
     body.print-section .print-target .video-script-table{ width:100%; break-inside:avoid-page; }
+    body.print-plan-portrait .page,
+    body.print-plan-portrait #tab-plan,
+    body.print-plan-portrait #tab-plan .doc-area{
+      width:210mm !important;
+      min-height:297mm !important;
+    }
+  }
+
+  @media print and (orientation:portrait){
+    @page{ size:A4 portrait; margin:10mm; }
   }
 </style>
 </head>
@@ -1331,7 +1341,12 @@
     activatePrimary('product-create');
     activateSub('product-create','tab-plan');
     document.body.classList.add('print-single');
-    const cleanup = function(){ document.body.classList.remove('print-single'); window.removeEventListener('afterprint', cleanup); };
+    document.body.classList.add('print-plan-portrait');
+    const cleanup = function(){
+      document.body.classList.remove('print-single');
+      document.body.classList.remove('print-plan-portrait');
+      window.removeEventListener('afterprint', cleanup);
+    };
     window.addEventListener('afterprint', cleanup);
     window.print();
   }
@@ -1342,7 +1357,13 @@
     document.querySelectorAll('.print-target').forEach(function(el){ el.classList.remove('print-target'); });
     target.classList.add('print-target');
     document.body.classList.add('print-section');
-    const cleanup = function(){ document.body.classList.remove('print-section'); target.classList.remove('print-target'); window.removeEventListener('afterprint', cleanup); };
+    if(sectionId === 'tab-plan') document.body.classList.add('print-plan-portrait');
+    const cleanup = function(){
+      document.body.classList.remove('print-section');
+      document.body.classList.remove('print-plan-portrait');
+      target.classList.remove('print-target');
+      window.removeEventListener('afterprint', cleanup);
+    };
     window.addEventListener('afterprint', cleanup);
     window.print();
   }
@@ -1459,5 +1480,6 @@
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </body>
 </html>
+
 
 
