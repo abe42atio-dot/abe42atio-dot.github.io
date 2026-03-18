@@ -177,7 +177,12 @@
   .video-script-table tr[data-ep="5"] td:first-child{ border-left-color:var(--p2); }
   .video-script-table tr[data-ep="6"] td:first-child{ border-left-color:#111827; }
   .video-script-table tr[data-ep-start="true"] td{ border-top:2px solid #cbd5e1; background:#f8fafc; }
-  .print-spec-bar{ border:2px solid #111; border-radius:14px; background:#fff; padding:10px 12px; display:flex; justify-content:space-between; gap:10px; align-items:center; font-size:12px; }
+  .print-spec-bar{ border:2px solid #111; border-radius:14px; background:#fff; padding:10px 12px; display:flex; justify-content:space-between; gap:10px; align-items:center; font-size:12px; flex-wrap:wrap; }
+  .page-size-tools{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .page-size-tools label{ font-size:11px; font-weight:1000; color:#475569; }
+  .page-size-tools select,.page-size-tools input{ border:1px solid #d1d5db; border-radius:10px; padding:6px 8px; font-size:12px; background:#fff; }
+  .episode-row-tools{ display:flex; gap:6px; flex-wrap:wrap; align-items:center; justify-content:flex-end; margin:4px 0 8px; }
+  .episode-row-tools .mini-note{ font-size:11px; color:#64748b; font-weight:1000; }
   .print-spec-title{ font-weight:1000; }
   .print-spec-meta{ color:#475569; }
   .video-script-actions-row{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
@@ -297,7 +302,7 @@
       </div>
 
       <div class="sub-content" id="tab-video-workflow" style="display:none;">
-        <div class="print-spec-bar no-print"><div class="print-spec-title">印刷設定</div><div class="print-spec-meta">想定サイズ：A3 横 / このページを印刷で適用</div></div>
+        <div class="print-spec-bar no-print"><div><div class="print-spec-title">印刷設定</div><div class="print-spec-meta">想定サイズ：A3 横 / このページを印刷で適用</div></div><div class="page-size-tools"><label>横幅</label><input id="video-workflow-width" type="range" min="260" max="520" step="10" value="400"><label>mm</label><input id="video-workflow-width-val" type="text" value="400" readonly style="width:64px;"><label>向き</label><select id="video-workflow-orientation"><option value="landscape" selected>横</option><option value="portrait">縦</option></select></div></div>
         <div class="workflow-playful page-a4-block">
           <div class="workflow-titlebar">動画用ワークフロー</div>
           <div class="storyboard-info" style="margin:12px 12px 0;">各話ごとに必要な準備・実行・フォローを整理できます。</div>
@@ -318,6 +323,7 @@
 
       <div class="sub-content" id="tab-video" style="display:none;">
         <div class="print-spec-bar no-print"><div class="print-spec-title">印刷設定</div><div class="print-spec-meta">想定サイズ：A4 縦 / このページを印刷で適用</div></div>
+        <div id="episode-row-tool-wrap" class="no-print"></div>
         <div class="doc-actions no-print video-script-actions-row">
           <button class="mini-btn primary" id="auto-draft-video-btn">🔄 自動下書き</button>
           <button class="mini-btn" id="manual-save-btn-2">💾 保存</button>
@@ -358,7 +364,7 @@
       </div>
 
       <div class="sub-content" id="tab-pres-workflow" style="display:none;">
-        <div class="print-spec-bar no-print"><div class="print-spec-title">印刷設定</div><div class="print-spec-meta">想定サイズ：A3 横 / このページを印刷で適用</div></div>
+        <div class="print-spec-bar no-print"><div><div class="print-spec-title">印刷設定</div><div class="print-spec-meta">想定サイズ：A3 横 / このページを印刷で適用</div></div><div class="page-size-tools"><label>横幅</label><input id="pres-workflow-width" type="range" min="260" max="520" step="10" value="400"><label>mm</label><input id="pres-workflow-width-val" type="text" value="400" readonly style="width:64px;"><label>向き</label><select id="pres-workflow-orientation"><option value="landscape" selected>横</option><option value="portrait">縦</option></select></div></div>
         <div class="workflow-playful page-a4-block">
           <div class="workflow-titlebar">プレゼン用ワークフロー</div>
           <div class="storyboard-info" style="margin:12px 12px 0;">タイトル→導入→現状分析→解決策→検証→まとめの流れで整理します。</div>
@@ -514,6 +520,10 @@
   const PRES_RAW = ['表題','みなさん、こんにちは。チーム「」です。本日は「」について発表します。','------------------------','導入','突然ですが、皆さんは日常の中で「これ、おかしいな？」と思った経験はありませんか？私たちが今回注目したのは、「」というテーマです。','------------------------','現状分析','私たちは現場へ足を運びました。まず「」を行ってみると、意外なことに「」だと気づいたのです。そこで気になって「」も調べてみました。すると、「」という衝撃的な事実が見えてきました。つまり、本当の問題は「」だったのです。','------------------------','仮説','現状分析から、私たちは「」が原因ではないかと考えました。そこで、「」という理由から、「」が有効であるという仮説を立てました。','------------------------','解決策','この仮説を実現するために私たちが考案したのが、「」です。コンセプトはズバリ、「」。具体的には「」や「」といった特徴で、新しい価値を提供します。','------------------------','検証計画','続いて、このアイデアが本当に有効かを確かめるために、「」という検証を計画しました。まず「」を行い、実際に「」を確認することにしました。','------------------------','実施報告','実際の検証は、「」に「」で行いました。対象は「」です。写真にあるように、私たちは「」を実施しました。','------------------------','結果','実施した結果、まず「」というデータが得られました。また、「」ということも分かりました。これらの結果から、私たちは「」という結論に至りました。','------------------------','考察','この結果に対する考察です。「」ということが言えます。しかし、同時に「」という課題も見えてきました。今後は「」が必要だと考えます。','------------------------','展望','最後に、私たちのビジョンです。もしこのアイデアが広まれば、「」未来になると信じています。。ご清聴ありがとうございました。','------------------------'];
   const LINES_PER_EP = 8;
   const A3_SECTION_IDS = new Set(['tab-canvas','tab-video-workflow','tab-pres-workflow']);
+  const DEFAULT_PAGE_PRINT_SETTINGS = {
+    'tab-video-workflow': { width:400, orientation:'landscape' },
+    'tab-pres-workflow': { width:400, orientation:'landscape' }
+  };
 
   let data = safeLoad();
   let currentId = null;
@@ -582,6 +592,12 @@
     if(typeof p.videoCatchphrase !== 'string') p.videoCatchphrase = '';
     if(!Array.isArray(p.videoScriptRows)) p.videoScriptRows = [];
     if(!Array.isArray(p.videoRowsPerEpisode) || p.videoRowsPerEpisode.length !== 6) p.videoRowsPerEpisode = [LINES_PER_EP,LINES_PER_EP,LINES_PER_EP,LINES_PER_EP,LINES_PER_EP,LINES_PER_EP];
+    if(!p.pagePrintSettings) p.pagePrintSettings = JSON.parse(JSON.stringify(DEFAULT_PAGE_PRINT_SETTINGS));
+    ['tab-video-workflow','tab-pres-workflow'].forEach(function(key){
+      if(!p.pagePrintSettings[key]) p.pagePrintSettings[key] = { ...DEFAULT_PAGE_PRINT_SETTINGS[key] };
+      if(!p.pagePrintSettings[key].width) p.pagePrintSettings[key].width = DEFAULT_PAGE_PRINT_SETTINGS[key].width;
+      if(!p.pagePrintSettings[key].orientation) p.pagePrintSettings[key].orientation = DEFAULT_PAGE_PRINT_SETTINGS[key].orientation;
+    });
     if(typeof p.planHtml !== 'string') p.planHtml = '';
     if(typeof p.presHtml !== 'string') p.presHtml = '';
   }
@@ -732,6 +748,7 @@
     renderToolFlow();
     renderPlanDoc(p.planHtml || '');
     renderPresDoc(p.presHtml || '');
+    renderEpisodeRowTools();
     activatePrimary('video-create');
     activateSub('video-create','tab-canvas');
   }
@@ -1040,8 +1057,8 @@
   }
 
   function rerenderFlowSummary(type){ if(type==='video') renderFlowSummary('video','workflow-todo-summary',false); if(type==='tool') renderFlowSummary('tool','tooldev-todo-summary',true); if(type==='videoEpisode') renderFlowSummary('videoEpisode','video-episode-todo-summary',false); }
-  function renderVideoFlow(){ renderFlow('video', VIDEO_FLOW_LABELS, 'workflow-flow-track', 'workflow-todo-summary', false); bindFlowControls(document.getElementById('workflow-flow-track')); }
-  function renderVideoEpisodeFlow(){ const p = getCurrentProject(); if(!p) return; const labels = p.storyboardPanels.map(function(r, i){ return ('第'+(i+1)+'話 ' + (r.title || '')).trim(); }); normalizeFlowState(p.videoEpisodeFlowState, labels); renderFlow('videoEpisode', labels, 'video-episode-flow-track', 'video-episode-todo-summary', false); bindFlowControls(document.getElementById('video-episode-flow-track')); }
+  function renderVideoFlow(){ renderFlow('video', VIDEO_FLOW_LABELS, 'workflow-flow-track', 'workflow-todo-summary', false); bindFlowControls(document.getElementById('workflow-flow-track')); renderPageSizeTools('tab-pres-workflow','pres-workflow-width','pres-workflow-width-val','pres-workflow-orientation'); }
+  function renderVideoEpisodeFlow(){ const p = getCurrentProject(); if(!p) return; const labels = p.storyboardPanels.map(function(r, i){ return ('第'+(i+1)+'話 ' + (r.title || '')).trim(); }); normalizeFlowState(p.videoEpisodeFlowState, labels); renderFlow('videoEpisode', labels, 'video-episode-flow-track', 'video-episode-todo-summary', false); bindFlowControls(document.getElementById('video-episode-flow-track')); renderPageSizeTools('tab-video-workflow','video-workflow-width','video-workflow-width-val','video-workflow-orientation'); }
   function renderToolFlow(){ renderFlow('tool', TOOL_FLOW_LABELS, 'tooldev-flow-track', 'tooldev-todo-summary', true); bindFlowControls(document.getElementById('tooldev-flow-track')); }
 
   function bindFlowControls(scope){
@@ -1156,6 +1173,66 @@
     const selected = document.querySelector('#video-script-tbody tr[data-ep]');
     if(selected) return parseInt(selected.getAttribute('data-ep'),10) || 1;
     return 1;
+  }
+
+  function addVideoScriptRowForEpisode(ep){
+    const p = getCurrentProject();
+    if(!p) return;
+    p.videoRowsPerEpisode[ep-1] = (parseInt(p.videoRowsPerEpisode[ep-1],10) || LINES_PER_EP) + 1;
+    buildVideoScriptTable();
+    restoreVideoRows(p);
+    renderEpisodeRowTools();
+    saveEditorData();
+    toast();
+  }
+
+  function deleteVideoScriptRowForEpisode(ep){
+    const p = getCurrentProject();
+    if(!p) return;
+    const current = Math.max(1, parseInt(p.videoRowsPerEpisode[ep-1],10) || LINES_PER_EP);
+    if(current <= 1) return;
+    const rowid = 'ep'+ep+'-c'+current;
+    p.videoScriptRows = (p.videoScriptRows || []).filter(function(row){ return row.rowid !== rowid; });
+    p.videoRowsPerEpisode[ep-1] = current - 1;
+    buildVideoScriptTable();
+    restoreVideoRows(p);
+    renderEpisodeRowTools();
+    saveEditorData();
+    toast();
+  }
+
+  function renderEpisodeRowTools(){
+    const wrap = document.getElementById('episode-row-tool-wrap');
+    const p = getCurrentProject();
+    if(!wrap || !p) return;
+    wrap.innerHTML = [1,2,3,4,5,6].map(function(ep){
+      const count = Math.max(1, parseInt(p.videoRowsPerEpisode[ep-1],10) || LINES_PER_EP);
+      return '<div class="episode-row-tools"><span class="mini-note">第'+ep+'話 行数：'+count+'</span><button class="mini-btn" data-add-ep-row="'+ep+'">第'+ep+'話に行追加</button><button class="mini-btn" data-del-ep-row="'+ep+'">第'+ep+'話の最終行削除</button></div>';
+    }).join('');
+    wrap.querySelectorAll('[data-add-ep-row]').forEach(function(btn){ btn.addEventListener('click', function(){ addVideoScriptRowForEpisode(parseInt(btn.dataset.addEpRow,10)); }); });
+    wrap.querySelectorAll('[data-del-ep-row]').forEach(function(btn){ btn.addEventListener('click', function(){ deleteVideoScriptRowForEpisode(parseInt(btn.dataset.delEpRow,10)); }); });
+  }
+
+  function renderPageSizeTools(sectionId, widthId, valueId, orientationId){
+    const p = getCurrentProject();
+    if(!p || !p.pagePrintSettings || !p.pagePrintSettings[sectionId]) return;
+    const widthEl = document.getElementById(widthId);
+    const valueEl = document.getElementById(valueId);
+    const orientationEl = document.getElementById(orientationId);
+    if(!widthEl || !valueEl || !orientationEl) return;
+    const settings = p.pagePrintSettings[sectionId];
+    widthEl.value = settings.width;
+    valueEl.value = settings.width;
+    orientationEl.value = settings.orientation;
+    widthEl.oninput = function(){
+      settings.width = parseInt(widthEl.value,10) || DEFAULT_PAGE_PRINT_SETTINGS[sectionId].width;
+      valueEl.value = settings.width;
+      saveEditorData();
+    };
+    orientationEl.onchange = function(){
+      settings.orientation = orientationEl.value || DEFAULT_PAGE_PRINT_SETTINGS[sectionId].orientation;
+      saveEditorData();
+    };
   }
 
   document.getElementById('video-script-tbody').addEventListener('input', function(e){
@@ -1412,14 +1489,25 @@
     const target = document.getElementById(sectionId);
     if(!target) return;
     saveEditorData();
-    document.querySelectorAll('.print-target').forEach(function(el){ el.classList.remove('print-target'); });
+    document.querySelectorAll('.print-target').forEach(function(el){ el.classList.remove('print-target'); el.style.width=''; el.style.maxWidth=''; });
     target.classList.add('print-target');
     document.body.classList.add('print-section');
     if(A3_SECTION_IDS.has(sectionId)) document.body.classList.add('print-a3');
+    const p = getCurrentProject();
+    if(p && p.pagePrintSettings && p.pagePrintSettings[sectionId]){
+      const settings = p.pagePrintSettings[sectionId];
+      const width = parseInt(settings.width,10) || DEFAULT_PAGE_PRINT_SETTINGS[sectionId]?.width || 190;
+      target.style.width = width + 'mm';
+      target.style.maxWidth = 'none';
+      if(settings.orientation === 'portrait') document.body.classList.remove('print-a3');
+      if(settings.orientation === 'landscape' && A3_SECTION_IDS.has(sectionId)) document.body.classList.add('print-a3');
+    }
     const cleanup = function(){
       document.body.classList.remove('print-section');
       document.body.classList.remove('print-a3');
       target.classList.remove('print-target');
+      target.style.width='';
+      target.style.maxWidth='';
       window.removeEventListener('afterprint', cleanup);
     };
     window.addEventListener('afterprint', cleanup);
@@ -1500,8 +1588,8 @@
     document.getElementById('apply-scenario-draft-btn').addEventListener('click', applyScenarioDraft);
     document.getElementById('auto-fill-scenario-btn').addEventListener('click', autoFillScenarioEpisodes);
     document.getElementById('auto-draft-video-btn').addEventListener('click', autoDraftVideo);
-    document.getElementById('add-video-row-btn').addEventListener('click', addVideoScriptRow);
-    document.getElementById('delete-video-row-btn').addEventListener('click', deleteVideoScriptRow);
+    document.getElementById('add-video-row-btn').addEventListener('click', function(){ addVideoScriptRowForEpisode(1); });
+    document.getElementById('delete-video-row-btn').addEventListener('click', function(){ deleteVideoScriptRowForEpisode(1); });
     document.getElementById('export-video-telops-btn').addEventListener('click', exportVideoTelopsXlsx);
     document.getElementById('copy-video-workflow-btn').addEventListener('click', copyVideoWorkflowTodoText);
     document.getElementById('export-video-workflow-btn').addEventListener('click', exportVideoWorkflowTodoXlsx);
