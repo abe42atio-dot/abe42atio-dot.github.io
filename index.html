@@ -1,365 +1,219 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Projects Maker 1ki2</title>
 <style>
   :root{
-    --p1:#4facfe; --p2:#43e97b; --p3:#fa709a; --p4:#f6d365; --p5:#a18cd1;
-    --ink:#111827; --muted:#6b7280; --line:#e5e7eb;
-    --bg:#ffffff; --paper:#ffffff; --soft:#f9fafb;
-
-    /* Plan defaults (A4 fitting) */
-    --planFont: 11px;
-    --planLine: 1.45;
-
-    /* ★追加：画像枠のデフォルト高さ */
-    --planImgBoxH: 120px;
+    --p1:#4facfe; --p2:#43e97b; --p3:#fa709a; --p4:#f6d365; --p5:#a18cd1; --p6:#60a5fa;
+    --ink:#111827; --muted:#6b7280; --line:#e5e7eb; --bg:#ffffff; --paper:#ffffff; --soft:#f9fafb;
+    --planFont:11px; --planLine:1.45; --planImgBoxH:120px;
+    --fun1:#fff7cc; --fun2:#eef6ff; --fun3:#fdf2f8; --fun4:#ecfeff; --fun5:#eefcf1; --fun6:#f3e8ff;
   }
-
-  body{
-    font-family: "Hiragino Sans","Noto Sans JP",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
-    margin:0; background:var(--bg); color:var(--ink);
-    touch-action: manipulation;
-  }
-
-  /* --- Dashboard --- */
-  #dashboard{ padding:28px 16px; max-width: 1040px; margin:0 auto; }
+  *{ box-sizing:border-box; }
+  body{ font-family:"Hiragino Sans","Noto Sans JP",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; margin:0; background:var(--bg); color:var(--ink); }
+  #dashboard{ padding:28px 16px; max-width:1040px; margin:0 auto; }
   .dash-header{ text-align:center; margin-bottom:22px; }
-  .dash-header h1{ margin:0 0 10px; font-weight:900; letter-spacing: .02em; }
+  .dash-header h1{ margin:0 0 10px; font-weight:900; }
   .dash-sub{ color:var(--muted); font-size:12px; margin-bottom:14px; }
-  .add-btn-main{
-    background:#111827; color:#fff; border:none; padding:12px 18px; border-radius:999px;
-    font-weight:800; cursor:pointer; font-size:14px;
-  }
-
-  .folder-container{
-    background:var(--paper); border-radius:16px; margin-bottom:14px;
-    box-shadow: 0 8px 30px rgba(17,24,39,0.06);
-    overflow:hidden; border:1px solid var(--line); border-left: 10px solid var(--p1);
-  }
-  .folder-header{
-    padding:14px 18px; display:flex; align-items:center; cursor:pointer;
-    background: #fff; transition:.15s;
-  }
-  .folder-header:hover{ background: var(--soft); }
+  .add-btn-main{ background:#111827; color:#fff; border:none; padding:12px 18px; border-radius:999px; font-weight:800; cursor:pointer; font-size:14px; }
+  .folder-container{ background:var(--paper); border-radius:16px; margin-bottom:14px; box-shadow:0 8px 30px rgba(17,24,39,0.06); overflow:hidden; border:1px solid var(--line); border-left:10px solid var(--p1); }
+  .folder-header{ padding:14px 18px; display:flex; align-items:center; cursor:pointer; background:#fff; }
+  .folder-header:hover{ background:var(--soft); }
   .folder-icon{ font-size:22px; margin-right:10px; }
-  .folder-name{ flex-grow:1; font-weight:900; font-size:16px; outline:none; }
+  .folder-name{ flex:1; font-weight:900; font-size:16px; outline:none; }
   .folder-controls{ display:flex; align-items:center; gap:10px; }
-  .color-picker{ width:24px; height:24px; border-radius:50%; border:2px solid #fff; box-shadow: 0 0 0 1px #ddd; cursor:pointer; padding:0; }
-  .delete-item{ color:#b6b6b6; border:none; background:none; cursor:pointer; font-size:16px; }
-  .delete-item:hover{ color:#ff4d4d; }
+  .color-picker{ width:24px; height:24px; border-radius:50%; border:2px solid #fff; box-shadow:0 0 0 1px #ddd; cursor:pointer; padding:0; }
+  .delete-item{ color:#6b7280; border:1px solid #e5e7eb; background:#fff; cursor:pointer; font-size:12px; padding:6px 10px; border-radius:999px; font-weight:900; }
+  .delete-item:hover{ color:#b91c1c; border-color:#fecaca; background:#fff5f5; }
+  .project-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:12px; padding:14px 16px; background:#fff; border-top:1px solid var(--line); }
+  .project-card{ background:var(--soft); padding:14px; border-radius:14px; border:1px solid #e8edf4; cursor:pointer; position:relative; transition:.2s; }
+  .project-card:hover{ transform:translateY(-2px); border-color:rgba(79,172,254,.55); background:#fff; box-shadow:0 10px 22px rgba(17,24,39,.06); }
+  .add-project-in-folder{ background:#fff; border:2px dashed #d1d5db; border-radius:14px; display:flex; align-items:center; justify-content:center; color:#6b7280; font-weight:900; cursor:pointer; min-height:80px; }
 
-  .project-grid{
-    display:grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap:12px; padding:14px 16px; background:#fff; border-top: 1px solid var(--line);
-  }
-  .project-card{
-    background: var(--soft); padding:14px; border-radius:14px; border:1px solid #e8edf4;
-    cursor:pointer; position:relative; transition:.2s;
-  }
-  .project-card:hover{
-    transform: translateY(-2px); border-color: rgba(79,172,254,.55); background:#fff;
-    box-shadow: 0 10px 22px rgba(17,24,39,.06);
-  }
-  .add-project-in-folder{
-    background:#fff; border:2px dashed #d1d5db; border-radius:14px;
-    display:flex; align-items:center; justify-content:center; color:#6b7280;
-    font-weight:900; cursor:pointer; min-height:80px;
-  }
-
-  /* --- Editor --- */
-  #editor{ display:none; padding: 10px; }
-  .topbar{
-    max-width:210mm; margin: 10px auto; display:flex; justify-content:space-between; align-items:center; gap:10px;
-  }
-  .back-btn{
-    cursor:pointer; background:none; border:none; color:var(--p1); font-weight:900;
-  }
-  .save-btn{
-    background:#111827; color:#fff; border:none; padding:10px 16px; border-radius:999px;
-    font-weight:900; cursor:pointer; font-size:12px;
-  }
+  #editor{ display:none; padding:10px; }
+  .topbar{ max-width:210mm; margin:10px auto; display:flex; justify-content:space-between; align-items:center; gap:10px; }
+  .back-btn{ cursor:pointer; background:none; border:none; color:var(--p1); font-weight:900; }
+  .save-btn{ background:#111827; color:#fff; border:none; padding:10px 16px; border-radius:999px; font-weight:900; cursor:pointer; font-size:12px; }
   .save-btn.secondary{ background:#6b7280; }
-
-  /* tabs */
-  .tabbar{
-    max-width:210mm; margin:0 auto 8px; display:flex; gap:8px; flex-wrap:wrap;
-  }
-  .tab{
-    border:1px solid var(--line); background:#fff; color:#111827;
-    padding:8px 12px; border-radius:999px; font-weight:900; cursor:pointer; font-size:12px;
-  }
-  .tab.active{ border-color: rgba(79,172,254,.65); box-shadow: 0 6px 16px rgba(79,172,254,.12); }
-
-  .page{
-    width: 210mm; min-height: 297mm; background: var(--paper);
-    padding: 10mm; margin: 0 auto 12px;
-    box-shadow: 0 0 50px rgba(0,0,0,0.10);
-    display:flex; flex-direction:column; gap:14px;
-    border-radius: 6px; position:relative; border: 1px solid var(--line);
-  }
-  .page-title{
-    text-align:center; outline:none; margin:0; font-size:22px; font-weight:1000;
-  }
-
-  /* --- Canvas area --- */
-  .canvas-section{ position:relative; height:500px; background:#fcfdfe; border:1px solid #eee; border-radius:20px; overflow:hidden; }
-  .center-line{ position:absolute; left:50%; top:0; bottom:0; border-left:2px dashed #ddd; z-index:1; }
-
-  .parent-bubble{
-    position:absolute; border-radius:50%; border:3px solid;
-    background: rgba(255,255,255,0.92); z-index:10; cursor:grab;
-    min-width:150px; min-height:150px; display:flex; align-items:center; justify-content:center;
-  }
-  .bubble-title{ position:absolute; top:-22px; font-size:11px; font-weight:900; white-space:nowrap; }
-
-  .child-container{ position:absolute; display:flex; flex-direction:column; align-items:center; z-index:20; transition: left .3s ease, top .3s ease; }
-  .child-label-wrap{ display:flex; align-items:center; gap:4px; }
-  .child-label{ font-size:8px; font-weight:900; color:#888; outline:none; border-bottom:1px dashed transparent; }
-  .child-del-btn{ font-size:10px; color:#ccc; cursor:pointer; border:none; background:none; padding:0; line-height:1; }
-  .child-del-btn:hover{ color:#ff4d4d; }
-
-  .child-bubble{
-    width:55px; height:55px; border-radius:50%; background:#fff; border:1.5px solid #ddd;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08); cursor:move; display:flex; align-items:center; justify-content:center; position:relative;
-  }
-  .child-text{ font-size:9px; width:85%; text-align:center; border:none; outline:none; background:transparent; font-weight:600; }
-
-  .resize-handle{
-    position:absolute; right:-8px; bottom:-8px; width:24px; height:24px;
-    background:#fff; border:2px solid #cbd5e0; border-radius:50%;
-    cursor:nwse-resize; z-index:30; display:flex; align-items:center; justify-content:center;
-  }
-  .resize-handle::after{ content:"↘"; font-size:12px; color:#666; }
-
-  .quick-add-btn{
-    position:absolute; bottom:-8px; left:-8px; width:24px; height:24px;
-    background:#eee; border-radius:50%; border:2px solid #ddd; cursor:pointer;
-    font-size:18px; color:#666; display:flex; align-items:center; justify-content:center;
-    opacity:.85; transition:.2s; z-index:40;
-  }
-
-  .section-title{
-    font-size:11px; font-weight:1000; color:#111827;
-    border-left: 4px solid #111827; padding-left: 8px; margin: 8px 0 4px;
-  }
-  table{ width:100%; border-collapse:separate; border-spacing:2px; font-size:9px; }
-  th{ background:#f8fafc; padding:6px; border-radius:4px; color:#64748b; font-weight:900; text-align:center; }
-  td{ background:#fff; border:1px solid #f1f5f9; padding:5px; border-radius:4px; outline:none; }
-
-  .flow-container{ display:flex; gap:8px; flex-wrap:wrap; }
-  .flow-card{
-    flex: 1; min-width: 140px;
-    border-top: 5px solid #eee; background:#fff; padding:10px; border-radius:14px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 1px solid #eef2f7;
-  }
-  .flow-input{ font-size:10px; min-height:40px; margin-top:6px; padding:6px; outline:none; background:#f9fafb; border-radius:10px; }
-
-  /* --- Document blocks --- */
-  .doc-area{
-    border:1px solid #eef2f7; border-radius:14px; padding:10px;
-    background:#fff;
-  }
-  .doc-area .hint{ font-size:11px; color:var(--muted); margin:0 0 8px; }
-  .doc-line{
-    font-size:12px; line-height:1.65;
-    padding:2px 0;
-    white-space:pre-wrap;
-  }
-  .doc-line[contenteditable="true"]:focus{
-    outline: 2px solid rgba(79,172,254,.25);
-    border-radius:8px;
-  }
+  .primary-tabbar{ max-width:210mm; margin:0 auto 8px; display:flex; gap:8px; flex-wrap:wrap; }
+  .primary-tab{ border:1px solid var(--line); background:#fff; color:#111827; padding:10px 14px; border-radius:999px; font-weight:900; cursor:pointer; font-size:12px; }
+  .primary-tab.active{ border-color:rgba(79,172,254,.65); box-shadow:0 6px 16px rgba(79,172,254,.12); }
+  .sub-tabbar{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px; }
+  .sub-tab{ border:1px solid var(--line); background:#fff; color:#111827; padding:8px 12px; border-radius:999px; font-weight:900; cursor:pointer; font-size:12px; }
+  .sub-tab.active{ border-color:rgba(79,172,254,.65); box-shadow:0 6px 16px rgba(79,172,254,.12); }
+  .primary-content,.sub-content{ display:none; }
+  .page{ width:210mm; min-height:297mm; background:var(--paper); padding:10mm; margin:0 auto 12px; box-shadow:0 0 50px rgba(0,0,0,0.10); display:flex; flex-direction:column; gap:14px; border-radius:6px; border:1px solid var(--line); }
+  .page-title{ text-align:center; outline:none; margin:0; font-size:22px; font-weight:1000; }
+  .storyboard-info{ font-size:12px; color:var(--muted); line-height:1.7; background:#fff; border:1px solid var(--line); border-radius:14px; padding:10px 12px; }
   .doc-actions{ display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
-  .mini-btn{
-    border:1px solid var(--line); background:#fff; padding:8px 12px; border-radius:999px;
-    font-weight:1000; cursor:pointer; font-size:12px;
-  }
-  .mini-btn.primary{ border-color: rgba(79,172,254,.55); box-shadow: 0 10px 20px rgba(79,172,254,.12); }
-
-  /* --- Input Menubar (Plan/Pres) --- */
-  .inputbar{
-    border:1px solid var(--line); border-radius:14px; background:#fff;
-    padding:10px; display:flex; align-items:center; justify-content:space-between;
-    gap:10px; box-shadow: 0 6px 18px rgba(17,24,39,.04);
-  }
-  .inputbar .left{
-    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
-  }
-  .inputbar .title{
-    font-size:12px; font-weight:1000; color:#111827;
-  }
-  .inputbar .desc{
-    font-size:11px; color:var(--muted);
-  }
-  .inputbar .right{
-    display:flex; gap:8px; flex-wrap:wrap; align-items:center;
-  }
-  .inputdrawer{
-    margin-top:10px;
-    border:1px solid #eef2f7; border-radius:14px; background:#fff;
-    padding:10px;
-    display:none;
-  }
+  .mini-btn{ border:1px solid var(--line); background:#fff; padding:8px 12px; border-radius:999px; font-weight:1000; cursor:pointer; font-size:12px; }
+  .mini-btn.primary{ border-color:rgba(79,172,254,.55); box-shadow:0 10px 20px rgba(79,172,254,.12); }
+  .guide-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .guide-card{ border:1px solid #eef2f7; border-radius:16px; background:#fff; padding:12px; box-shadow:0 6px 18px rgba(17,24,39,.04); }
+  .guide-card h3{ margin:0 0 6px; font-size:14px; font-weight:1000; }
+  .guide-card p{ margin:0 0 8px; color:var(--muted); font-size:11px; line-height:1.6; }
+  .guide-card textarea{ width:100%; min-height:110px; border:1px solid #e5e7eb; border-radius:12px; padding:10px; font-size:12px; outline:none; resize:vertical; background:#fff; }
+  .doc-area{ border:1px solid #eef2f7; border-radius:14px; padding:10px; background:#fff; }
+  .doc-area .hint{ font-size:11px; color:var(--muted); margin:0 0 8px; }
+  .doc-line{ font-size:12px; line-height:1.65; padding:2px 0; white-space:pre-wrap; }
+  .doc-line[contenteditable="true"]:focus{ outline:2px solid rgba(79,172,254,.25); border-radius:8px; }
+  .inputbar{ border:1px solid var(--line); border-radius:14px; background:#fff; padding:10px; display:flex; align-items:center; justify-content:space-between; gap:10px; box-shadow:0 6px 18px rgba(17,24,39,.04); }
+  .inputbar .left{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .inputbar .title{ font-size:12px; font-weight:1000; color:#111827; }
+  .inputbar .desc{ font-size:11px; color:var(--muted); }
+  .inputbar .right{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .inputdrawer{ margin-top:10px; border:1px solid #eef2f7; border-radius:14px; background:#fff; padding:10px; display:none; }
   .inputdrawer.open{ display:block; }
-  .fields-grid{
-    display:grid; grid-template-columns: repeat(2, minmax(220px, 1fr)); gap:10px;
-  }
-  .field{
-    display:grid; grid-template-columns: 110px 1fr; gap:8px; align-items:center;
-    padding:6px 0; border-bottom:1px dashed #eef2f7;
-  }
+  .fields-grid{ display:grid; grid-template-columns:repeat(2, minmax(220px, 1fr)); gap:10px; }
+  .field{ display:grid; grid-template-columns:110px 1fr; gap:8px; align-items:center; padding:6px 0; border-bottom:1px dashed #eef2f7; }
   .field:last-child{ border-bottom:none; }
   .field label{ font-size:11px; color:var(--muted); font-weight:900; }
-  .field input, .field textarea{
-    width:100%; border:1px solid #e5e7eb; border-radius:10px; padding:8px 10px;
-    font-size:12px; outline:none; background:#fff;
-  }
+  .field input,.field textarea,.field select{ width:100%; border:1px solid #e5e7eb; border-radius:10px; padding:8px 10px; font-size:12px; outline:none; background:#fff; }
   .field textarea{ min-height:64px; resize:vertical; }
 
-  /* --- Plan A4 Fit / Emphasis --- */
-  #tab-plan{ padding: 8mm; }
-  #tab-plan .doc-area{ padding: 8px; }
-  /* ★line-height を var(--planLine) に統一 */
-  #tab-plan .doc-line{ font-size: var(--planFont); line-height: var(--planLine); padding: 1px 0; }
-  #tab-plan .plan-heading{
-    font-weight:1000;
-    font-size: calc(var(--planFont) + 1px);
-    margin-top: 6px;
-  }
-  #tab-plan .plan-title{
-    font-weight:1000;
-    font-size: calc(var(--planFont) + 4px);
-    letter-spacing: .02em;
-    margin: 4px 0 8px;
-  }
+  .scenario-template{ border:2px solid #111; border-radius:18px; overflow:hidden; background:#fff; }
+  .scenario-headbar{ padding:12px; background:linear-gradient(180deg, #ffe680, #f5c400); border-bottom:2px solid #111; text-align:center; }
+  .scenario-headbar .title{ font-size:24px; font-weight:1000; }
+  .scenario-synopsis-box{ padding:10px 12px; border-bottom:2px solid #111; background:#fffef5; }
+  .scenario-synopsis-box label{ display:block; font-size:12px; font-weight:1000; margin-bottom:6px; }
+  .scenario-synopsis-box textarea{ width:100%; min-height:90px; border:1px solid #d1d5db; border-radius:12px; padding:10px; font-size:12px; line-height:1.7; resize:vertical; }
+  .scenario-draft-box{ padding:12px; border-bottom:2px solid #111; background:#f8fafc; }
+  .scenario-draft-title{ font-size:13px; font-weight:1000; margin-bottom:8px; }
+  .scenario-draft-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; }
+  .scenario-draft-grid input{ width:100%; border:1px solid #d1d5db; border-radius:10px; padding:9px 10px; font-size:12px; }
+  .scenario-draft-preview{ margin-top:10px; border:1px dashed #cbd5e1; border-radius:12px; background:#fff; padding:10px; font-size:12px; line-height:1.8; }
+  .scenario-episode-list{ padding:12px; display:flex; flex-direction:column; gap:8px; }
+  .scenario-episode-arrow{ text-align:center; font-size:22px; font-weight:1000; color:#64748b; }
+  .scenario-episode-card{ display:grid; grid-template-columns:74px 1fr 120px 120px; gap:8px; align-items:stretch; border:2px solid #111; border-radius:14px; overflow:hidden; background:#fff; }
+  .scenario-ep-label{ background:linear-gradient(180deg, #fff4b8, #ffe680); border-right:2px solid #111; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:1000; padding:10px; }
+  .scenario-ep-main{ padding:10px; display:flex; flex-direction:column; gap:8px; }
+  .scenario-ep-title2,.scenario-ep-title{ width:100%; border:1px solid #d1d5db; border-radius:10px; padding:8px 10px; }
+  .scenario-ep-title2{ font-size:12px; background:#fffef8; }
+  .scenario-ep-title{ font-size:14px; font-weight:1000; }
+  .scenario-ep-desc{ width:100%; min-height:92px; border:1px solid #d1d5db; border-radius:10px; padding:10px; font-size:12px; line-height:1.7; resize:vertical; }
+  .scenario-ep-term,.scenario-ep-date{ padding:10px; border-left:2px solid #111; background:#fffdf0; display:flex; flex-direction:column; gap:8px; justify-content:center; }
+  .scenario-cell-title{ font-size:11px; font-weight:1000; color:#64748b; }
+  .scenario-ep-term select,.scenario-ep-date input{ width:100%; border:1px solid #d1d5db; border-radius:10px; padding:8px; font-size:12px; }
+
+  .workflow-playful{ border:2px solid #111; border-radius:20px; overflow:hidden; background:linear-gradient(180deg,#fffef8 0%,#f8fbff 100%); }
+  .workflow-titlebar{ padding:14px; background:linear-gradient(180deg,#ffe680 0%,#f5c400 100%); border-bottom:2px solid #111; text-align:center; font-size:24px; font-weight:1000; }
+  .workflow-scroll{ padding:12px; border-bottom:2px solid #111; overflow-x:visible; }
+  .flow-track{ display:flex; flex-direction:column; gap:10px; }
+  .flow-node-wrap{ display:flex; flex-direction:column; gap:8px; }
+  .flow-arrow{ font-size:22px; font-weight:1000; color:#64748b; text-align:center; line-height:1; }
+  .flow-node{ width:100%; border:2px solid #111; border-radius:16px; overflow:hidden; background:#fff; box-shadow:0 8px 20px rgba(17,24,39,.06); }
+  .flow-node[data-cat="1"] .flow-node-head{ background:var(--fun1); }
+  .flow-node[data-cat="2"] .flow-node-head{ background:var(--fun2); }
+  .flow-node[data-cat="3"] .flow-node-head{ background:var(--fun3); }
+  .flow-node[data-cat="4"] .flow-node-head{ background:var(--fun4); }
+  .flow-node[data-cat="5"] .flow-node-head{ background:var(--fun5); }
+  .flow-node[data-cat="6"] .flow-node-head{ background:var(--fun6); }
+  .flow-node-head{ padding:12px; font-weight:1000; display:flex; align-items:center; justify-content:space-between; gap:8px; cursor:pointer; }
+  .flow-node-title{ font-size:14px; }
+  .flow-node-toggle{ font-size:12px; border:1px solid #111; background:#fff; border-radius:999px; padding:4px 8px; }
+  .flow-node-body{ display:none; padding:10px; border-top:2px solid #111; background:#fff; }
+  .flow-node.open .flow-node-body{ display:block; }
+  .folder-list-wrap{ display:flex; flex-direction:column; gap:10px; }
+  .wf-folder{ border:2px dashed #cbd5e1; border-radius:14px; background:#f8fafc; padding:10px; }
+  .wf-folder-head{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px; }
+  .wf-folder-title{ width:100%; border:1px solid #d1d5db; border-radius:10px; padding:8px 10px; font-size:12px; font-weight:1000; background:#fff; }
+  .wf-folder-tools{ display:flex; gap:6px; flex-wrap:wrap; }
+  .wf-folder-desc{ font-size:11px; color:#64748b; line-height:1.6; margin:0 0 8px; }
+  .wf-folder-table{ width:100%; border-collapse:collapse; font-size:12px; }
+  .wf-folder-table th,.wf-folder-table td{ border:1px solid #d1d5db; padding:8px; vertical-align:top; }
+  .wf-folder-table th{ background:#fffdf0; font-weight:1000; }
+  .wf-folder-table textarea,.wf-folder-table input,.wf-folder-table select{ width:100%; border:1px solid #d1d5db; border-radius:10px; padding:8px 10px; font-size:12px; background:#fff; }
+  .wf-folder-table textarea{ min-height:56px; resize:vertical; }
+  .drag-chip{ cursor:grab; border:1px solid #111; background:#fff; border-radius:999px; padding:4px 8px; font-size:11px; font-weight:1000; }
+  .tool-sheet{ display:flex; flex-direction:column; gap:10px; }
+  .tool-sheet-card{ border:2px dashed #cbd5e1; border-radius:14px; background:#f8fafc; padding:12px; }
+  .tool-sheet-title{ font-size:13px; font-weight:1000; margin-bottom:6px; }
+  .tool-sheet-desc{ font-size:11px; color:#64748b; line-height:1.7; margin-bottom:10px; }
+  .tool-sheet-grid{ display:grid; grid-template-columns:160px 1fr; gap:8px; }
+  .tool-sheet-grid label{ font-size:11px; color:#64748b; font-weight:1000; align-self:center; }
+  .tool-sheet-grid input,.tool-sheet-grid textarea,.tool-sheet-grid select{ width:100%; border:1px solid #d1d5db; border-radius:10px; padding:8px 10px; font-size:12px; background:#fff; }
+  .tool-sheet-grid textarea{ min-height:72px; resize:vertical; }
+  .todo-summary-wrap{ padding:12px; }
+  .todo-summary-head{ display:flex; justify-content:space-between; gap:10px; align-items:flex-start; margin-bottom:10px; }
+  .todo-summary-head h3{ margin:0; font-size:16px; }
+  .todo-summary-grid{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+  .todo-summary-card{ border:2px solid #111; border-radius:14px; overflow:hidden; background:#fff; }
+  .todo-summary-card h4{ margin:0; padding:10px 12px; background:#fff4b8; border-bottom:2px solid #111; font-size:14px; }
+  .todo-summary-body{ padding:10px; display:flex; flex-direction:column; gap:8px; }
+  .todo-item{ border:1px solid #d1d5db; border-radius:12px; background:#fff; padding:8px; font-size:12px; line-height:1.6; }
+  .todo-empty{ color:#94a3b8; font-size:11px; padding:6px 2px; }
+  .todo-badge{ display:inline-block; padding:2px 8px; font-size:10px; border-radius:999px; background:#111827; color:#fff; font-weight:1000; margin-bottom:6px; }
+
+  #tab-plan .doc-area{ padding:8px; }
+  #tab-plan .doc-line{ font-size:var(--planFont); line-height:var(--planLine); padding:1px 0; }
+  #tab-plan .plan-heading{ font-weight:1000; font-size:calc(var(--planFont) + 1px); margin-top:6px; }
+  #tab-plan .plan-title{ font-weight:1000; font-size:calc(var(--planFont) + 4px); letter-spacing:.02em; margin:4px 0 8px; }
   #tab-plan .plan-bullet strong{ font-weight:1000; }
-
-  .plan-images{
-    display:grid; grid-template-columns: 1fr 1fr; gap:8px;
-    margin-top:6px;
-  }
-  /* ★変更：枠の高さを可変（デフォルトは --planImgBoxH） */
-  .plan-images .imgbox{
-    border:1px dashed #cbd5e1; border-radius:12px;
-    height: var(--planImgBoxH);
-    background:#f8fafc;
-    display:flex; align-items:center; justify-content:center;
-    overflow:hidden;
-    position:relative;
-  }
-  .plan-images img{
-    width:100%; height:100%; object-fit:cover; display:block;
-    transform-origin:center center;
-  }
-
-  /* ✅ 画像操作UI */
-  .img-tools{
-    position:absolute; left:8px; right:8px; bottom:8px;
-    display:flex; flex-direction:column; gap:6px;
-    background: rgba(255,255,255,.86);
-    border:1px solid rgba(226,232,240,.9);
-    border-radius:12px;
-    padding:8px;
-    backdrop-filter: blur(4px);
-  }
-  .img-tools .row{
-    display:flex; gap:8px; align-items:center; justify-content:space-between; flex-wrap:wrap;
-  }
-  .img-tools .btn-mini{
-    border:1px solid #e5e7eb; background:#fff; border-radius:999px;
-    padding:6px 10px; font-weight:1000; font-size:11px; cursor:pointer;
-  }
+  .plan-images{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px; }
+  .plan-images .imgbox{ border:1px dashed #cbd5e1; border-radius:12px; height:var(--planImgBoxH); background:#f8fafc; display:flex; align-items:center; justify-content:center; overflow:hidden; position:relative; }
+  .plan-images img{ width:100%; height:100%; object-fit:cover; display:block; transform-origin:center center; }
+  .img-tools{ position:absolute; left:8px; right:8px; bottom:8px; display:flex; flex-direction:column; gap:6px; background:rgba(255,255,255,.86); border:1px solid rgba(226,232,240,.9); border-radius:12px; padding:8px; backdrop-filter:blur(4px); }
+  .img-tools .row{ display:flex; gap:8px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+  .img-tools .btn-mini{ border:1px solid #e5e7eb; background:#fff; border-radius:999px; padding:6px 10px; font-weight:1000; font-size:11px; cursor:pointer; }
   .img-tools .btn-mini.danger{ border-color:#fecaca; color:#b91c1c; }
-  .img-tools .lbl{
-    font-size:11px; color:var(--muted); font-weight:900;
-  }
-  .img-tools input[type="range"]{ width: 140px; }
-
-  .fontctl{
-    display:flex; align-items:center; gap:8px;
-    border:1px solid var(--line); border-radius:999px; padding:6px 10px;
-    background:#fff;
-  }
+  .img-tools .lbl{ font-size:11px; color:var(--muted); font-weight:900; }
+  .img-tools input[type="range"]{ width:140px; }
+  .fontctl{ display:flex; align-items:center; gap:8px; border:1px solid var(--line); border-radius:999px; padding:6px 10px; background:#fff; }
   .fontctl span{ font-size:11px; color:var(--muted); font-weight:900; }
-  .fontctl input[type="range"]{ width: 110px; }
-
-  /* --- Video script --- */
+  .fontctl input[type="range"]{ width:110px; }
   .video-script-table td{ vertical-align:middle; }
-  .status-select{
-    width: 100%; border:1px solid #e5e7eb; border-radius:8px; padding:4px 6px; font-size:10px; outline:none; background:#fff;
-  }
-  .video-script-table{ font-size:12px; }
-  .video-script-table th{ padding:10px 8px; }
-  .video-script-table td{ padding:10px 8px; }
+  .status-select{ width:100%; border:1px solid #e5e7eb; border-radius:8px; padding:4px 6px; font-size:10px; outline:none; background:#fff; }
+  .video-script-table{ font-size:12px; width:100%; border-collapse:separate; border-spacing:2px; }
+  .video-script-table th{ padding:10px 8px; background:#f8fafc; }
+  .video-script-table td{ padding:10px 8px; background:#fff; border:1px solid #f1f5f9; border-radius:4px; }
   .video-script-table td[contenteditable]{ line-height:1.6; min-height:34px; }
+  .video-script-table tr[data-ep] td:first-child{ border-left:8px solid #e5e7eb; }
+  .video-script-table tr[data-ep="1"] td:first-child{ border-left-color:var(--p1); }
+  .video-script-table tr[data-ep="2"] td:first-child{ border-left-color:var(--p5); }
+  .video-script-table tr[data-ep="3"] td:first-child{ border-left-color:var(--p1); }
+  .video-script-table tr[data-ep="4"] td:first-child{ border-left-color:var(--p3); }
+  .video-script-table tr[data-ep="5"] td:first-child{ border-left-color:var(--p2); }
+  .video-script-table tr[data-ep="6"] td:first-child{ border-left-color:#111827; }
+  .video-script-table tr[data-ep-start="true"] td{ border-top:2px solid #cbd5e1; background:#f8fafc; }
+  .page-a4-block{ width:100%; }
+  body.print-section .primary-content, body.print-section .sub-content{ display:none !important; }
+  body.print-section .print-target{ display:block !important; }
+  body.print-section .print-target .no-print{ display:none !important; }
+  #toast{ position:fixed; bottom:20px; right:20px; background:#111827; color:#fff; padding:10px 16px; border-radius:999px; font-size:12px; opacity:0; transition:.5s; z-index:1000; }
 
-  .video-script-table tr[data-ep] td:first-child{ border-left: 8px solid #e5e7eb; }
-  .video-script-table tr[data-ep="1"] td:first-child{ border-left-color: var(--p1); }
-  .video-script-table tr[data-ep="2"] td:first-child{ border-left-color: var(--p5); }
-  .video-script-table tr[data-ep="3"] td:first-child{ border-left-color: var(--p1); }
-  .video-script-table tr[data-ep="4"] td:first-child{ border-left-color: var(--p3); }
-  .video-script-table tr[data-ep="5"] td:first-child{ border-left-color: var(--p2); }
-  .video-script-table tr[data-ep="6"] td:first-child{ border-left-color: #111827; }
-
-  .video-script-table tr[data-ep-start="true"] td{
-    border-top: 2px solid #cbd5e1;
-    background:#f8fafc;
-  }
-  .video-script-table tr[data-ep="1"][data-ep-start="true"] td{ background:#f0f9ff; }
-  .video-script-table tr[data-ep="2"][data-ep-start="true"] td{ background:#f6f3ff; }
-  .video-script-table tr[data-ep="3"][data-ep-start="true"] td{ background:#f0f9ff; }
-  .video-script-table tr[data-ep="4"][data-ep-start="true"] td{ background:#fff1f2; }
-  .video-script-table tr[data-ep="5"][data-ep-start="true"] td{ background:#f0fdf4; }
-  .video-script-table tr[data-ep="6"][data-ep-start="true"] td{ background:#f3f4f6; }
-
-  #toast{
-    position:fixed; bottom:20px; right:20px; background:#111827; color:#fff;
-    padding:10px 16px; border-radius:999px; font-size:12px; opacity:0; transition:.5s; z-index:1000;
-  }
-
-  @media (max-width: 780px){
+  @media (max-width:780px){
     #dashboard{ padding:18px 12px; }
-    .page{ width: calc(100vw - 16px); min-height:auto; padding:14px; border-radius:16px; }
-    .topbar, .tabbar{ max-width: calc(100vw - 16px); }
-    .canvas-section{ height: 520px; }
-    .fields-grid{ grid-template-columns: 1fr; }
-    #tab-plan{ padding:14px; }
-    .plan-images{ grid-template-columns: 1fr; }
-    .img-tools input[type="range"]{ width: 180px; }
+    .page{ width:calc(100vw - 16px); min-height:auto; padding:14px; border-radius:16px; }
+    .topbar,.primary-tabbar{ max-width:calc(100vw - 16px); }
+    .fields-grid,.guide-grid,.scenario-draft-grid,.todo-summary-grid,.tool-sheet-grid{ grid-template-columns:1fr; }
+    .scenario-episode-card{ grid-template-columns:1fr; }
+    .plan-images{ grid-template-columns:1fr; }
   }
 
   @media print{
     body{ background:#fff; }
     .no-print{ display:none !important; }
     .page{ box-shadow:none; margin:0; border:none; border-radius:0; }
-    .tab-content{ display:block !important; }
-
-    body.print-single .tab-content{ display:none !important; }
+    .primary-content,.sub-content{ display:block !important; }
+    body.print-single .primary-content, body.print-single .sub-content{ display:none !important; }
     body.print-single #tab-plan{ display:block !important; }
-    body.print-single #tab-pres{ display:none !important; }
-    body.print-single #tab-video{ display:none !important; }
-    body.print-single #tab-canvas{ display:none !important; }
   }
 </style>
 </head>
-
 <body>
 <div id="toast">保存しました ✅</div>
 
-<!-- Dashboard -->
 <div id="dashboard">
   <div class="dash-header">
     <h1>📁 Projects Maker 1ki2</h1>
-    <div class="dash-sub">フォルダ → プロジェクト → 4つのタブ（🫧キャンバス / 📄企画書 / 🎤プレゼン / 🎬動画台本）</div>
-    <button class="add-btn-main" onclick="createNewFolder()">📁 新しいフォルダを作成</button>
+    <div class="dash-sub">フォルダ → プロジェクト → 3カテゴリ（動画作成 / プレゼン作成 / ツール開発）</div>
+    <button id="new-folder-btn" class="add-btn-main">📁 新しいフォルダを作成</button>
   </div>
   <div id="folder-list"></div>
 </div>
 
-<!-- Editor -->
 <div id="editor">
   <div class="topbar no-print">
     <button class="back-btn" onclick="goBackToDashboard()">← ダッシュボードへ戻る</button>
@@ -370,1757 +224,302 @@
     </div>
   </div>
 
-  <!-- Tabs -->
-  <div class="tabbar no-print">
-    <button class="tab active" data-tab="tab-canvas" onclick="switchTab('tab-canvas', this)">🫧 キャンバス</button>
-    <button class="tab" data-tab="tab-plan" onclick="switchTab('tab-plan', this)">📄 企画書</button>
-    <button class="tab" data-tab="tab-pres" onclick="switchTab('tab-pres', this)">🎤 プレゼン台本</button>
-    <button class="tab" data-tab="tab-video" onclick="switchTab('tab-video', this)">🎬 動画台本</button>
+  <div class="primary-tabbar no-print">
+    <button class="primary-tab active" data-primary="video-create">① 動画作成</button>
+    <button class="primary-tab" data-primary="presentation-create">② プレゼン作成</button>
+    <button class="primary-tab" data-primary="product-create">③ ツール開発</button>
   </div>
 
-  <!-- Page 1: Canvas -->
-  <div class="page tab-content" id="tab-canvas" style="display:block;">
-    <h1 id="editable-title" class="page-title" contenteditable="true">Project Name</h1>
-
-    <section class="canvas-section" id="canvas">
-      <div class="center-line"></div>
-
-      <div id="b-theme" class="parent-bubble" style="top:30px; left:50px; border-color:var(--p1);">
-        <span class="bubble-title">課題分析 (THEME)</span>
-        <button class="quick-add-btn no-print" onclick="smartAdd('b-theme')">+</button>
-        <div class="resize-handle"></div>
+  <div class="primary-content" id="video-create" style="display:block;">
+    <div class="page">
+      <h1 id="editable-title" class="page-title" contenteditable="true">Project Name</h1>
+      <div class="sub-tabbar no-print" data-group="video-create">
+        <button class="sub-tab active" data-sub="tab-canvas">🎞️ シナリオ</button>
+        <button class="sub-tab" data-sub="tab-video-workflow">🎬 動画用ワークフロー</button>
+        <button class="sub-tab" data-sub="tab-video">🎬 動画台本</button>
       </div>
 
-      <div id="b-idea" class="parent-bubble" style="top:320px; left:60px; border-color:var(--p3);">
-        <span class="bubble-title">解決策 (IDEA)</span>
-        <button class="quick-add-btn no-print" onclick="smartAdd('b-idea')">+</button>
-        <div class="resize-handle"></div>
-      </div>
-
-      <div id="b-action" class="parent-bubble" style="top:180px; left:160px; border-color:var(--p2);">
-        <span class="bubble-title">検証 (ACTION)</span>
-        <button class="quick-add-btn no-print" onclick="smartAdd('b-action')">+</button>
-        <div class="resize-handle"></div>
-      </div>
-
-      <div id="b-story" class="parent-bubble" style="top:30px; right:50px; border-color:var(--p5);">
-        <span class="bubble-title">導入 (STORY)</span>
-        <button class="quick-add-btn no-print" onclick="smartAdd('b-story')">+</button>
-        <div class="resize-handle"></div>
-      </div>
-
-      <div id="b-weapon" class="parent-bubble" style="top:320px; right:60px; border-color:var(--p4);">
-        <span class="bubble-title">武器 (WEAPON)</span>
-        <button class="quick-add-btn no-print" onclick="smartAdd('b-weapon')">+</button>
-        <div class="resize-handle"></div>
-      </div>
-
-      <div id="b-scheme" class="parent-bubble" style="top:180px; right:160px; border-color:var(--p2);">
-        <span class="bubble-title">スキーム (SCHEME)</span>
-        <button class="quick-add-btn no-print" onclick="smartAdd('b-scheme')">+</button>
-        <div class="resize-handle"></div>
-      </div>
-    </section>
-
-    <section class="flow-container">
-      <div class="flow-card" style="border-color:var(--p1)">
-        <span style="font-size:10px; font-weight:1000;">① タイトル</span>
-        <div class="flow-input" contenteditable="true" data-flow="0"></div>
-      </div>
-      <div class="flow-card" style="border-color:var(--p5)">
-        <span style="font-size:10px; font-weight:1000;">② 導入</span>
-        <div class="flow-input" contenteditable="true" data-flow="1"></div>
-      </div>
-      <div class="flow-card" style="border-color:var(--p1)">
-        <span style="font-size:10px; font-weight:1000;">③ 現状分析</span>
-        <div class="flow-input" contenteditable="true" data-flow="2"></div>
-      </div>
-      <div class="flow-card" style="border-color:var(--p3)">
-        <span style="font-size:10px; font-weight:1000;">④ 解決策</span>
-        <div class="flow-input" contenteditable="true" data-flow="3"></div>
-      </div>
-      <div class="flow-card" style="border-color:var(--p2)">
-        <span style="font-size:10px; font-weight:1000;">⑤ 検証</span>
-        <div class="flow-input" contenteditable="true" data-flow="4"></div>
-      </div>
-      <div class="flow-card" style="border-color:#111827">
-        <span style="font-size:10px; font-weight:1000;">⑥ ビジョン</span>
-        <div class="flow-input" contenteditable="true" data-flow="5"></div>
-      </div>
-    </section>
-
-    <section>
-      <div class="section-title">🎬 動画制作工程表 (全6話構成)</div>
-      <table>
-        <thead>
-          <tr>
-            <th>話数</th><th>テーマ・撮影内容</th><th>撮影時期</th><th>場所</th><th>出演者</th><th>機材</th><th>備考</th>
-          </tr>
-        </thead>
-        <tbody id="video-tbody"></tbody>
-      </table>
-    </section>
-
-    <section>
-      <div class="section-title">📅 実行タスクスケジュール</div>
-      <table>
-        <thead>
-          <tr>
-            <th style="width: 120px;">要素</th><th>WHAT</th><th>WHO</th><th>WHEN</th><th>WHERE</th><th>WHY</th><th>HOW</th>
-          </tr>
-        </thead>
-        <tbody id="task-tbody">
-          <tr>
-            <td style="font-weight:1000; border-left:4px solid var(--p1);">①インタビュー</td>
-            <td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>
-          </tr>
-          <tr>
-            <td style="font-weight:1000; border-left:4px solid var(--p4);">②ウエポン制作</td>
-            <td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>
-          </tr>
-          <tr>
-            <td style="font-weight:1000; border-left:4px solid var(--p2);">③イベント</td>
-            <td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-  </div>
-
-  <!-- Page 2: Plan -->
-  <div class="page tab-content" id="tab-plan" style="display:none;">
-    <h1 class="page-title">📄 企画書（取材のお願い）</h1>
-
-    <!-- hidden file input for plan images -->
-    <input id="plan-image-input" class="no-print" type="file" accept="image/*" multiple style="display:none" />
-
-    <div class="inputbar no-print">
-      <div class="left">
-        <div class="title">🧩 穴埋め入力</div>
-        <div class="desc">「入力を開く」→必要項目を入力 →「企画書に反映」</div>
-      </div>
-      <div class="right">
-        <div class="fontctl" title="企画書の文字サイズ">
-          <span>文字</span>
-          <input id="plan-font-range" type="range" min="9" max="14" step="1" value="11" />
-          <span id="plan-font-val">11px</span>
-        </div>
-
-        <!-- ★追加：A4に収める -->
-        <button class="mini-btn" onclick="fitPlanToA4()">🪄 A4に収める</button>
-
-        <button class="mini-btn" onclick="toggleDrawer('plan-input')">🧩 入力を開く/閉じる</button>
-        <button class="mini-btn primary" onclick="regenPlan()">🔄 企画書に反映</button>
-        <button class="mini-btn" onclick="openPlanImagePicker()">🖼️ 画像追加（最大2）</button>
-        <button class="mini-btn" onclick="copyDoc('plan-doc-area')">📋 企画書をコピー</button>
-      </div>
-    </div>
-
-    <div class="inputdrawer no-print" id="plan-input">
-      <div class="fields-grid">
-        <div>
-          <div class="field"><label>作成日</label><input data-field="createdDate" placeholder="例）2026年1月21日"></div>
-          <div class="field"><label>企業名</label><input data-field="companyName" placeholder="例）株式会社〇〇"></div>
-          <div class="field"><label>部署名</label><input data-field="department" placeholder="例）広報部"></div>
-          <div class="field"><label>ご担当者</label><input data-field="contactName" placeholder="例）山田 太郎"></div>
-
-          <div class="field"><label>学校名</label><input data-field="schoolName" placeholder="例）〇〇高等学校"></div>
-          <div class="field"><label>学年</label><input data-field="grade" placeholder="例）2年"></div>
-          <div class="field"><label>生徒代表</label><input data-field="studentRep" placeholder="例）〇〇 〇〇"></div>
-          <div class="field"><label>担当教員</label><input data-field="teacherRep" placeholder="例）〇〇 〇〇"></div>
-        </div>
-
-        <div>
-          <div class="field"><label>テーマ</label><input data-field="theme" placeholder="例）地域の防災意識を高める方法"></div>
-
-          <div class="field"><label>第1希望</label><input data-field="dt1" placeholder="例）2月3日 16:00〜"></div>
-          <div class="field"><label>第2希望</label><input data-field="dt2" placeholder="例）2月5日 10:00〜"></div>
-          <div class="field"><label>第3希望</label><input data-field="dt3" placeholder="例）2月6日 17:30〜"></div>
-
-          <div class="field"><label>生徒人数</label><input data-field="studentsCount" placeholder="例）5"></div>
-          <div class="field"><label>教員人数</label><input data-field="teachersCount" placeholder="例）1"></div>
-          <div class="field"><label>場所</label><input data-field="place" placeholder="例）貴社会議室 / オンライン"></div>
-
-          <div class="field"><label>内容説明</label><textarea data-field="planDescText" placeholder="例）当日は、事業概要・課題・工夫・今後の展望について伺い、授業成果として発表資料にまとめます。"></textarea></div>
-
-          <div class="field"><label>メール</label><input data-field="email" placeholder="例）xxx@example.com"></div>
-          <div class="field"><label>電話</label><input data-field="phone" placeholder="例）000-0000-0000"></div>
+      <div class="sub-content" id="tab-canvas" style="display:block;">
+        <input id="story-image-input" class="no-print" type="file" accept="image/*" style="display:none">
+        <div class="scenario-template">
+          <div class="scenario-headbar"><div class="title">シナリオ</div></div>
+          <div class="scenario-synopsis-box"><label>あらすじ</label><textarea id="scenario-synopsis" placeholder="この動画全体のあらすじを入力"></textarea></div>
+          <div class="scenario-draft-box">
+            <div class="scenario-draft-title">穴埋め下書き</div>
+            <div class="scenario-draft-grid">
+              <input id="draft-who" placeholder="誰が"><input id="draft-problem" placeholder="どんな問題を"><input id="draft-method" placeholder="どんな方法で解決しようとし"><input id="draft-interviewee" placeholder="誰に話を聞き"><input id="draft-actions" placeholder="何をしていくのか"><input id="draft-answer" placeholder="たどりつく答えとは">
+            </div>
+            <div class="doc-actions no-print" style="margin-top:10px;"><button class="mini-btn primary" onclick="applyScenarioDraft()">🔄 反映</button><button class="mini-btn" onclick="autoFillScenarioEpisodes()">✨ 話数も下書き</button></div>
+            <div id="scenario-draft-preview" class="scenario-draft-preview">ここに完成イメージが表示されます。</div>
+          </div>
+          <div id="scenario-episode-list" class="scenario-episode-list"></div>
         </div>
       </div>
-      <div style="font-size:11px; color:var(--muted); margin-top:8px; line-height:1.6;">
-        ※「画像追加（最大2）」で、企画書の<strong>内容説明</strong>の箇所に画像を挿入できます（保存されます）。<br>
-        ※画像は<strong>削除／差し替え／サイズ変更（拡大縮小）</strong>できます。<br>
-        ※さらに<strong>画像枠（挿入位置の占有サイズ）</strong>も変更できます（A4 1枚に収めやすくなります）。
-      </div>
-    </div>
 
-    <div class="doc-area">
-      <p class="hint no-print">✅ 本文は<strong>そのまま編集できます</strong>。印刷時はこの本文だけがページとして出ます。</p>
-      <div id="plan-doc-area"></div>
+      <div class="sub-content" id="tab-video-workflow" style="display:none;">
+        <div class="workflow-playful page-a4-block">
+          <div class="workflow-titlebar">動画用ワークフロー</div>
+          <div class="storyboard-info" style="margin:12px 12px 0;">各話ごとに必要な準備・実行・フォローを整理できます。</div>
+          <div class="workflow-scroll"><div id="video-episode-flow-track" class="flow-track"></div></div>
+          <div class="todo-summary-wrap">
+            <div class="todo-summary-head">
+              <div><h3>ToDoリストまとめ</h3></div>
+              <div class="doc-actions no-print" style="margin-top:0;"><button class="mini-btn" onclick="copyVideoWorkflowTodoText()">📋 ToDoをコピー</button><button class="mini-btn primary" onclick="exportVideoWorkflowTodoXlsx()">⬇️ Excel出力</button><button class="mini-btn" onclick="printSection('tab-video-workflow')">🖨️ このページをPDF</button></div>
+            </div>
+            <div id="video-episode-todo-summary" class="todo-summary-grid"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-content" id="tab-video" style="display:none;">
+        <div class="doc-actions no-print"><button class="mini-btn primary" onclick="autoDraftVideo()">🔄 自動下書き</button><button class="mini-btn" onclick="manualSave()">💾 保存</button><button class="mini-btn" onclick="exportVideoTelopsXlsx()">⬇️ Excel（テロップ）</button><button class="mini-btn" onclick="printSection('tab-video')">🖨️ このページをPDF</button></div>
+        <table class="video-script-table"><thead><tr><th style="width:44px;">話</th><th style="width:58px;">カット</th><th>テロップ（1文）</th><th>映像イメージ</th><th style="width:90px;">撮影</th><th style="width:90px;">編集</th></tr></thead><tbody id="video-script-tbody"></tbody></table>
+      </div>
     </div>
   </div>
 
-  <!-- Page 3: Presentation -->
-  <div class="page tab-content" id="tab-pres" style="display:none;">
-    <h1 class="page-title">🎤 プレゼン台本</h1>
-
-    <div class="inputbar no-print">
-      <div class="left">
-        <div class="title">🧩 穴埋め入力</div>
-        <div class="desc">必要項目→「台本に反映」／本文は印刷で単体ページ化</div>
+  <div class="primary-content" id="presentation-create">
+    <div class="page">
+      <h1 class="page-title">🎤 プレゼン作成</h1>
+      <div class="sub-tabbar no-print" data-group="presentation-create">
+        <button class="sub-tab active" data-sub="tab-pres-guide">🧠 流れの解説</button>
+        <button class="sub-tab" data-sub="tab-pres-workflow">🗺️ プレゼン用ワークフロー</button>
+        <button class="sub-tab" data-sub="tab-pres">🎤 プレゼン台本</button>
       </div>
-      <div class="right">
-        <button class="mini-btn" onclick="toggleDrawer('pres-input')">🧩 入力を開く/閉じる</button>
-        <button class="mini-btn primary" onclick="regenPres()">🔄 台本に反映</button>
-        <button class="mini-btn" onclick="copyDoc('pres-doc-area')">📋 台本をコピー</button>
-      </div>
-    </div>
 
-    <div class="inputdrawer no-print" id="pres-input">
-      <div class="fields-grid">
-        <div>
-          <div class="field"><label>チーム名</label><input data-field="teamName" placeholder="例）探究チームA"></div>
-          <div class="field"><label>発表テーマ</label><input data-field="presTopic" placeholder="例）防災×若者の行動変容"></div>
+      <div class="sub-content" id="tab-pres-guide" style="display:block;"><div class="storyboard-info">①〜⑥のプレゼンの流れをここで整理します。ここで入力した内容は、プレゼン台本にも反映されます。</div><div id="guide-grid" class="guide-grid"></div></div>
 
-          <div class="field"><label>現場で実施①</label><input data-field="fieldAction1" placeholder="例）市役所へインタビュー"></div>
-          <div class="field"><label>気づき①</label><input data-field="insight1" placeholder="例）情報が届いていない層がいる"></div>
-          <div class="field"><label>調査②</label><input data-field="research2" placeholder="例）アンケート調査"></div>
-          <div class="field"><label>事実②</label><input data-field="fact2" placeholder="例）若年層の備蓄率が低い"></div>
-          <div class="field"><label>本当の問題</label><input data-field="coreProblem" placeholder="例）行動につながる導線不足"></div>
-
-          <div class="field"><label>仮説（原因）</label><input data-field="hypCause" placeholder="例）体験が不足"></div>
-          <div class="field"><label>仮説（理由）</label><input data-field="hypReason" placeholder="例）実感がないと行動しない"></div>
-          <div class="field"><label>仮説（有効策）</label><input data-field="hypSolution" placeholder="例）AR体験が有効"></div>
-        </div>
-
-        <div>
-          <div class="field"><label>アイデア名</label><input data-field="ideaName" placeholder="例）防災AR体験"></div>
-          <div class="field"><label>コンセプト</label><input data-field="concept" placeholder="例）スマホで浸水を見える化"></div>
-          <div class="field"><label>特徴①</label><input data-field="feature1" placeholder="例）学校で簡単に体験"></div>
-          <div class="field"><label>特徴②</label><input data-field="feature2" placeholder="例）地域データに対応"></div>
-
-          <div class="field"><label>検証方法</label><input data-field="verifyMethod" placeholder="例）体験前後アンケート"></div>
-          <div class="field"><label>検証手順①</label><input data-field="verifyStep1" placeholder="例）体験会を実施"></div>
-          <div class="field"><label>確認項目</label><input data-field="verifyCheck" placeholder="例）備蓄意欲の変化"></div>
-
-          <div class="field"><label>実施日</label><input data-field="doDate" placeholder="例）2月10日"></div>
-          <div class="field"><label>実施場所</label><input data-field="doPlace" placeholder="例）学校の教室"></div>
-          <div class="field"><label>対象</label><input data-field="target" placeholder="例）高校2年生 30名"></div>
-          <div class="field"><label>実施内容</label><input data-field="doWhat" placeholder="例）AR体験＋説明"></div>
-
-          <div class="field"><label>データ①</label><input data-field="data1" placeholder="例）意欲が30%増"></div>
-          <div class="field"><label>分かったこと</label><input data-field="learned" placeholder="例）体験が強い動機に"></div>
-          <div class="field"><label>結論</label><input data-field="conclusion" placeholder="例）AR体験は有効"></div>
-
-          <div class="field"><label>考察</label><textarea data-field="discussion" placeholder="例）時間確保が課題…"></textarea></div>
-          <div class="field"><label>今後必要</label><input data-field="nextNeed" placeholder="例）地域と連携"></div>
-          <div class="field"><label>未来</label><input data-field="future" placeholder="例）防災行動が当たり前に"></div>
+      <div class="sub-content" id="tab-pres-workflow" style="display:none;">
+        <div class="workflow-playful page-a4-block">
+          <div class="workflow-titlebar">プレゼン用ワークフロー</div>
+          <div class="storyboard-info" style="margin:12px 12px 0;">タイトル→導入→現状分析→解決策→検証→まとめの流れで整理します。</div>
+          <div class="workflow-scroll"><div id="workflow-flow-track" class="flow-track"></div></div>
+          <div class="todo-summary-wrap">
+            <div class="todo-summary-head">
+              <div><h3>ToDoリストまとめ</h3></div>
+              <div class="doc-actions no-print" style="margin-top:0;"><button class="mini-btn" onclick="copyWorkflowTodoText()">📋 ToDoをコピー</button><button class="mini-btn primary" onclick="exportWorkflowTodoXlsx()">⬇️ Excel出力</button><button class="mini-btn" onclick="printSection('tab-pres-workflow')">🖨️ このページをPDF</button></div>
+            </div>
+            <div id="workflow-todo-summary" class="todo-summary-grid"></div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="doc-area">
-      <p class="hint no-print">✅ 本文は<strong>完成文</strong>として編集できます。印刷時はこの本文だけがページとして出ます。</p>
-      <div id="pres-doc-area"></div>
+      <div class="sub-content" id="tab-pres" style="display:none;">
+        <div class="inputbar no-print"><div class="left"><div class="title">🧩 穴埋め入力</div><div class="desc">必要項目→「台本に反映」／本文は印刷で単体ページ化</div></div><div class="right"><button class="mini-btn" onclick="toggleDrawer('pres-input')">🧩 入力を開く/閉じる</button><button class="mini-btn primary" onclick="regenPres()">🔄 台本に反映</button><button class="mini-btn" onclick="copyDoc('pres-doc-area')">📋 台本をコピー</button><button class="mini-btn" onclick="printSection('tab-pres')">🖨️ このページをPDF</button></div></div>
+        <div class="inputdrawer no-print" id="pres-input"><div class="fields-grid"><div><div class="field"><label>チーム名</label><input data-field="teamName"></div><div class="field"><label>発表テーマ</label><input data-field="presTopic"></div><div class="field"><label>現場で実施①</label><input data-field="fieldAction1"></div><div class="field"><label>気づき①</label><input data-field="insight1"></div><div class="field"><label>調査②</label><input data-field="research2"></div><div class="field"><label>事実②</label><input data-field="fact2"></div><div class="field"><label>本当の問題</label><input data-field="coreProblem"></div><div class="field"><label>仮説（原因）</label><input data-field="hypCause"></div><div class="field"><label>仮説（理由）</label><input data-field="hypReason"></div><div class="field"><label>仮説（有効策）</label><input data-field="hypSolution"></div></div><div><div class="field"><label>アイデア名</label><input data-field="ideaName"></div><div class="field"><label>コンセプト</label><input data-field="concept"></div><div class="field"><label>特徴①</label><input data-field="feature1"></div><div class="field"><label>特徴②</label><input data-field="feature2"></div><div class="field"><label>検証方法</label><input data-field="verifyMethod"></div><div class="field"><label>検証手順①</label><input data-field="verifyStep1"></div><div class="field"><label>確認項目</label><input data-field="verifyCheck"></div><div class="field"><label>実施日</label><input data-field="doDate"></div><div class="field"><label>実施場所</label><input data-field="doPlace"></div><div class="field"><label>対象</label><input data-field="target"></div><div class="field"><label>実施内容</label><input data-field="doWhat"></div><div class="field"><label>データ①</label><input data-field="data1"></div><div class="field"><label>分かったこと</label><input data-field="learned"></div><div class="field"><label>結論</label><input data-field="conclusion"></div><div class="field"><label>考察</label><textarea data-field="discussion"></textarea></div><div class="field"><label>今後必要</label><input data-field="nextNeed"></div><div class="field"><label>未来</label><input data-field="future"></div></div></div></div>
+        <div class="doc-area"><p class="hint no-print">✅ 本文は完成文として編集できます。</p><div id="pres-doc-area"></div></div>
+      </div>
     </div>
   </div>
 
-  <!-- Page 4: Video Script -->
-  <div class="page tab-content" id="tab-video" style="display:none;">
-    <h1 class="page-title">🎬 動画台本（全6話 × 8カット）</h1>
-
-    <div class="section-title no-print">📌 使い方</div>
-    <div class="no-print" style="font-size:12px; color:var(--muted); line-height:1.6;">
-      ・各行は「1カット＝テロップ1文」想定（短く強く）。<br>
-      ・最初に<strong>決め台詞（宣言）</strong> → 1文ずつで内容説明 → 最後に<strong>次回予告</strong>の流れ。<br>
-      ・決め台詞は<strong>どれか1話の1カット目に入力すれば、全6話の冒頭に同期</strong>されます。<br>
-      ・「🔄 自動下書き」で、今の入力（企画書/プレゼン/キャンバス）から台本を自動生成します（編集OK）。
+  <div class="primary-content" id="product-create">
+    <div class="page">
+      <h1 class="page-title">🛠️ ツール開発</h1>
+      <div class="sub-tabbar no-print" data-group="product-create">
+        <button class="sub-tab active" data-sub="tab-plan">📄 企画書</button>
+        <button class="sub-tab" data-sub="tab-tool-dev">🛠️ ツール開発</button>
+      </div>
+      <div class="sub-content" id="tab-plan" style="display:block;">
+        <h1 class="page-title">📄 企画書（取材のお願い）</h1>
+        <input id="plan-image-input" class="no-print" type="file" accept="image/*" multiple style="display:none">
+        <div class="inputbar no-print"><div class="left"><div class="title">🧩 穴埋め入力</div><div class="desc">必要項目を入力して企画書へ反映</div></div><div class="right"><div class="fontctl"><span>文字</span><input id="plan-font-range" type="range" min="9" max="14" step="1" value="11"><span id="plan-font-val">11px</span></div><button class="mini-btn" onclick="fitPlanToA4()">🪄 A4に収める</button><button class="mini-btn" onclick="toggleDrawer('plan-input')">🧩 入力を開く/閉じる</button><button class="mini-btn primary" onclick="regenPlan()">🔄 企画書に反映</button><button class="mini-btn" onclick="openPlanImagePicker()">🖼️ 画像追加（最大2）</button><button class="mini-btn" onclick="copyDoc('plan-doc-area')">📋 企画書をコピー</button><button class="mini-btn" onclick="printSection('tab-plan')">🖨️ このページをPDF</button></div></div>
+        <div class="inputdrawer no-print" id="plan-input"><div class="fields-grid"><div><div class="field"><label>作成日</label><input data-field="createdDate"></div><div class="field"><label>企業名</label><input data-field="companyName"></div><div class="field"><label>部署名</label><input data-field="department"></div><div class="field"><label>ご担当者</label><input data-field="contactName"></div><div class="field"><label>学校名</label><input data-field="schoolName"></div><div class="field"><label>学年</label><input data-field="grade"></div><div class="field"><label>生徒代表</label><input data-field="studentRep"></div><div class="field"><label>担当教員</label><input data-field="teacherRep"></div></div><div><div class="field"><label>テーマ</label><input data-field="theme"></div><div class="field"><label>第1希望</label><input data-field="dt1"></div><div class="field"><label>第2希望</label><input data-field="dt2"></div><div class="field"><label>第3希望</label><input data-field="dt3"></div><div class="field"><label>生徒人数</label><input data-field="studentsCount"></div><div class="field"><label>教員人数</label><input data-field="teachersCount"></div><div class="field"><label>場所</label><input data-field="place"></div><div class="field"><label>内容説明</label><textarea data-field="planDescText"></textarea></div><div class="field"><label>メール</label><input data-field="email"></div><div class="field"><label>電話</label><input data-field="phone"></div></div></div></div>
+        <div class="doc-area"><p class="hint no-print">✅ 本文はそのまま編集できます。</p><div id="plan-doc-area"></div></div>
+      </div>
+      <div class="sub-content" id="tab-tool-dev" style="display:none;">
+        <div class="workflow-playful page-a4-block">
+          <div class="workflow-titlebar">ツール開発</div>
+          <div class="workflow-scroll"><div id="tooldev-flow-track" class="flow-track"></div></div>
+          <div class="todo-summary-wrap">
+            <div class="todo-summary-head"><div><h3>ToDoリストまとめ</h3></div><div class="doc-actions no-print" style="margin-top:0;"><button class="mini-btn" onclick="copyToolDevTodoText()">📋 ToDoをコピー</button><button class="mini-btn primary" onclick="exportToolDevTodoXlsx()">⬇️ Excel出力</button><button class="mini-btn" onclick="printSection('tab-tool-dev')">🖨️ このページをPDF</button></div></div>
+            <div id="tooldev-todo-summary" class="todo-summary-grid"></div>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <div class="doc-actions no-print" style="margin-top:10px;">
-      <button class="mini-btn primary" onclick="autoDraftVideo()">🔄 自動下書き</button>
-      <button class="mini-btn" onclick="manualSave()">💾 保存</button>
-      <!-- ✅追加：テロップExcel出力 -->
-      <button class="mini-btn" onclick="exportVideoTelopsXlsx()">⬇️ Excel（テロップ）</button>
-    </div>
-
-    <div class="section-title" style="margin-top:12px;">🗂️ 台本 & 進捗（表形式）</div>
-    <table class="video-script-table">
-      <thead>
-        <tr>
-          <th style="width:44px;">話</th>
-          <th style="width:58px;">カット</th>
-          <th>テロップ（1文）</th>
-          <th>映像イメージ</th>
-          <th style="width:90px;">撮影</th>
-          <th style="width:90px;">編集</th>
-        </tr>
-      </thead>
-      <tbody id="video-script-tbody"></tbody>
-    </table>
   </div>
 </div>
 
 <script>
-  /* -------------------------
-     Storage / Data
-  ------------------------- */
-  const STORAGE_KEY = 'bubbleStrategyV15'; // 既存データ互換のためキーは維持
-  function safeLoad(){
-    try{
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if(!raw) return { folders: [] };
-      const parsed = JSON.parse(raw);
-      if(!parsed || typeof parsed !== 'object') return { folders: [] };
-      if(!Array.isArray(parsed.folders)) parsed.folders = [];
-      return parsed;
-    }catch(e){
-      return { folders: [] };
-    }
-  }
+  const STORAGE_KEY = 'bubbleStrategyV16';
+  const GUIDE_LABELS = ['① タイトル','② 導入','③ 現状分析','④ 解決策','⑤ 検証','⑥ ビジョン'];
+  const GUIDE_HINTS = ['発表全体のタイトルと、伝えたい核を整理します。','なぜこのテーマに取り組むのか、背景やきっかけを整理します。','今の課題や現状の構造、見えてきた事実をまとめます。','どんな方法やツールで解決するのかを整理します。','どう試し、何を確かめるのかを整理します。','今後どう広げたいか、未来像を整理します。'];
+  const VIDEO_FLOW_LABELS = ['① タイトル','② 導入','③ 現状分析','④ 解決策','⑤ 検証','⑥ まとめ'];
+  const TOOL_FLOW_LABELS = ['① 経費の計算','② 必要予算の算出','③ 予算確保の方法','④ 商品・サービス販売の方法','⑤ 実施方法','⑥ 会計報告'];
+  const FLOW_PHASES = ['①準備','②実行','③フォロー'];
+  const PRES_RAW = ['表題','みなさん、こんにちは。チーム「」です。本日は「」について発表します。','------------------------','導入','突然ですが、皆さんは日常の中で「これ、おかしいな？」と思った経験はありませんか？私たちが今回注目したのは、「」というテーマです。','------------------------','現状分析','私たちは現場へ足を運びました。まず「」を行ってみると、意外なことに「」だと気づいたのです。そこで気になって「」も調べてみました。すると、「」という衝撃的な事実が見えてきました。つまり、本当の問題は「」だったのです。','------------------------','仮説','現状分析から、私たちは「」が原因ではないかと考えました。そこで、「」という理由から、「」が有効であるという仮説を立てました。','------------------------','解決策','この仮説を実現するために私たちが考案したのが、「」です。コンセプトはズバリ、「」。具体的には「」や「」といった特徴で、新しい価値を提供します。','------------------------','検証計画','続いて、このアイデアが本当に有効かを確かめるために、「」という検証を計画しました。まず「」を行い、実際に「」を確認することにしました。','------------------------','実施報告','実際の検証は、「」に「」で行いました。対象は「」です。写真にあるように、私たちは「」を実施しました。','------------------------','結果','実施した結果、まず「」というデータが得られました。また、「」ということも分かりました。これらの結果から、私たちは「」という結論に至りました。','------------------------','考察','この結果に対する考察です。「」ということが言えます。しかし、同時に「」という課題も見えてきました。今後は「」が必要だと考えます。','------------------------','展望','最後に、私たちのビジョンです。もしこのアイデアが広まれば、「」未来になると信じています。。ご清聴ありがとうございました。','------------------------'];
+  const LINES_PER_EP = 8;
   let data = safeLoad();
   let currentId = null;
-  let activeElem = null;
-  let resizeElem = null;
-  let offset = { x: 0, y: 0 };
+  let storyImagePickIndex = -1;
 
-  const masterConfig = {
-    'b-theme': ['社会問題', '課題'],
-    'b-action': ['インタビュー', 'イベント'],
-    'b-idea': ['1', '2', '3'],
-    'b-story': ['好きなモノ', '経験', '夢'],
-    'b-scheme': ['協力者', 'パトロン', '顧客'],
-    'b-weapon': ['スキル', 'サービス', 'アプリ', '商品']
-  };
-
-  const PLAN_TEMPLATE = [
-    {"align":"right","text":"作成日：20XX年XX月XX日"},
-    {"align":"center","text":"取材のお願い"},
-    {"align":"left","text":"（企業名）（部署名）"},
-    {"align":"left","text":"ご担当者様"},
-    {"align":"right","text":"所属：（学校名）（学年）"},
-    {"align":"right","text":"生徒代表：　　　　　"},
-    {"align":"right","text":"担当教員：　　　　　"},
-    {"align":"left","text":""},
-
-    {"align":"center","text":"謝辞"},
-    {"align":"left","text":""},
-
-    {"align":"left","text":"突然のご連絡失礼いたします。私たちは（学校名）の探究学習の一環として、（テーマ：　　　　　　　　　）について学んでおります。\nつきましては、貴社・貴団体のご業務・お取り組みについて 短時間のインタビュー取材（30分から一時間程度） にご協力いただけないでしょうか。\nご多忙のところ恐縮ですが、ご検討のほど何卒よろしくお願いいたします。"},
-    {"align":"left","text":""},
-
-    {"align":"left","text":"取材の目的"},
-    {"align":"left","text":"探究テーマに関する「現場の視点・実務の知見」を伺い、学習の質を高めるため"},
-    {"align":"left","text":"取材内容は、授業内の成果物（発表・レポート等）に活用します"},
-    {"align":"left","text":""},
-
-    {"align":"left","text":"取材概要（希望）"},
-    {"align":"left","text":"形式：対面／オンライン（Zoom等）"},
-    {"align":"left","text":"所要時間：30分（最大45分）"},
-    {"align":"left","text":"候補日時：\n第1希望（　月　日　　時〜）／第2希望（　月　日　　時〜）／第3希望（　月　日　　時〜）"},
-    {"align":"left","text":"参加者：生徒（　名）＋教員（　名）"},
-    {"align":"left","text":"場所：／オンライン"},
-    {"align":"left","text":""},
-
-    {"align":"left","text":"内容説明"},
-    {"align":"left","text":"__CONTENT_DESC_BLOCK__"},
-    {"align":"left","text":""},
-
-    {"align":"left","text":"お伺いしたい内容（例）"},
-    {"align":"left","text":"貴社の事業概要と現在の状況（顧客・市場・課題感）"},
-    {"align":"left","text":"課題に対する取り組み（施策・工夫・技術活用等）"},
-    {"align":"left","text":"成果と難しさ（効果・障壁・学び）"},
-    {"align":"left","text":"今後の展望（次の一手、必要な連携）"},
-    {"align":"left","text":"中高生や地域に期待すること（関わり方のヒント）"},
-    {"align":"left","text":""},
-
-    {"align":"left","text":"資料や写真について"},
-    {"align":"left","text":"当日に頂いた資料や情報、撮影した写真や動画につきましては、学校や部の活動を発信しているSNSアカウントおよび、参加するコンテストでの発表資料として使用させて頂く場合があります。掲載可否・範囲については必ず確認いたします。"},
-    {"align":"left","text":""},
-
-    {"align":"right","text":"【連絡先】"},
-    {"align":"right","text":"メール：（　　　　　　　　　）\n電話：（　　　　　　　　　）"}
-  ];
-
-  const PRES_RAW = [
-    "表題",
-    "みなさん、こんにちは。チーム「」です。本日は「」について発表します。",
-    "------------------------",
-    "導入",
-    "突然ですが、皆さんは日常の中で「これ、おかしいな？」と思った経験はありませんか？私たちが今回注目したのは、「」というテーマです。",
-    "------------------------",
-    "現状分析",
-    "私たちは現場へ足を運びました。まず「」を行ってみると、意外なことに「」だと気づいたのです。そこで気になって「」も調べてみました。すると、「」という衝撃的な事実が見えてきました。つまり、本当の問題は「」だったのです。",
-    "------------------------",
-    "仮説",
-    "現状分析から、私たちは「」が原因ではないかと考えました。そこで、「」という理由から、「」が有効であるという仮説を立てました。",
-    "------------------------",
-    "解決策",
-    "この仮説を実現するために私たちが考案したのが、「」です。コンセプトはズバリ、「」。具体的には「」や「」といった特徴で、新しい価値を提供します。",
-    "------------------------",
-    "検証計画",
-    "続いて、このアイデアが本当に有効かを確かめるために、「」という検証を計画しました。まず「」を行い、実際に「」を確認することにしました。",
-    "------------------------",
-    "実施報告",
-    "実際の検証は、「」に「」で行いました。対象は「」です。写真にあるように、私たちは「」を実施しました。",
-    "------------------------",
-    "結果",
-    "実施した結果、まず「」というデータが得られました。また、「」ということも分かりました。これらの結果から、私たちは「」という結論に至りました。",
-    "------------------------",
-    "考察",
-    "この結果に対する考察です。「」ということが言えます。しかし、同時に「」という課題も見えてきました。今後は「」が必要だと考えます。",
-    "------------------------",
-    "展望",
-    "最後に、私たちのビジョンです。もしこのアイデアが広まれば、「」未来になると信じています。。ご清聴ありがとうございました。",
-    "------------------------"
-  ];
-
-  /* -------------------------
-     Init tables (Canvas page)
-  ------------------------- */
-  const vt = document.getElementById('video-tbody');
-  for(let i=1; i<=6; i++){
-    vt.innerHTML += `<tr>
-      <td style="text-align:center; font-weight:1000;">第 ${i} 話</td>
-      <td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>
-    </tr>`;
-  }
-
-  /* -------------------------
-     Video Script Table
-  ------------------------- */
-  const LINES_PER_EP = 8;
-
-  function buildVideoScriptTable(){
-    const tbody = document.getElementById('video-script-tbody');
-    tbody.innerHTML = "";
-    for(let ep=1; ep<=6; ep++){
-      for(let cut=1; cut<=LINES_PER_EP; cut++){
-        const rid = `ep${ep}-c${cut}`;
-        const isEpStart = (cut===1);
-        tbody.innerHTML += `
-          <tr data-rowid="${rid}" data-ep="${ep}" data-ep-start="${isEpStart}">
-            <td style="text-align:center; font-weight:1000;">${ep}</td>
-            <td style="text-align:center; color:#64748b; font-weight:1000;">${cut}</td>
-            <td contenteditable data-vs="text"></td>
-            <td contenteditable data-vs="visual"></td>
-            <td>
-              <select class="status-select" data-vs="shoot">
-                <option>未着手</option><option>準備中</option><option>撮影中</option><option>撮影済</option>
-              </select>
-            </td>
-            <td>
-              <select class="status-select" data-vs="edit">
-                <option>未着手</option><option>編集中</option><option>仮完成</option><option>完成</option>
-              </select>
-            </td>
-          </tr>
-        `;
-      }
-    }
-  }
-  buildVideoScriptTable();
-
-  /* -------------------------
-     Utils
-  ------------------------- */
-  function getClientCoords(e){
-    if(e.touches && e.touches.length > 0) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
-    return { x: e.clientX, y: e.clientY };
-  }
+  function uid(){ return 'id-' + Math.random().toString(36).slice(2,10); }
+  function safeLoad(){ try{ const raw = localStorage.getItem(STORAGE_KEY); if(!raw) return { folders: [] }; const parsed = JSON.parse(raw); if(!parsed || typeof parsed !== 'object') return { folders: [] }; if(!Array.isArray(parsed.folders)) parsed.folders = []; return parsed; }catch(e){ return { folders: [] }; } }
   function saveToStorage(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
-  function toast(){
-    const t = document.getElementById('toast');
-    t.style.opacity = "1";
-    setTimeout(()=> t.style.opacity="0", 1500);
-  }
-  function manualSave(){ saveEditorData(); toast(); }
+  function toast(){ const t=document.getElementById('toast'); t.style.opacity='1'; setTimeout(()=> t.style.opacity='0', 1500); }
+  function escapeHtml(str){ return (str ?? '').toString().replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
+  function escapeAttr(str){ return escapeHtml(str).replaceAll('\n',' '); }
 
-  function showEditor(){
-    document.getElementById('dashboard').style.display='none';
-    document.getElementById('editor').style.display='block';
-  }
-  function showDashboard(){
-    document.getElementById('dashboard').style.display='block';
-    document.getElementById('editor').style.display='none';
-    renderDashboard();
-  }
-  function goBackToDashboard(){ saveEditorData(); showDashboard(); }
-
-  function switchTab(tabId, btn){
-    document.querySelectorAll('.tab-content').forEach(el=> el.style.display='none');
-    document.getElementById(tabId).style.display='block';
-    document.querySelectorAll('.tab').forEach(t=> t.classList.remove('active'));
-    if(btn) btn.classList.add('active');
-    if(tabId === 'tab-plan') renderPlanDoc();
-    if(tabId === 'tab-pres') renderPresDoc();
-  }
-
-  function copyDoc(areaId){
-    const el = document.getElementById(areaId);
-    const range = document.createRange();
-    range.selectNodeContents(el);
-    const sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(range);
-    try{
-      document.execCommand('copy');
-      toast();
-    }catch(e){ alert("コピーに失敗しました"); }
-    sel.removeAllRanges();
-  }
-
-  function toggleDrawer(id){
-    const el = document.getElementById(id);
-    if(!el) return;
-    el.classList.toggle('open');
-  }
-
-  function printPlanOnly(){
-    switchTab('tab-plan', document.querySelector('.tab[data-tab="tab-plan"]'));
-    document.body.classList.add('print-single');
-
-    const cleanup = ()=>{
-      document.body.classList.remove('print-single');
-      window.removeEventListener('afterprint', cleanup);
-    };
-    window.addEventListener('afterprint', cleanup);
-
-    window.print();
-  }
-
-  /* -------------------------
-     ✅ 追加：テロップをExcel（.xlsx）出力（SheetJS）
-  ------------------------- */
-  function exportVideoTelopsXlsx(){
-    if(typeof XLSX === "undefined"){
-      alert("Excel出力ライブラリ（xlsx）が読み込めていません。HTML末尾のCDN追加を確認してください。");
-      return;
-    }
-
-    const title = (document.getElementById('editable-title')?.innerText || "project").trim() || "project";
-    const tbody = document.getElementById('video-script-tbody');
-    if(!tbody){
-      alert("動画台本テーブルが見つかりません。");
-      return;
-    }
-
-    // ヘッダ（テロップ単体）
-    const rows = [["話", "カット", "テロップ（1文）"]];
-
-    // 全48行を出力（空欄も含む）
-    const trs = Array.from(tbody.querySelectorAll('tr'));
-    trs.forEach(tr=>{
-      const ep = tr.getAttribute('data-ep') || "";
-      const cut = (tr.querySelectorAll('td')[1]?.innerText || "").trim();
-      const telop = (tr.querySelector('[data-vs="text"]')?.innerText || "").replace(/\r?\n/g, "\n").trim();
-      rows.push([ep, cut, telop]);
-    });
-
-    const ws = XLSX.utils.aoa_to_sheet(rows);
-
-    // 見やすさ：列幅
-    ws['!cols'] = [
-      { wch: 4 },   // 話
-      { wch: 6 },   // カット
-      { wch: 60 }   // テロップ
-    ];
-
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "テロップ");
-
-    // ファイル名：ProjectTitle_YYYYMMDD_telops.xlsx
-    const d = new Date();
-    const y = d.getFullYear();
-    const m = String(d.getMonth()+1).padStart(2,'0');
-    const da = String(d.getDate()).padStart(2,'0');
-    const filename = `${title}_${y}${m}${da}_telops.xlsx`;
-
-    XLSX.writeFile(wb, filename);
-  }
-
-  /* -------------------------
-     Dashboard
-  ------------------------- */
-  function createNewFolder(){
-    const folder = { id: Date.now().toString(), name:"新しいフォルダ", color:"#4facfe", projects:[], isOpen:true };
-    data.folders.push(folder);
-    saveToStorage(); renderDashboard();
-  }
-
-  function renderDashboard(){
-    const list = document.getElementById('folder-list');
-    list.innerHTML = '';
-    data.folders.forEach(folder=>{
-      const container = document.createElement('div');
-      container.className = 'folder-container';
-      container.style.borderLeftColor = folder.color;
-      container.innerHTML = `
-        <div class="folder-header" onclick="toggleFolder('${folder.id}')">
-          <span class="folder-icon">${folder.isOpen ? '📂' : '📁'}</span>
-          <div class="folder-name" contenteditable="true" onclick="event.stopPropagation()"
-               onblur="updateFolderName('${folder.id}', this.innerText)">${escapeHtml(folder.name)}</div>
-          <div class="folder-controls" onclick="event.stopPropagation()">
-            <input type="color" class="color-picker" value="${folder.color}" onchange="updateFolderColor('${folder.id}', this.value)">
-            <button class="delete-item" onclick="deleteFolder('${folder.id}')">🗑️</button>
-          </div>
-        </div>
-        <div class="project-grid" style="display:${folder.isOpen ? 'grid' : 'none'}">
-          ${folder.projects.map(p=>`
-            <div class="project-card" onclick="openProject('${p.id}')">
-              <button class="delete-item" style="position:absolute; top:6px; right:8px;" onclick="deleteProject('${p.id}', event)">×</button>
-              <div style="font-weight:1000; font-size:14px; margin-top:10px;">${escapeHtml(p.title || "（無題）")}</div>
-            </div>
-          `).join('')}
-          <div class="add-project-in-folder" onclick="createNewProject('${folder.id}')">+ 新規作成</div>
-        </div>
-      `;
-      list.appendChild(container);
-    });
-  }
-
-  function toggleFolder(id){
-    const folder = data.folders.find(x=>x.id===id);
-    if(folder){
-      folder.isOpen = !folder.isOpen;
-      saveToStorage();
-      renderDashboard();
-    }
-  }
-  function updateFolderName(id, name){
-    const folder = data.folders.find(x=>x.id===id);
-    if(folder){
-      folder.name = (name || "").trim() || "新しいフォルダ";
-      saveToStorage();
-    }
-  }
-  function updateFolderColor(id, color){
-    const folder = data.folders.find(x=>x.id===id);
-    if(folder){
-      folder.color = color;
-      saveToStorage();
-      renderDashboard();
-    }
-  }
-  function deleteFolder(id){
-    if(!confirm("フォルダ内のすべてのプロジェクトも削除されます。よろしいですか？")) return;
-    data.folders = data.folders.filter(f=>f.id!==id);
-    saveToStorage(); renderDashboard();
-  }
-
-  function defaultFields(){
-    return {
-      createdDate:"", companyName:"", department:"", contactName:"",
-      schoolName:"", grade:"", studentRep:"", teacherRep:"",
-      theme:"", dt1:"", dt2:"", dt3:"", studentsCount:"", teachersCount:"", place:"",
-      planDescText:"",
-      email:"", phone:"",
-      teamName:"", presTopic:"",
-      fieldAction1:"", insight1:"", research2:"", fact2:"", coreProblem:"",
-      hypCause:"", hypReason:"", hypSolution:"",
-      ideaName:"", concept:"", feature1:"", feature2:"",
-      verifyMethod:"", verifyStep1:"", verifyCheck:"",
-      doDate:"", doPlace:"", target:"", doWhat:"",
-      data1:"", learned:"", conclusion:"",
-      discussion:"", nextNeed:"", future:""
-    };
-  }
-
-  // ✅ plan settings（保存対象を追加：lineHeight / boxH）
-  function defaultPlanSettings(){
-    return {
-      fontSize: 11,
-      lineHeight: 1.45,
-      images: [] // [{src:"dataURL", scale:100, boxH:120}]
-    };
-  }
+  function defaultFields(){ return { createdDate:'', companyName:'', department:'', contactName:'', schoolName:'', grade:'', studentRep:'', teacherRep:'', theme:'', dt1:'', dt2:'', dt3:'', studentsCount:'', teachersCount:'', place:'', planDescText:'', email:'', phone:'', teamName:'', presTopic:'', fieldAction1:'', insight1:'', research2:'', fact2:'', coreProblem:'', hypCause:'', hypReason:'', hypSolution:'', ideaName:'', concept:'', feature1:'', feature2:'', verifyMethod:'', verifyStep1:'', verifyCheck:'', doDate:'', doPlace:'', target:'', doWhat:'', data1:'', learned:'', conclusion:'', discussion:'', nextNeed:'', future:'' }; }
+  function defaultPresentationGuide(){ return GUIDE_LABELS.map((label, i)=>({ label, hint: GUIDE_HINTS[i], text:'' })); }
+  function defaultStoryboardPanels(){ return Array.from({length:6}, (_,i)=>({ episode:`第${i+1}話`, title:'', subtitle:'', image:'', desc:'', term:'１学期', shotDate:'' })); }
+  function defaultScenarioMeta(){ return { synopsis:'', draft:{ who:'', problem:'', method:'', interviewee:'', actions:'', answer:'' } }; }
+  function defaultFlowItem(phase='①準備'){ return { phase, date:'', what:'', who:'', where:'', when:'', why:'', how:'', note:'', budget:'', fundMethod:'', salesMethod:'', reportTo:'' }; }
+  function defaultFolder(title='①準備'){ return { id: uid(), title, items:[defaultFlowItem(title)] }; }
+  function defaultFlowState(labels){ return labels.map((label, i)=>({ id:uid(), label, order:i, open:false, folders:[defaultFolder('①準備'), defaultFolder('②実行'), defaultFolder('③フォロー')] })); }
+  function defaultPlanSettings(){ return { fontSize:11, lineHeight:1.45, images:[] }; }
+  function folderDescription(title){ if(title==='①準備') return '何を準備するのか、誰に相談するのか、必要な情報や素材を整理します。'; if(title==='②実行') return '実際に動く内容、いつどこで誰が行うか、当日の段取りを整理します。'; if(title==='③フォロー') return '実施後の確認、改善、連絡、記録、次につなげる行動を整理します。'; return 'このフォルダで必要な作業を整理します。'; }
 
   function ensureProjectDefaults(p){
     if(!p.fields) p.fields = defaultFields();
+    if(!p.presentationGuide) p.presentationGuide = defaultPresentationGuide();
+    if(!p.storyboardPanels || p.storyboardPanels.length !== 6) p.storyboardPanels = defaultStoryboardPanels();
+    p.storyboardPanels = p.storyboardPanels.map((row,i)=>({ episode: row?.episode || `第${i+1}話`, title: row?.title || '', subtitle: row?.subtitle || '', image: row?.image || '', desc: row?.desc || '', term: row?.term || '１学期', shotDate: row?.shotDate || '' }));
+    if(!p.scenarioMeta) p.scenarioMeta = defaultScenarioMeta();
+    if(!p.videoFlowState || p.videoFlowState.length !== 6) p.videoFlowState = defaultFlowState(VIDEO_FLOW_LABELS);
+    if(!p.videoEpisodeFlowState || p.videoEpisodeFlowState.length !== 6) p.videoEpisodeFlowState = defaultFlowState(p.storyboardPanels.map((r,i)=>`第${i+1}話 ${r.title || ''}`.trim()));
+    if(!p.toolFlowState || p.toolFlowState.length !== 6) p.toolFlowState = defaultFlowState(TOOL_FLOW_LABELS);
+    normalizeFlowState(p.videoFlowState, VIDEO_FLOW_LABELS);
+    normalizeFlowState(p.videoEpisodeFlowState, p.storyboardPanels.map((r,i)=>`第${i+1}話 ${r.title || ''}`.trim()));
+    normalizeFlowState(p.toolFlowState, TOOL_FLOW_LABELS);
     if(!p.planSettings) p.planSettings = defaultPlanSettings();
-
-    // 旧データ互換：images が dataURL配列なら meta 配列へ変換
-    if(Array.isArray(p.planSettings.images) && p.planSettings.images.length){
-      const first = p.planSettings.images[0];
-      if(typeof first === "string"){
-        p.planSettings.images = p.planSettings.images
-          .filter(Boolean)
-          .slice(0,2)
-          .map(src => ({ src, scale: 100, boxH: 120 }));
-      }
-    }
     if(!Array.isArray(p.planSettings.images)) p.planSettings.images = [];
-    p.planSettings.images = p.planSettings.images.slice(0,2).map(im=>{
-      if(typeof im === "string") return { src: im, scale: 100, boxH: 120 };
-      const src = im?.src || "";
-      const sc = parseInt(im?.scale,10);
-      const bh = parseInt(im?.boxH,10);
-      return {
-        src,
-        scale: Number.isFinite(sc) ? sc : 100,
-        boxH: Number.isFinite(bh) ? bh : 120
-      };
-    });
-
-    if(!Number.isFinite(p.planSettings.fontSize)) p.planSettings.fontSize = 11;
-    if(!Number.isFinite(p.planSettings.lineHeight)) p.planSettings.lineHeight = 1.45;
-
-    // ✅ 動画の決め台詞（任意）
-    if(typeof p.videoCatchphrase !== "string") p.videoCatchphrase = "";
+    if(typeof p.videoCatchphrase !== 'string') p.videoCatchphrase = '';
+    if(!Array.isArray(p.videoScriptRows)) p.videoScriptRows = [];
+    if(typeof p.planHtml !== 'string') p.planHtml = '';
+    if(typeof p.presHtml !== 'string') p.presHtml = '';
   }
 
-  function createNewProject(folderId){
-    const id = Date.now().toString();
-    const newProj = {
-      id, title:"新規プロジェクト", bubbles:{},
-      fields: defaultFields(),
-      planHtml: "", presHtml: "",
-      videoScriptRows: [],
-      planSettings: defaultPlanSettings(),
-      videoCatchphrase: ""
-    };
-    const f = data.folders.find(x=>x.id===folderId);
-    if(!f) return;
-    f.isOpen = true;
-    f.projects.push(newProj);
-
-    currentId = id;
-    showEditor();
-    resetEditorFields();
-
-    Object.keys(masterConfig).forEach(bid=>{
-      masterConfig[bid].forEach(label=>{
-        document.getElementById(bid).appendChild(createChildDOM(label, "", 55, 50, 50));
-      });
-      organizePolygon(bid);
+  function normalizeFlowState(state, labels){
+    state.forEach((node, i)=>{
+      node.id = node.id || uid();
+      node.label = labels[i] || node.label || ('項目' + (i+1));
+      if(!Array.isArray(node.folders) || !node.folders.length) node.folders = [defaultFolder('①準備'), defaultFolder('②実行'), defaultFolder('③フォロー')];
+      node.folders = node.folders.map((f, fi)=>({
+        id: f?.id || uid(),
+        title: f?.title || FLOW_PHASES[fi] || ('フォルダ' + (fi+1)),
+        items: Array.isArray(f?.items) && f.items.length ? f.items.map(item=>({ phase: FLOW_PHASES.includes(item?.phase) ? item.phase : (f?.title || '①準備'), date:item?.date || '', what:item?.what || '', who:item?.who || '', where:item?.where || '', when:item?.when || '', why:item?.why || '', how:item?.how || '', note:item?.note || '', budget:item?.budget || '', fundMethod:item?.fundMethod || '', salesMethod:item?.salesMethod || '', reportTo:item?.reportTo || '' })) : [defaultFlowItem(f?.title || '①準備')]
+      }));
+      FLOW_PHASES.forEach((phase, pi)=>{ if(!node.folders[pi]) node.folders[pi] = defaultFolder(phase); });
     });
-
-    setFieldsToUI(newProj.fields);
-    setPlanFontSize(newProj.planSettings.fontSize, false);
-    setPlanLineHeight(newProj.planSettings.lineHeight, false);
-    regenPlan(true);
-    regenPres(true);
-
-    saveEditorData();
   }
 
-  function openProject(id){
-    currentId = id;
-    let p = null;
-    data.folders.forEach(f=>{
-      const found = f.projects.find(x=>x.id===id);
-      if(found) p = found;
-    });
-    if(!p) return;
-    ensureProjectDefaults(p);
+  function buildVideoScriptTable(){ const tbody=document.getElementById('video-script-tbody'); tbody.innerHTML=''; for(let ep=1; ep<=6; ep++){ for(let cut=1; cut<=LINES_PER_EP; cut++){ const rid='ep'+ep+'-c'+cut; const isEpStart=cut===1; tbody.innerHTML += '<tr data-rowid="'+rid+'" data-ep="'+ep+'" data-ep-start="'+isEpStart+'"><td style="text-align:center; font-weight:1000;">'+ep+'</td><td style="text-align:center; color:#64748b; font-weight:1000;">'+cut+'</td><td contenteditable data-vs="text"></td><td contenteditable data-vs="visual"></td><td><select class="status-select" data-vs="shoot"><option>未着手</option><option>準備中</option><option>撮影中</option><option>撮影済</option></select></td><td><select class="status-select" data-vs="edit"><option>未着手</option><option>編集中</option><option>仮完成</option><option>完成</option></select></td></tr>'; } } }
 
-    showEditor();
+  function createNewFolder(){ data.folders.push({ id:uid(), name:'新しいフォルダ', color:'#4facfe', projects:[], isOpen:true }); saveToStorage(); renderDashboard(); }
+  function renderDashboard(){ const list=document.getElementById('folder-list'); list.innerHTML=''; data.folders.forEach(folder=>{ const wrap=document.createElement('div'); wrap.className='folder-container'; wrap.style.borderLeftColor=folder.color; wrap.innerHTML = '<div class="folder-header"><span class="folder-icon">'+(folder.isOpen ? '📂' : '📁')+'</span><div class="folder-name" contenteditable="true">'+escapeHtml(folder.name)+'</div><div class="folder-controls"><input type="color" class="color-picker" value="'+folder.color+'"><button class="delete-item">フォルダ削除</button></div></div><div class="project-grid" style="display:'+(folder.isOpen ? 'grid' : 'none')+'"></div>'; const header=wrap.querySelector('.folder-header'); const nameEl=wrap.querySelector('.folder-name'); const colorEl=wrap.querySelector('.color-picker'); const delBtn=wrap.querySelector('.delete-item'); const grid=wrap.querySelector('.project-grid'); header.addEventListener('click', ()=>{ folder.isOpen=!folder.isOpen; saveToStorage(); renderDashboard(); }); nameEl.addEventListener('click', e=> e.stopPropagation()); nameEl.addEventListener('blur', ()=>{ folder.name=(nameEl.innerText || '').trim() || '新しいフォルダ'; saveToStorage(); }); colorEl.addEventListener('click', e=> e.stopPropagation()); colorEl.addEventListener('input', ()=>{ folder.color=colorEl.value; saveToStorage(); renderDashboard(); }); delBtn.addEventListener('click', e=>{ e.stopPropagation(); if(!confirm('フォルダ内のすべてのプロジェクトも削除されます。よろしいですか？')) return; data.folders = data.folders.filter(f=>f.id!==folder.id); saveToStorage(); renderDashboard(); }); folder.projects.forEach(p=>{ const card=document.createElement('div'); card.className='project-card'; card.innerHTML='<button class="delete-item" style="position:absolute; top:6px; right:8px;">削除</button><div style="font-weight:1000; font-size:14px; margin-top:10px;">'+escapeHtml(p.title || '（無題）')+'</div>'; card.addEventListener('click', ()=> openProject(p.id)); card.querySelector('.delete-item').addEventListener('click', e=>{ e.stopPropagation(); if(!confirm('プロジェクトを削除しますか？')) return; data.folders.forEach(f=> f.projects = f.projects.filter(x=>x.id!==p.id)); saveToStorage(); renderDashboard(); }); grid.appendChild(card); }); const add=document.createElement('div'); add.className='add-project-in-folder'; add.textContent='+ 新規作成'; add.addEventListener('click', ()=> createNewProject(folder.id)); grid.appendChild(add); list.appendChild(wrap); }); }
+  function createNewProject(folderId){ const folder=data.folders.find(f=>f.id===folderId); if(!folder) return; const id=uid(); const proj={ id, title:'新規プロジェクト', fields:defaultFields(), presentationGuide:defaultPresentationGuide(), storyboardPanels:defaultStoryboardPanels(), scenarioMeta:defaultScenarioMeta(), videoFlowState:defaultFlowState(VIDEO_FLOW_LABELS), videoEpisodeFlowState:defaultFlowState(defaultStoryboardPanels().map((r,i)=>'第'+(i+1)+'話')), toolFlowState:defaultFlowState(TOOL_FLOW_LABELS), planHtml:'', presHtml:'', videoScriptRows:[], planSettings:defaultPlanSettings(), videoCatchphrase:'' }; folder.projects.push(proj); folder.isOpen=true; currentId=id; saveToStorage(); openProject(id); }
+  function getCurrentProject(){ if(!currentId) return null; for(const f of data.folders){ const p=f.projects.find(x=>x.id===currentId); if(p){ ensureProjectDefaults(p); return p; } } return null; }
+  function showEditor(){ document.getElementById('dashboard').style.display='none'; document.getElementById('editor').style.display='block'; }
+  function showDashboard(){ document.getElementById('dashboard').style.display='block'; document.getElementById('editor').style.display='none'; renderDashboard(); }
+  function goBackToDashboard(){ saveEditorData(); showDashboard(); }
+  function openProject(id){ currentId=id; const p=getCurrentProject(); if(!p) return; showEditor(); document.getElementById('editable-title').innerText=p.title; setFieldsToUI(p.fields); buildVideoScriptTable(); restoreVideoRows(p); renderPresentationGuide(); renderScenario(); renderVideoFlow(); renderVideoEpisodeFlow(); renderToolFlow(); renderPlanDoc(p.planHtml || ''); renderPresDoc(p.presHtml || ''); activatePrimary('video-create'); activateSub('video-create','tab-canvas'); }
 
-    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-    document.querySelector('.tab[data-tab="tab-canvas"]').classList.add('active');
-    document.querySelectorAll('.tab-content').forEach(el=> el.style.display='none');
-    document.getElementById('tab-canvas').style.display='block';
+  function activatePrimary(primaryId){ document.querySelectorAll('.primary-content').forEach(el=> el.style.display='none'); document.getElementById(primaryId).style.display='block'; document.querySelectorAll('.primary-tab').forEach(btn=> btn.classList.toggle('active', btn.dataset.primary===primaryId)); }
+  function activateSub(groupId, subId){ const group=document.getElementById(groupId); if(!group) return; group.querySelectorAll('.sub-content').forEach(el=> el.style.display='none'); const target=group.querySelector('#'+subId); if(target) target.style.display='block'; group.querySelectorAll('.sub-tab').forEach(btn=> btn.classList.toggle('active', btn.dataset.sub===subId)); if(subId==='tab-canvas') renderScenario(); if(subId==='tab-video-workflow') renderVideoEpisodeFlow(); if(subId==='tab-pres-guide') renderPresentationGuide(); if(subId==='tab-pres-workflow') renderVideoFlow(); if(subId==='tab-pres') renderPresDoc(); if(subId==='tab-plan') renderPlanDoc(); if(subId==='tab-tool-dev') renderToolFlow(); }
 
-    document.getElementById('editable-title').innerText = p.title;
+  function collectFieldsFromUI(){ const p=getCurrentProject(); const base=(p&&p.fields)?{...p.fields}:defaultFields(); document.querySelectorAll('[data-field]').forEach(el=> base[el.dataset.field]=el.value || ''); return base; }
+  function setFieldsToUI(fields){ document.querySelectorAll('[data-field]').forEach(el=> el.value=fields?.[el.dataset.field] || ''); }
+  document.addEventListener('input', e=>{ if(e.target.matches('[data-field]')) saveEditorData(); });
 
-    // バブル復元
-    document.querySelectorAll('.child-container').forEach(c=>c.remove());
-    Object.keys(p.bubbles || {}).forEach(bid=>{
-      const pb = document.getElementById(bid);
-      const d = p.bubbles[bid];
-      if(!pb || !d) return;
-      pb.style.left = d.x; pb.style.top = d.y; pb.style.width = d.w; pb.style.height = d.h;
-      (d.children || []).forEach(c=> pb.appendChild(createChildDOM(c.label, c.text, c.size, c.x, c.y)));
-    });
+  function collectPresentationGuideFromUI(){ return Array.from(document.querySelectorAll('[data-guide-index]')).map((el,i)=>({ label:GUIDE_LABELS[i], hint:GUIDE_HINTS[i], text:el.value || '' })); }
+  function renderPresentationGuide(){ const p=getCurrentProject(); if(!p) return; const grid=document.getElementById('guide-grid'); grid.innerHTML = p.presentationGuide.map((item,i)=>'<div class="guide-card"><h3>'+GUIDE_LABELS[i]+'</h3><p>'+GUIDE_HINTS[i]+'</p><textarea data-guide-index="'+i+'">'+escapeHtml(item.text || '')+'</textarea></div>').join(''); grid.querySelectorAll('[data-guide-index]').forEach(el=> el.addEventListener('input', ()=>{ saveEditorData(); renderPresDoc(); })); }
 
-    if(p.flow) document.querySelectorAll('.flow-input').forEach((el,i)=> el.innerText = p.flow[i] || "");
-    if(p.video) document.querySelectorAll('#video-tbody td[contenteditable]').forEach((el,i)=> el.innerText = p.video[i] || "");
-    if(p.task) document.querySelectorAll('#task-tbody td[contenteditable]').forEach((el,i)=> el.innerText = p.task[i] || "");
+  function collectScenarioMetaFromUI(){ const p=getCurrentProject(); const base=JSON.parse(JSON.stringify(p?.scenarioMeta || defaultScenarioMeta())); const syn=document.getElementById('scenario-synopsis'); if(syn) base.synopsis=syn.value || ''; ['who','problem','method','interviewee','actions','answer'].forEach(k=>{ const el=document.getElementById('draft-'+k); if(el) base.draft[k]=el.value || ''; }); return base; }
+  function scenarioSentenceFromDraft(d){ return (d.who || '誰か') + 'が、' + (d.problem || 'ある問題') + 'を、' + (d.method || 'ある方法') + 'で解決しようとし、' + (d.interviewee || '誰か') + 'に話を聞き、' + (d.actions || '行動') + 'を重ね、やがて' + (d.answer || 'ひとつの答え') + 'にたどりつく。'; }
+  function applyScenarioDraft(){ const p=getCurrentProject(); if(!p) return; p.scenarioMeta=collectScenarioMetaFromUI(); const sentence=scenarioSentenceFromDraft(p.scenarioMeta.draft); const syn=document.getElementById('scenario-synopsis'); if(syn && !syn.value.trim()) syn.value=sentence; document.getElementById('scenario-draft-preview').innerText=sentence; saveEditorData(); toast(); }
+  function autoFillScenarioEpisodes(){ const p=getCurrentProject(); if(!p) return; const d=collectScenarioMetaFromUI().draft; const drafts=[(d.who || '主人公')+'が、'+(d.problem || '向き合う課題')+'に気づく。',(d.interviewee || '話を聞く相手')+'に会いに行く。',(d.actions || '行動')+'を始めて現状を知る。',(d.method || '解決方法')+'を試し、課題が見えてくる。','結果を整理し、必要な改善を考える。','最終的に、'+(d.answer || 'たどりついた答え')+'へたどりつく。']; p.storyboardPanels.forEach((panel,i)=>{ if(!panel.title) panel.title='第'+(i+1)+'話'; if(!panel.subtitle) panel.subtitle='サブタイトル'+(i+1); if(!panel.desc) panel.desc=drafts[i]; }); renderScenario(); saveEditorData(); toast(); }
+  function collectStoryboardFromUI(){ return Array.from(document.querySelectorAll('.scenario-episode-card')).map((card,i)=>({ episode:'第'+(i+1)+'話', title:card.querySelector('[data-story="title"]')?.value || '', subtitle:card.querySelector('[data-story="subtitle"]')?.value || '', image:card.querySelector('[data-story-image]')?.getAttribute('data-story-image') || '', desc:card.querySelector('[data-story="desc"]')?.value || '', term:card.querySelector('[data-story="term"]')?.value || '１学期', shotDate:card.querySelector('[data-story="shotDate"]')?.value || '' })); }
+  function renderScenario(){ const p=getCurrentProject(); if(!p) return; const meta=p.scenarioMeta || defaultScenarioMeta(); document.getElementById('scenario-synopsis').value=meta.synopsis || ''; ['who','problem','method','interviewee','actions','answer'].forEach(k=>{ const el=document.getElementById('draft-'+k); if(el) el.value=meta.draft[k] || ''; }); document.getElementById('scenario-draft-preview').innerText=scenarioSentenceFromDraft(meta.draft || defaultScenarioMeta().draft); const list=document.getElementById('scenario-episode-list'); list.innerHTML = p.storyboardPanels.map((row,i)=>{ const arrow = i>0 ? '<div class="scenario-episode-arrow">▼</div>' : ''; const img = row.image ? '<img src="'+row.image+'" alt="ep image" data-story-image="'+row.image+'" style="width:100%; max-height:110px; object-fit:cover; border-radius:10px; border:1px solid #d1d5db;">' : ''; return arrow + '<div class="scenario-episode-card"><div class="scenario-ep-label">第'+(i+1)+'話</div><div class="scenario-ep-main"><input class="scenario-ep-title2" data-story="subtitle" value="'+escapeAttr(row.subtitle || '')+'" placeholder="各話のタイトル"><input class="scenario-ep-title" data-story="title" value="'+escapeAttr(row.title || '')+'" placeholder="タイトル"><textarea class="scenario-ep-desc" data-story="desc" placeholder="テロップの流れ・内容を入力">'+escapeHtml(row.desc || '')+'</textarea><div class="doc-actions no-print" style="margin-top:0;"><button class="mini-btn" onclick="openStoryImagePicker('+i+')">🖼️ 画像</button><button class="mini-btn" onclick="deleteStoryImage('+i+')">削除</button></div>'+img+'</div><div class="scenario-ep-term"><div class="scenario-cell-title">学期</div><select data-story="term"><option '+(row.term==='１学期'?'selected':'')+'>１学期</option><option '+(row.term==='２学期'?'selected':'')+'>２学期</option><option '+(row.term==='３学期'?'selected':'')+'>３学期</option></select></div><div class="scenario-ep-date"><div class="scenario-cell-title">撮影日</div><input type="date" data-story="shotDate" value="'+escapeAttr(row.shotDate || '')+'"></div></div>'; }).join(''); list.querySelectorAll('[data-story]').forEach(el=> el.addEventListener('input', ()=> saveEditorData())); document.getElementById('scenario-synopsis').oninput=saveEditorData; ['who','problem','method','interviewee','actions','answer'].forEach(k=>{ document.getElementById('draft-'+k).oninput=()=>{ document.getElementById('scenario-draft-preview').innerText=scenarioSentenceFromDraft(collectScenarioMetaFromUI().draft); saveEditorData(); }; }); }
+  function openStoryImagePicker(index){ storyImagePickIndex=index; const inp=document.getElementById('story-image-input'); inp.value=''; inp.click(); }
+  function deleteStoryImage(index){ const p=getCurrentProject(); if(!p) return; p.storyboardPanels[index].image=''; renderScenario(); saveEditorData(); }
+  document.getElementById('story-image-input').addEventListener('change', async ()=>{ const p=getCurrentProject(); if(!p) return; const file=(document.getElementById('story-image-input').files || [])[0]; if(!file || storyImagePickIndex<0) return; const src=await fileToDataURL(file); p.storyboardPanels[storyImagePickIndex].image=src; renderScenario(); saveEditorData(); toast(); });
 
-    setFieldsToUI(p.fields);
+  function getFlowState(type){ const p=getCurrentProject(); if(!p) return []; if(type==='video') return p.videoFlowState; if(type==='tool') return p.toolFlowState; if(type==='videoEpisode') return p.videoEpisodeFlowState; return []; }
+  function setFlowState(type,state){ const p=getCurrentProject(); if(!p) return; if(type==='video') p.videoFlowState=state; if(type==='tool') p.toolFlowState=state; if(type==='videoEpisode') p.videoEpisodeFlowState=state; }
+  function renderFlow(type, labels, trackId, summaryId, isTool){ const state=getFlowState(type); const track=document.getElementById(trackId); if(!track) return; track.innerHTML = state.map((node,i)=>{ const folders=node.folders.map((folder,fi)=> isTool ? renderToolFolderHtml(type,i,fi,folder,node.label) : renderNormalFolderHtml(type,i,fi,folder)).join(''); return '<div class="flow-node-wrap">'+(i>0?'<div class="flow-arrow">▼</div>':'')+'<div class="flow-node '+(node.open ? 'open' : '')+'" data-cat="'+((i%6)+1)+'"><div class="flow-node-head" onclick="toggleFlowNode(\''+type+'\','+i+')"><div class="flow-node-title">'+escapeHtml(labels[i] || node.label)+'</div><div style="display:flex; gap:6px; align-items:center;"><span class="drag-chip no-print">↕</span><span class="flow-node-toggle">'+(node.open ? '閉じる' : '開く')+'</span></div></div><div class="flow-node-body"><div class="folder-list-wrap">'+folders+'</div></div></div></div>'; }).join(''); renderFlowSummary(type, summaryId, isTool); }
+  function renderNormalFolderHtml(type,nodeIndex,folderIndex,folder){ return '<div class="wf-folder"><div class="wf-folder-head"><input class="wf-folder-title" value="'+escapeAttr(folder.title || '')+'" oninput="updateFlowFolderTitle(\''+type+'\','+nodeIndex+','+folderIndex+', this.value)"><div class="wf-folder-tools no-print"><button class="mini-btn" onclick="addFlowItem(\''+type+'\','+nodeIndex+','+folderIndex+')">＋ ToDo</button></div></div><p class="wf-folder-desc">'+escapeHtml(folderDescription(folder.title || ''))+'</p><table class="wf-folder-table"><thead><tr><th style="width:100px;">分類</th><th style="width:120px;">日付</th><th>内容</th><th>Who</th><th>Where</th><th>When</th><th>Why</th><th>How</th><th class="no-print">操作</th></tr></thead><tbody>'+folder.items.map((item,ii)=>'<tr><td><select onchange="updateFlowItemField(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+',\'phase\', this.value)">'+FLOW_PHASES.map(ph=>'<option '+(item.phase===ph?'selected':'')+'>'+ph+'</option>').join('')+'</select></td><td><input type="date" value="'+escapeAttr(item.date || '')+'" onchange="updateFlowItemField(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+',\'date\', this.value)"></td><td><textarea oninput="updateFlowItemField(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+',\'what\', this.value)">'+escapeHtml(item.what || '')+'</textarea></td><td><textarea oninput="updateFlowItemField(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+',\'who\', this.value)">'+escapeHtml(item.who || '')+'</textarea></td><td><textarea oninput="updateFlowItemField(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+',\'where\', this.value)">'+escapeHtml(item.where || '')+'</textarea></td><td><textarea oninput="updateFlowItemField(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+',\'when\', this.value)">'+escapeHtml(item.when || '')+'</textarea></td><td><textarea oninput="updateFlowItemField(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+',\'why\', this.value)">'+escapeHtml(item.why || '')+'</textarea></td><td><textarea oninput="updateFlowItemField(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+',\'how\', this.value)">'+escapeHtml(item.how || '')+'</textarea></td><td class="no-print"><button class="mini-btn" onclick="deleteFlowItem(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+')">削除</button></td></tr>').join('')+'</tbody></table></div>'; }
+  function toolFieldTemplates(stepLabel){ if(stepLabel.includes('経費の計算')) return [{key:'what',label:'何にお金がかかる？',desc:'必要なモノ・サービス・移動費などを整理します。',placeholder:'例）試作品材料、交通費、印刷費'},{key:'budget',label:'金額の見込み',desc:'だいたいの金額を書きます。',placeholder:'例）15,000円'},{key:'why',label:'なぜ必要？',desc:'この費用が必要な理由を書きます。',placeholder:'例）試作品を作るため'}]; if(stepLabel.includes('必要予算の算出')) return [{key:'what',label:'予算の内訳',desc:'合計予算を出すための内訳を書きます。',placeholder:'例）材料費＋広報費＋運営費'},{key:'budget',label:'合計いくら必要？',desc:'全体で必要な金額を書きます。',placeholder:'例）80,000円'},{key:'note',label:'計算メモ',desc:'見積もりの考え方を書きます。',placeholder:'例）1回分×5回で算出'}]; if(stepLabel.includes('予算確保の方法')) return [{key:'fundMethod',label:'どうやって資金を集める？',desc:'助成金、協賛、販売など方法を書きます。',placeholder:'例）企業協賛を3社集める'},{key:'who',label:'誰にお願いする？',desc:'相談先や候補相手を書きます。',placeholder:'例）地域企業、学校、保護者会'},{key:'how',label:'どんな手順で動く？',desc:'お願いの仕方や流れを書きます。',placeholder:'例）資料作成→訪問→提案'}]; if(stepLabel.includes('商品・サービス販売の方法')) return [{key:'salesMethod',label:'どうやって売る？',desc:'販売方法や提供方法を書きます。',placeholder:'例）学校イベントで販売'},{key:'where',label:'どこで売る？',desc:'販売場所やチャネルを書きます。',placeholder:'例）文化祭、SNS、EC'},{key:'who',label:'誰に届ける？',desc:'ターゲットを書く欄です。',placeholder:'例）高校生、地域の親子'}]; if(stepLabel.includes('実施方法')) return [{key:'when',label:'いつ行う？',desc:'実施タイミングや流れを書きます。',placeholder:'例）11月の文化祭で実施'},{key:'how',label:'どう実施する？',desc:'当日の段取りや役割分担を書きます。',placeholder:'例）受付→体験→販売→記録'},{key:'note',label:'必要な準備',desc:'事前にやることを書きます。',placeholder:'例）机、POP、つり銭を準備'}]; return [{key:'reportTo',label:'誰に報告する？',desc:'会計報告や共有先を書きます。',placeholder:'例）先生、会計担当、協賛先'},{key:'note',label:'何をまとめる？',desc:'売上・支出・反省などを書きます。',placeholder:'例）売上、支出、利益、改善点'},{key:'how',label:'どう記録する？',desc:'記録方法を書きます。',placeholder:'例）スプレッドシートで管理'}]; }
+  function renderToolFolderHtml(type,nodeIndex,folderIndex,folder,stepLabel){ const cards = folder.items.map((item,ii)=>{ const fields=toolFieldTemplates(stepLabel).map(t=>'<label>'+escapeHtml(t.label)+'<br><span style="font-size:10px;color:#94a3b8;font-weight:400;">'+escapeHtml(t.desc)+'</span></label>'+(t.key==='budget' ? '<input value="'+escapeAttr(item[t.key] || '')+'" placeholder="'+escapeAttr(t.placeholder || '')+'" oninput="updateFlowItemField(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+',\''+t.key+'\', this.value)">' : '<textarea placeholder="'+escapeAttr(t.placeholder || '')+'" oninput="updateFlowItemField(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+',\''+t.key+'\', this.value)">'+escapeHtml(item[t.key] || '')+'</textarea>')).join(''); return '<div class="tool-sheet-card"><div class="tool-sheet-title">記入欄 '+(ii+1)+'</div><div class="tool-sheet-desc">'+escapeHtml(folderDescription(folder.title || ''))+'</div><div class="tool-sheet-grid"><label>分類</label><select onchange="updateFlowItemField(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+',\'phase\', this.value)">'+FLOW_PHASES.map(ph=>'<option '+(item.phase===ph?'selected':'')+'>'+ph+'</option>').join('')+'</select><label>日付</label><input type="date" value="'+escapeAttr(item.date || '')+'" onchange="updateFlowItemField(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+',\'date\', this.value)">'+fields+'<label>ひとことで言うと</label><textarea oninput="updateFlowItemField(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+',\'what\', this.value)">'+escapeHtml(item.what || '')+'</textarea></div><div class="doc-actions no-print" style="margin-top:10px;"><button class="mini-btn" onclick="deleteFlowItem(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+')">削除</button></div></div>'; }).join(''); return '<div class="wf-folder"><div class="wf-folder-head"><input class="wf-folder-title" value="'+escapeAttr(folder.title || '')+'" oninput="updateFlowFolderTitle(\''+type+'\','+nodeIndex+','+folderIndex+', this.value)"><div class="wf-folder-tools no-print"><button class="mini-btn" onclick="addFlowItem(\''+type+'\','+nodeIndex+','+folderIndex+')">＋ 記入欄</button></div></div><p class="wf-folder-desc">'+escapeHtml(folderDescription(folder.title || ''))+'</p><div class="tool-sheet">'+cards+'</div></div>'; }
+  function toggleFlowNode(type,index){ const state=getFlowState(type); state[index].open=!state[index].open; setFlowState(type,state); saveEditorData(); rerenderFlow(type); }
+  function updateFlowFolderTitle(type,nodeIndex,folderIndex,value){ const state=getFlowState(type); state[nodeIndex].folders[folderIndex].title=value || ''; state[nodeIndex].folders[folderIndex].items.forEach(item=>{ if(FLOW_PHASES.includes(value)) item.phase=value; }); setFlowState(type,state); saveEditorData(); }
+  function addFlowItem(type,nodeIndex,folderIndex){ const state=getFlowState(type); const phase=state[nodeIndex].folders[folderIndex].title || '①準備'; state[nodeIndex].folders[folderIndex].items.push(defaultFlowItem(phase)); setFlowState(type,state); saveEditorData(); rerenderFlow(type); }
+  function deleteFlowItem(type,nodeIndex,folderIndex,itemIndex){ const state=getFlowState(type); const items=state[nodeIndex].folders[folderIndex].items; if(items.length<=1) state[nodeIndex].folders[folderIndex].items=[defaultFlowItem(state[nodeIndex].folders[folderIndex].title || '①準備')]; else items.splice(itemIndex,1); setFlowState(type,state); saveEditorData(); rerenderFlow(type); }
+  function updateFlowItemField(type,nodeIndex,folderIndex,itemIndex,key,value){ const state=getFlowState(type); state[nodeIndex].folders[folderIndex].items[itemIndex][key]=value; setFlowState(type,state); saveEditorData(); rerenderFlowSummary(type); }
+  function rerenderFlow(type){ if(type==='video') renderVideoFlow(); if(type==='tool') renderToolFlow(); if(type==='videoEpisode') renderVideoEpisodeFlow(); }
+  function flattenFlow(state){ const out=[]; state.forEach(node=> node.folders.forEach(folder=> folder.items.forEach(item=>{ if(item.phase || item.date || item.what || item.who || item.where || item.when || item.why || item.how || item.note || item.budget || item.fundMethod || item.salesMethod || item.reportTo){ out.push({ step: node.label, folder: folder.title, phase:item.phase, date:item.date, what:item.what, who:item.who, where:item.where, when:item.when, why:item.why, how:item.how, note:item.note, budget:item.budget, fundMethod:item.fundMethod, salesMethod:item.salesMethod, reportTo:item.reportTo }); } }))); return out; }
+  function sortDateValue(v){ if(!v) return Number.MAX_SAFE_INTEGER; const t=new Date(v).getTime(); return Number.isNaN(t) ? Number.MAX_SAFE_INTEGER : t; }
+  function termFromDate(v){ if(!v) return '未設定'; const m=new Date(v).getMonth()+1; if([4,5,6,7,8].includes(m)) return '1学期'; if([9,10,11,12].includes(m)) return '2学期'; return '3学期'; }
+  function renderFlowSummary(type, summaryId, isTool){ const grid=document.getElementById(summaryId); if(!grid) return; const flat=flattenFlow(getFlowState(type)).sort((a,b)=> sortDateValue(a.date)-sortDateValue(b.date)); const groups={ '1学期':[], '2学期':[], '3学期':[] }; flat.forEach(item=>{ const t=termFromDate(item.date); if(groups[t]) groups[t].push(item); }); grid.innerHTML=['1学期','2学期','3学期'].map(term=>'<div class="todo-summary-card"><h4>'+term+'</h4><div class="todo-summary-body">'+(groups[term].length ? groups[term].map(item=>'<div class="todo-item"><div class="todo-badge">'+escapeHtml(item.step)+'</div><div><strong>'+escapeHtml(item.phase || '')+'</strong> / '+escapeHtml(item.folder || '')+'</div><div>日付：'+escapeHtml(item.date || '未設定')+'</div><div>内容：'+escapeHtml(item.what || item.note || '—')+'</div>'+(isTool ? '<div>補足：'+escapeHtml(item.budget || item.fundMethod || item.salesMethod || item.reportTo || '—')+'</div>' : '<div>5W1H：Who '+escapeHtml(item.who || '—')+' / Where '+escapeHtml(item.where || '—')+' / When '+escapeHtml(item.when || '—')+' / Why '+escapeHtml(item.why || '—')+' / How '+escapeHtml(item.how || '—')+'</div>')+'</div>').join('') : '<div class="todo-empty">まだ ToDo はありません。</div>')+'</div></div>').join(''); }
+  function rerenderFlowSummary(type){ if(type==='video') renderFlowSummary('video','workflow-todo-summary',false); if(type==='tool') renderFlowSummary('tool','tooldev-todo-summary',true); if(type==='videoEpisode') renderFlowSummary('videoEpisode','video-episode-todo-summary',false); }
+  function renderVideoFlow(){ renderFlow('video', VIDEO_FLOW_LABELS, 'workflow-flow-track', 'workflow-todo-summary', false); }
+  function renderVideoEpisodeFlow(){ const p=getCurrentProject(); if(!p) return; const labels=p.storyboardPanels.map((r,i)=>('第'+(i+1)+'話 '+(r.title || '')).trim()); normalizeFlowState(p.videoEpisodeFlowState, labels); renderFlow('videoEpisode', labels, 'video-episode-flow-track', 'video-episode-todo-summary', false); }
+  function renderToolFlow(){ renderFlow('tool', TOOL_FLOW_LABELS, 'tooldev-flow-track', 'tooldev-todo-summary', true); }
 
-    setPlanFontSize(p.planSettings.fontSize, false);
-    setPlanLineHeight(p.planSettings.lineHeight, false);
+  function getCellText(rowid){ const tr=document.querySelector('#video-script-tbody tr[data-rowid="'+rowid+'"]'); return tr?.querySelector('[data-vs="text"]')?.innerText || ''; }
+  function setCellText(rowid,text){ const tr=document.querySelector('#video-script-tbody tr[data-rowid="'+rowid+'"]'); const td=tr?.querySelector('[data-vs="text"]'); if(td) td.innerText=text || ''; }
+  function applyCatchphraseToAll(text){ for(let ep=1; ep<=6; ep++) setCellText('ep'+ep+'-c1', text || ''); const p=getCurrentProject(); if(p) p.videoCatchphrase=(text || '').trim(); }
+  function pick(){ for(const v of arguments){ if((v || '').toString().trim() !== '') return v; } return ''; }
+  function buildEpisodeCuts(ep, ctx){ const f=ctx.f, storyboard=ctx.storyboard, guide=ctx.guide; const panel=storyboard[ep-1] || {}; const cp=(ctx.catchphrase || '').trim() || ('私たちは『'+pick(f.presTopic, guide[0]?.text, '目標')+'』'+pick(f.teamName, 'チーム')+'です！'); return [{ text:cp, visual:'冒頭の決めカット' },{ text:'第'+ep+'話「'+pick(panel.title, 'テーマ')+'」です。', visual:'タイトル表示' },{ text:pick(panel.desc, '課題が見えてくる。'), visual:'課題が伝わるカット' },{ text:'舞台は'+pick(f.doPlace, '場所')+'、テーマは「'+pick(f.theme, guide[1]?.text, 'テーマ')+'」です。', visual:'場所とテーマの関係が分かるカット' },{ text:'まず私たちは'+pick(f.fieldAction1, '調査')+'から始めました。', visual:'取材・調査' },{ text:'そして作戦は「'+pick(f.ideaName, guide[3]?.text, '作戦')+'」です。', visual:'作戦紹介' },{ text:pick(f.concept, '') ? '一言でいうと「'+pick(f.concept,'')+'」です。' : '一言でいうと「小さく試して改善」です。', visual:'コンセプトを象徴する絵' },{ text:'次回「'+pick(f.nextNeed, guide[5]?.text, '次の展開')+'」へ！', visual:'次回予告' }]; }
+  function autoDraftVideo(){ const p=getCurrentProject(); if(!p) return; const ctx={ f:p.fields, catchphrase:p.videoCatchphrase || getCellText('ep1-c1'), storyboard:p.storyboardPanels, guide:p.presentationGuide }; const tbody=document.getElementById('video-script-tbody'); for(let ep=1; ep<=6; ep++){ const cuts=buildEpisodeCuts(ep, ctx); for(let cut=1; cut<=LINES_PER_EP; cut++){ const tr=tbody.querySelector('tr[data-rowid="ep'+ep+'-c'+cut+'"]'); if(!tr) continue; const t=tr.querySelector('[data-vs="text"]'); const v=tr.querySelector('[data-vs="visual"]'); if(!t.innerText.trim()) t.innerText=cuts[cut-1]?.text || ''; if(!v.innerText.trim()) v.innerText=cuts[cut-1]?.visual || ''; } } applyCatchphraseToAll(ctx.catchphrase || getCellText('ep1-c1')); saveEditorData(); toast(); }
+  function restoreVideoRows(p){ if(!p.videoScriptRows?.length) return; p.videoScriptRows.forEach(saved=>{ const tr=document.querySelector('#video-script-tbody tr[data-rowid="'+saved.rowid+'"]'); if(!tr) return; tr.querySelector('[data-vs="text"]').innerText=saved.text || ''; tr.querySelector('[data-vs="visual"]').innerText=saved.visual || ''; tr.querySelector('select[data-vs="shoot"]').value=saved.shoot || '未着手'; tr.querySelector('select[data-vs="edit"]').value=saved.edit || '未着手'; }); }
+  document.getElementById('video-script-tbody').addEventListener('input', e=>{ const td=e.target; if(!td || td.getAttribute('data-vs')!=='text') return; const tr=td.closest('tr'); if(!tr) return; if((tr.dataset.rowid || '').endsWith('-c1')) applyCatchphraseToAll(td.innerText || ''); saveEditorData(); });
+  document.getElementById('video-script-tbody').addEventListener('change', saveEditorData);
 
-    renderPlanDoc(p.planHtml || "");
-    renderPresDoc(p.presHtml || "");
+  function fillPlanText(t,f){ let s=t; if(s.includes('作成日：')) s=s.replace('作成日：20XX年XX月XX日', '作成日：' + (f.createdDate || '20XX年XX月XX日')); s=s.replace('（企業名）', f.companyName || '（企業名）'); s=s.replace('（部署名）', f.department || '（部署名）'); if(s.trim()==='ご担当者様' && f.contactName) s=f.contactName + ' 様'; s=s.replace('所属：（学校名）（学年）', '所属：' + (f.schoolName || '（学校名）') + (f.grade ? '（' + f.grade + '）' : '（学年）')); if(s.startsWith('生徒代表：')) s='生徒代表：' + (f.studentRep || '　　　　　'); if(s.startsWith('担当教員：')) s='担当教員：' + (f.teacherRep || '　　　　　'); s=s.replace('私たちは（学校名）の探究学習', '私たちは' + (f.schoolName || '（学校名）') + 'の探究学習'); s=s.replace('（テーマ：　　　　　　　　　）', '（テーマ：' + (f.theme || '　　　　　　　　　') + '）'); if(s.includes('候補日時：')) s='候補日時：\n第1希望（'+(f.dt1 || '　月　日　　時〜')+'）／第2希望（'+(f.dt2 || '　月　日　　時〜')+'）／第3希望（'+(f.dt3 || '　月　日　　時〜')+'）'; if(s.startsWith('参加者：')) s='参加者：生徒（'+(f.studentsCount || '　')+'名）＋教員（'+(f.teachersCount || '　')+'名）'; if(s.startsWith('場所：')) s='場所：' + (f.place || '／オンライン'); if(s.includes('メール：（　　　　　　　　　）')) s='メール：（'+(f.email || '　　　　　　　　　')+'）\n電話：（'+(f.phone || '　　　　　　　　　')+'）'; return s; }
+  const PLAN_TEMPLATE=[{align:'right',text:'作成日：20XX年XX月XX日'},{align:'center',text:'取材のお願い'},{align:'left',text:'（企業名）（部署名）'},{align:'left',text:'ご担当者様'},{align:'right',text:'所属：（学校名）（学年）'},{align:'right',text:'生徒代表：　　　　　'},{align:'right',text:'担当教員：　　　　　'},{align:'left',text:''},{align:'center',text:'謝辞'},{align:'left',text:''},{align:'left',text:'突然のご連絡失礼いたします。私たちは（学校名）の探究学習の一環として、（テーマ：　　　　　　　　　）について学んでおります。\nつきましては、貴社・貴団体のご業務・お取り組みについて 短時間のインタビュー取材（30分から一時間程度） にご協力いただけないでしょうか。\nご多忙のところ恐縮ですが、ご検討のほど何卒よろしくお願いいたします。'},{align:'left',text:''},{align:'left',text:'取材の目的'},{align:'left',text:'探究テーマに関する「現場の視点・実務の知見」を伺い、学習の質を高めるため'},{align:'left',text:'取材内容は、授業内の成果物（発表・レポート等）に活用します'},{align:'left',text:''},{align:'left',text:'取材概要（希望）'},{align:'left',text:'形式：対面／オンライン（Zoom等）'},{align:'left',text:'所要時間：30分（最大45分）'},{align:'left',text:'候補日時：\n第1希望（　月　日　　時〜）／第2希望（　月　日　　時〜）／第3希望（　月　日　　時〜）'},{align:'left',text:'参加者：生徒（　名）＋教員（　名）'},{align:'left',text:'場所：／オンライン'},{align:'left',text:''},{align:'left',text:'内容説明'},{align:'left',text:'__CONTENT_DESC_BLOCK__'},{align:'left',text:''},{align:'left',text:'お伺いしたい内容（例）'},{align:'left',text:'貴社の事業概要と現在の状況（顧客・市場・課題感）'},{align:'left',text:'課題に対する取り組み（施策・工夫・技術活用等）'},{align:'left',text:'成果と難しさ（効果・障壁・学び）'},{align:'left',text:'今後の展望（次の一手、必要な連携）'},{align:'left',text:'中高生や地域に期待すること（関わり方のヒント）'},{align:'left',text:''},{align:'left',text:'資料や写真について'},{align:'left',text:'当日に頂いた資料や情報、撮影した写真や動画につきましては、学校や部の活動を発信しているSNSアカウントおよび、参加するコンテストでの発表資料として使用させて頂く場合があります。掲載可否・範囲については必ず確認いたします。'},{align:'left',text:''},{align:'right',text:'【連絡先】'},{align:'right',text:'メール：（　　　　　　　　　）\n電話：（　　　　　　　　　）'}];
+  const PLAN_HEADINGS=new Set(['謝辞','取材の目的','取材概要（希望）','内容説明','お伺いしたい内容（例）','資料や写真について','【連絡先】']);
+  function formatPlanLine(raw){ const t=(raw || '').trim(); if(!t) return {html:'',cls:''}; if(t==='取材のお願い') return {html:'<strong>'+escapeHtml(t)+'</strong>', cls:'plan-title'}; if(PLAN_HEADINGS.has(t)) return {html:'<strong>'+escapeHtml(t)+'</strong>', cls:'plan-heading plan-bullet'}; const m=t.match(/^([^：]+)：(.*)$/); if(m) return {html:'<strong>'+escapeHtml(m[1].trim())+'：</strong>'+escapeHtml(m[2].trim()), cls:'plan-bullet'}; return {html:escapeHtml(raw), cls:''}; }
+  function renderPlanDoc(forceHtml){ const p=getCurrentProject(); if(!p) return; const area=document.getElementById('plan-doc-area'); if(forceHtml){ area.innerHTML=forceHtml; area.querySelectorAll('.doc-line[contenteditable="true"]').forEach(line=> line.addEventListener('input', saveEditorData)); updatePlanImagesSlot(); return; } area.innerHTML = PLAN_TEMPLATE.map((row,idx)=>{ if(row.text==='__CONTENT_DESC_BLOCK__'){ return '<div class="doc-line" contenteditable="true" data-doc="plan" data-idx="'+idx+'" style="text-align:left;">'+escapeHtml(p.fields.planDescText || '')+'</div><div id="plan-image-slot" class="doc-line" style="text-align:left; padding-top:4px;"></div>'; } const txt=fillPlanText(row.text,p.fields); const f=formatPlanLine(txt); return '<div class="doc-line '+f.cls+'" contenteditable="true" data-doc="plan" data-idx="'+idx+'" style="text-align:'+row.align+';">'+f.html.replace(/\n/g,'<br>')+'</div>'; }).join(''); area.querySelectorAll('.doc-line[contenteditable="true"]').forEach(line=> line.addEventListener('input', saveEditorData)); updatePlanImagesSlot(); }
+  function regenPlan(silent){ const p=getCurrentProject(); if(!p) return; if(!silent && !confirm('入力内容で企画書を再生成します。本文の手直しは上書きされます。よろしいですか？')) return; p.fields=collectFieldsFromUI(); renderPlanDoc(); saveEditorData(); if(!silent) toast(); }
+  function toggleDrawer(id){ const el=document.getElementById(id); if(el) el.classList.toggle('open'); }
+  function renderPresDoc(forceHtml){ const p=getCurrentProject(); if(!p) return; const area=document.getElementById('pres-doc-area'); if(forceHtml){ area.innerHTML=forceHtml; area.querySelectorAll('.doc-line[contenteditable="true"]').forEach(line=> line.addEventListener('input', saveEditorData)); return; } const f=p.fields, g=p.presentationGuide; const slots=[f.teamName || '', f.presTopic || g[0]?.text || '', g[1]?.text || f.theme || '', f.fieldAction1 || '', f.insight1 || '', f.research2 || '', f.fact2 || '', f.coreProblem || g[2]?.text || '', f.hypCause || '', f.hypReason || '', f.hypSolution || '', f.ideaName || g[3]?.text || '', f.concept || '', f.feature1 || '', f.feature2 || '', f.verifyMethod || g[4]?.text || '', f.verifyStep1 || '', f.verifyCheck || '', f.doDate || '', f.doPlace || '', f.target || '', f.doWhat || '', f.data1 || '', f.learned || '', f.conclusion || '', f.discussion || '', '（課題）', f.nextNeed || '', (f.future || g[5]?.text || '') + 'という']; let slotIdx=0; const blocks=[]; PRES_RAW.forEach(line=>{ if(line==='------------------------') blocks.push({type:'sep'}); else if(line.length<=6 && !line.includes('。') && !line.includes('、')) blocks.push({type:'heading', text:line}); else { let txt=line; while(txt.includes('「」') && slotIdx<slots.length){ txt=txt.replace('「」','「'+(slots[slotIdx] || '')+'」'); slotIdx++; } blocks.push({type:'p', text:txt}); } }); area.innerHTML=blocks.map((b,i)=> b.type==='sep' ? '<div class="doc-line" style="text-align:left; color:#9ca3af; font-weight:900;">------------------------</div>' : '<div class="doc-line" contenteditable="true" data-doc="pres" data-idx="'+i+'" style="text-align:left;'+(b.type==='heading'?' font-weight:1000;':'')+'">'+escapeHtml(b.text)+'</div>').join(''); area.querySelectorAll('.doc-line[contenteditable="true"]').forEach(line=> line.addEventListener('input', saveEditorData)); }
+  function regenPres(silent){ const p=getCurrentProject(); if(!p) return; if(!silent && !confirm('入力内容でプレゼン台本を再生成します。本文の手直しは上書きされます。よろしいですか？')) return; p.fields=collectFieldsFromUI(); p.presentationGuide=collectPresentationGuideFromUI(); renderPresDoc(); saveEditorData(); if(!silent) toast(); }
 
-    // video script
+  function setPlanFontSize(size, shouldSave=true){ const fs=Math.max(9, Math.min(14, parseInt(size,10) || 11)); document.documentElement.style.setProperty('--planFont', fs + 'px'); document.getElementById('plan-font-range').value=String(fs); document.getElementById('plan-font-val').innerText=fs+'px'; const p=getCurrentProject(); if(p){ p.planSettings.fontSize=fs; if(shouldSave) saveEditorData(); } }
+  function setPlanLineHeight(v, shouldSave=true){ const lh=Math.max(1.2, Math.min(1.65, parseFloat(v) || 1.45)); document.documentElement.style.setProperty('--planLine', String(lh)); const p=getCurrentProject(); if(p){ p.planSettings.lineHeight=lh; if(shouldSave) saveEditorData(); } }
+  document.getElementById('plan-font-range').addEventListener('input', ()=> setPlanFontSize(document.getElementById('plan-font-range').value, false));
+  document.getElementById('plan-font-range').addEventListener('change', ()=>{ setPlanFontSize(document.getElementById('plan-font-range').value, true); toast(); });
+  let planImagePickMode={ mode:'append', index:-1 };
+  function openPlanImagePicker(){ planImagePickMode={ mode:'append', index:-1 }; const inp=document.getElementById('plan-image-input'); inp.value=''; inp.click(); }
+  function openPlanImageReplacePicker(index){ planImagePickMode={ mode:'replace', index:index }; const inp=document.getElementById('plan-image-input'); inp.value=''; inp.click(); }
+  document.getElementById('plan-image-input').addEventListener('change', async ()=>{ const p=getCurrentProject(); if(!p) return; const files=Array.from(document.getElementById('plan-image-input').files || []); if(!files.length) return; if(planImagePickMode.mode==='replace' && planImagePickMode.index>=0){ const idx=planImagePickMode.index; const src=await fileToDataURL(files[0]); const old=p.planSettings.images[idx] || { src:'', scale:100, boxH:120 }; p.planSettings.images[idx]={ src, scale: old.scale ?? 100, boxH: old.boxH ?? 120 }; } else { const slots=p.planSettings.images || []; const canAdd=Math.max(0, 2 - slots.length); for(const f of files.slice(0, canAdd)){ const src=await fileToDataURL(f); slots.push({ src, scale:100, boxH:120 }); } p.planSettings.images=slots.slice(0,2); } updatePlanImagesSlot(); saveEditorData(); toast(); });
+  function fileToDataURL(file){ return new Promise(resolve=>{ const reader=new FileReader(); reader.onload=()=> resolve(reader.result); reader.onerror=()=> resolve(''); reader.readAsDataURL(file); }); }
+  function deletePlanImage(index){ const p=getCurrentProject(); if(!p) return; p.planSettings.images=(p.planSettings.images || []).filter((_,i)=> i!==index); updatePlanImagesSlot(); saveEditorData(); }
+  function setPlanImageScale(index, scale){ const p=getCurrentProject(); if(!p || !p.planSettings.images[index]) return; p.planSettings.images[index].scale=Math.max(50, Math.min(160, parseInt(scale,10) || 100)); updatePlanImagesSlot(false); }
+  function setPlanImageBoxH(index, h){ const p=getCurrentProject(); if(!p || !p.planSettings.images[index]) return; p.planSettings.images[index].boxH=Math.max(80, Math.min(260, parseInt(h,10) || 120)); document.documentElement.style.setProperty('--planImgBoxH', p.planSettings.images[index].boxH + 'px'); updatePlanImagesSlot(false); }
+  function updatePlanImagesSlot(shouldSave=false){ const p=getCurrentProject(); if(!p) return; const slot=document.getElementById('plan-image-slot'); if(!slot) return; const imgs=(p.planSettings?.images || []).slice(0,2); slot.innerHTML='<div class="plan-images">'+[0,1].map(i=>{ const im=imgs[i]; if(im && im.src){ const sc=Math.max(50, Math.min(160, parseInt(im.scale,10) || 100)); const bh=Math.max(80, Math.min(260, parseInt(im.boxH,10) || 120)); return '<div class="imgbox" style="height:'+bh+'px;"><img alt="plan image '+(i+1)+'" src="'+im.src+'" style="transform:scale('+(sc/100)+');"><div class="img-tools no-print"><div class="row"><span class="lbl">画像'+(i+1)+'</span><div style="display:flex; gap:6px; flex-wrap:wrap;"><button class="btn-mini" onclick="openPlanImageReplacePicker('+i+')">差し替え</button><button class="btn-mini danger" onclick="deletePlanImage('+i+')">削除</button></div></div><div class="row"><span class="lbl">画像サイズ</span><input type="range" min="50" max="160" step="5" value="'+sc+'" oninput="setPlanImageScale('+i+', this.value)"><span class="lbl">'+sc+'%</span></div><div class="row"><span class="lbl">枠高さ</span><input type="range" min="80" max="260" step="10" value="'+bh+'" oninput="setPlanImageBoxH('+i+', this.value)"><span class="lbl">'+bh+'px</span></div></div></div>'; } return '<div class="imgbox" style="flex-direction:column; gap:10px; color:#94a3b8; font-size:11px; font-weight:900;">画像'+(i+1)+'（未設定）<button class="btn-mini no-print" onclick="openPlanImagePicker()">＋ 追加</button></div>'; }).join('')+'</div>'; if(shouldSave) saveEditorData(); }
+  function fitPlanToA4(){ toast(); }
+
+  function saveEditorData(){ const p=getCurrentProject(); if(!p) return; p.title=document.getElementById('editable-title').innerText; p.fields=collectFieldsFromUI(); p.presentationGuide=collectPresentationGuideFromUI(); try{ p.storyboardPanels=collectStoryboardFromUI(); }catch(e){} try{ p.scenarioMeta=collectScenarioMetaFromUI(); }catch(e){} p.planHtml=document.getElementById('plan-doc-area').innerHTML; p.presHtml=document.getElementById('pres-doc-area').innerHTML; p.videoScriptRows=Array.from(document.querySelectorAll('#video-script-tbody tr')).map(tr=>({ rowid:tr.dataset.rowid, text:tr.querySelector('[data-vs="text"]')?.innerText || '', visual:tr.querySelector('[data-vs="visual"]')?.innerText || '', shoot:tr.querySelector('select[data-vs="shoot"]')?.value || '未着手', edit:tr.querySelector('select[data-vs="edit"]')?.value || '未着手' })); p.videoCatchphrase=(getCellText('ep1-c1') || '').trim(); saveToStorage(); }
+  function manualSave(){ saveEditorData(); toast(); }
+  function printPlanOnly(){ activatePrimary('product-create'); activateSub('product-create','tab-plan'); document.body.classList.add('print-single'); const cleanup=()=>{ document.body.classList.remove('print-single'); window.removeEventListener('afterprint',cleanup); }; window.addEventListener('afterprint', cleanup); window.print(); }
+  function printSection(sectionId){ const target=document.getElementById(sectionId); if(!target) return; document.querySelectorAll('.print-target').forEach(el=> el.classList.remove('print-target')); target.classList.add('print-target'); document.body.classList.add('print-section'); const cleanup=()=>{ document.body.classList.remove('print-section'); target.classList.remove('print-target'); window.removeEventListener('afterprint', cleanup); }; window.addEventListener('afterprint', cleanup); window.print(); }
+  function exportVideoTelopsXlsx(){ if(typeof XLSX==='undefined'){ alert('Excel出力ライブラリが読み込めていません。'); return; } const title=(document.getElementById('editable-title')?.innerText || 'project').trim() || 'project'; const rows=[['話','カット','テロップ（1文）']]; document.querySelectorAll('#video-script-tbody tr').forEach(tr=> rows.push([tr.getAttribute('data-ep') || '', (tr.querySelectorAll('td')[1]?.innerText || '').trim(), (tr.querySelector('[data-vs="text"]')?.innerText || '').trim()])); const ws=XLSX.utils.aoa_to_sheet(rows); const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'テロップ'); XLSX.writeFile(wb, title+'_telops.xlsx'); }
+  function exportWorkflowTodoXlsx(){ exportFlowXlsx('video', 'workflow_todo', false); }
+  function exportVideoWorkflowTodoXlsx(){ exportFlowXlsx('videoEpisode', 'video_workflow', false); }
+  function exportToolDevTodoXlsx(){ exportFlowXlsx('tool', 'tooldev_todo', true); }
+  function exportFlowXlsx(type, suffix, isTool){ if(typeof XLSX==='undefined'){ alert('Excel出力ライブラリが読み込めていません。'); return; } const flat=flattenFlow(getFlowState(type)).sort((a,b)=> sortDateValue(a.date)-sortDateValue(b.date)); const headers=isTool ? ['学期','ステップ','フォルダ','分類','日付','内容','説明','必要金額','資金確保','販売方法','報告先'] : ['学期','ステップ','フォルダ','分類','日付','内容','Who','Where','When','Why','How']; const rows=[headers].concat(flat.map(item=> isTool ? [termFromDate(item.date),item.step,item.folder,item.phase,item.date,item.what || item.note,item.note,item.budget,item.fundMethod,item.salesMethod,item.reportTo] : [termFromDate(item.date),item.step,item.folder,item.phase,item.date,item.what,item.who,item.where,item.when,item.why,item.how])); const ws=XLSX.utils.aoa_to_sheet(rows); const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'ToDo'); const title=(document.getElementById('editable-title')?.innerText || 'project').trim() || 'project'; XLSX.writeFile(wb, title+'_'+suffix+'.xlsx'); }
+  function copyWorkflowTodoText(){ copyFlowText('video', false); }
+  function copyVideoWorkflowTodoText(){ copyFlowText('videoEpisode', false); }
+  function copyToolDevTodoText(){ copyFlowText('tool', true); }
+  function copyFlowText(type, isTool){ const flat=flattenFlow(getFlowState(type)).sort((a,b)=> sortDateValue(a.date)-sortDateValue(b.date)); const text=flat.length ? flat.map(item=> isTool ? '['+termFromDate(item.date)+'] '+item.step+' / '+item.folder+'\n'+item.phase+'\n日付: '+(item.date || '未設定')+'\n内容: '+(item.what || item.note || '—')+'\n補足: '+(item.budget || item.fundMethod || item.salesMethod || item.reportTo || '—') : '['+termFromDate(item.date)+'] '+item.step+' / '+item.folder+'\n'+item.phase+'\n日付: '+(item.date || '未設定')+'\n内容: '+(item.what || '—')+'\nWho: '+(item.who || '—')+' / Where: '+(item.where || '—')+' / When: '+(item.when || '—')+' / Why: '+(item.why || '—')+' / How: '+(item.how || '—')).join('\n\n') : 'ToDo はありません。'; navigator.clipboard.writeText(text).then(()=>toast()).catch(()=>alert('コピーに失敗しました')); }
+
+  function bindTabs(){ document.querySelectorAll('.primary-tab').forEach(btn=> btn.addEventListener('click', ()=> activatePrimary(btn.dataset.primary))); document.querySelectorAll('[data-group]').forEach(group=>{ const gid=group.dataset.group; group.querySelectorAll('.sub-tab').forEach(btn=> btn.addEventListener('click', ()=> activateSub(gid, btn.dataset.sub))); }); }
+  function bindToolbar(){ document.getElementById('new-folder-btn').addEventListener('click', createNewFolder); }
+  function runSelfTests(){ console.assert(typeof createNewFolder==='function', 'createNewFolder exists'); console.assert(typeof renderDashboard==='function', 'renderDashboard exists'); console.assert(typeof printSection==='function', 'printSection exists'); console.assert(typeof renderVideoEpisodeFlow==='function', 'renderVideoEpisodeFlow exists'); console.assert(scenarioSentenceFromDraft({who:'A',problem:'B',method:'C',interviewee:'D',actions:'E',answer:'F'}).includes('A'), 'scenario sentence ok'); }
+
+  window.addEventListener('DOMContentLoaded', ()=>{
+    bindToolbar();
+    bindTabs();
     buildVideoScriptTable();
-    if(p.videoScriptRows && p.videoScriptRows.length){
-      const tbody = document.getElementById('video-script-tbody');
-      p.videoScriptRows.forEach(saved=>{
-        const tr = tbody.querySelector(`tr[data-rowid="${saved.rowid}"]`);
-        if(!tr) return;
-        const tcell = tr.querySelector('[data-vs="text"]');
-        const vcell = tr.querySelector('[data-vs="visual"]');
-        const shoot = tr.querySelector('select[data-vs="shoot"]');
-        const edit = tr.querySelector('select[data-vs="edit"]');
-        if(tcell) tcell.innerText = saved.text || "";
-        if(vcell) vcell.innerText = saved.visual || "";
-        if(shoot) shoot.value = saved.shoot || "未着手";
-        if(edit) edit.value = saved.edit || "未着手";
-      });
-    }
-
-    // ✅ 決め台詞を全話の冒頭へ反映（ロード時）
-    applyCatchphraseToAll(p.videoCatchphrase || getCellText('ep1-c1'));
-  }
-
-  function deleteProject(id, evt){
-    try{
-      if(evt) evt.stopPropagation();
-      else if(window.event) window.event.stopPropagation();
-    }catch(e){}
-    if(!confirm("プロジェクトを削除しますか？")) return;
-    data.folders.forEach(f=>{ f.projects = f.projects.filter(p=>p.id!==id); });
-    saveToStorage(); renderDashboard();
-  }
-
-  /* -------------------------
-     Save / Load editor
-  ------------------------- */
-  function getCurrentProject(){
-    if(!currentId) return null;
-    let p=null;
-    data.folders.forEach(f=>{
-      const found = f.projects.find(x=>x.id===currentId);
-      if(found) p=found;
-    });
-    if(p) ensureProjectDefaults(p);
-    return p;
-  }
-
-  function saveEditorData(){
-    const p = getCurrentProject();
-    if(!p) return;
-
-    p.title = document.getElementById('editable-title').innerText;
-
-    // bubbles
-    p.bubbles = {};
-    document.querySelectorAll('.parent-bubble').forEach(pb=>{
-      p.bubbles[pb.id] = {
-        x: pb.style.left, y: pb.style.top, w: pb.style.width, h: pb.style.height,
-        children: Array.from(pb.querySelectorAll('.child-container')).map(c=>({
-          label: c.querySelector('.child-label').innerText,
-          text: c.querySelector('.child-text').value,
-          x: parseInt(c.style.left), y: parseInt(c.style.top),
-          size: (()=>{
-            const b = c.querySelector('.child-bubble');
-            const w = parseInt((b?.style?.width || "").replace("px",""));
-            const ds = parseInt(b?.dataset?.size || "");
-            return (Number.isFinite(w) && w >= 40) ? w : (Number.isFinite(ds) && ds >= 40 ? ds : 55);
-          })()
-        }))
-      };
-    });
-
-    p.flow = Array.from(document.querySelectorAll('.flow-input')).map(i=> i.innerText);
-    p.video = Array.from(document.querySelectorAll('#video-tbody td[contenteditable]')).map(td=> td.innerText);
-    p.task = Array.from(document.querySelectorAll('#task-tbody td[contenteditable]')).map(td=> td.innerText);
-
-    p.fields = collectFieldsFromUI();
-
-    const r = document.getElementById('plan-font-range');
-    if(r){
-      const fs = parseInt(r.value, 10);
-      p.planSettings.fontSize = Number.isFinite(fs) ? fs : 11;
-    }
-
-    // lineHeight は setPlanLineHeight() が p.planSettings に反映済みの想定
-
-    p.planHtml = document.getElementById('plan-doc-area').innerHTML;
-    p.presHtml = document.getElementById('pres-doc-area').innerHTML;
-
-    p.videoScriptRows = Array.from(document.querySelectorAll('#video-script-tbody tr')).map(tr=>{
-      return {
-        rowid: tr.dataset.rowid,
-        text: (tr.querySelector('[data-vs="text"]')?.innerText || ""),
-        visual: (tr.querySelector('[data-vs="visual"]')?.innerText || ""),
-        shoot: (tr.querySelector('select[data-vs="shoot"]')?.value || "未着手"),
-        edit: (tr.querySelector('select[data-vs="edit"]')?.value || "未着手")
-      };
-    });
-
-    // ✅ 決め台詞を保存（ep1-c1のテキスト）
-    p.videoCatchphrase = (getCellText('ep1-c1') || "").trim();
-
-    saveToStorage();
-  }
-
-  function resetEditorFields(){
-    document.querySelectorAll('.flow-input').forEach(el=> el.innerText="");
-    document.querySelectorAll('#video-tbody td[contenteditable]').forEach(el=> el.innerText="");
-    document.querySelectorAll('#task-tbody td[contenteditable]').forEach(el=> el.innerText="");
-    document.querySelectorAll('.child-container').forEach(c=> c.remove());
-    document.querySelectorAll('[data-field]').forEach(el=> el.value="");
-    document.getElementById('plan-doc-area').innerHTML = "";
-    document.getElementById('pres-doc-area').innerHTML = "";
-    buildVideoScriptTable();
-
-    document.getElementById('plan-input')?.classList.remove('open');
-    document.getElementById('pres-input')?.classList.remove('open');
-  }
-
-  function collectFieldsFromUI(){
-    const p = getCurrentProject();
-    const base = (p && p.fields) ? {...p.fields} : defaultFields();
-
-    // ✅ 同じ data-field が複数あるので「最後に触った値」を優先しつつ、空で上書きしない
-    document.querySelectorAll('[data-field]').forEach(el=>{
-      const k = el.dataset.field;
-      const v = el.value || "";
-      if(v !== "" || (base[k] ?? "") === "") base[k] = v;
-    });
-    return base;
-  }
-
-  function setFieldsToUI(fields){
-    document.querySelectorAll('[data-field]').forEach(el=>{
-      el.value = fields?.[el.dataset.field] || "";
-    });
-  }
-
-  // ✅ 入力の同期：同じ data-field を全UIへ反映
-  function syncSameFieldToAll(sourceEl){
-    const key = sourceEl?.dataset?.field;
-    if(!key) return;
-    const val = sourceEl.value || "";
-    document.querySelectorAll(`[data-field="${key}"]`).forEach(el=>{
-      if(el !== sourceEl) el.value = val;
-    });
-  }
-
-  // 入力変更で即保存（軽く）＋同一フィールド同期
-  document.addEventListener('input', (e)=>{
-    if(e.target && e.target.matches('[data-field]')){
-      syncSameFieldToAll(e.target);
-      saveEditorData();
-    }
-  });
-
-  /* -------------------------
-     Plan font size control
-  ------------------------- */
-  function setPlanFontSize(size, shouldSave=true){
-    const fs = Math.max(9, Math.min(14, parseInt(size,10) || 11));
-    document.documentElement.style.setProperty('--planFont', fs + 'px');
-    const range = document.getElementById('plan-font-range');
-    const label = document.getElementById('plan-font-val');
-    if(range) range.value = String(fs);
-    if(label) label.innerText = fs + 'px';
-
-    const p = getCurrentProject();
-    if(p){
-      ensureProjectDefaults(p);
-      p.planSettings.fontSize = fs;
-      if(shouldSave) saveEditorData();
-    }
-  }
-
-  /* ★追加：行間制御（A4フィットで使用） */
-  function setPlanLineHeight(v, shouldSave=true){
-    const lh = Math.max(1.2, Math.min(1.65, parseFloat(v) || 1.45));
-    document.documentElement.style.setProperty('--planLine', String(lh));
-
-    const p = getCurrentProject();
-    if(p){
-      ensureProjectDefaults(p);
-      p.planSettings.lineHeight = lh;
-      if(shouldSave) saveEditorData();
-    }
-  }
-
-  const planFontRange = document.getElementById('plan-font-range');
-  if(planFontRange){
-    planFontRange.addEventListener('input', ()=>{
-      setPlanFontSize(planFontRange.value, false);
-    });
-    planFontRange.addEventListener('change', ()=>{
-      setPlanFontSize(planFontRange.value, true);
-      if(isPlanOverflow()) fitPlanToA4({silent:true});
-      toast();
-    });
-  }
-
-  /* -------------------------
-     Plan images (add / delete / replace / resize / box size)
-  ------------------------- */
-  let planImagePickMode = { mode: "append", index: -1 };
-
-  function openPlanImagePicker(){
-    planImagePickMode = { mode: "append", index: -1 };
-    const inp = document.getElementById('plan-image-input');
-    if(!inp) return;
-    inp.value = "";
-    inp.click();
-  }
-
-  function openPlanImageReplacePicker(index){
-    planImagePickMode = { mode: "replace", index: index };
-    const inp = document.getElementById('plan-image-input');
-    if(!inp) return;
-    inp.value = "";
-    inp.click();
-  }
-
-  const planImgInput = document.getElementById('plan-image-input');
-  if(planImgInput){
-    planImgInput.addEventListener('change', async ()=>{
-      const p = getCurrentProject();
-      if(!p) return;
-      ensureProjectDefaults(p);
-
-      const files = Array.from(planImgInput.files || []);
-      if(files.length === 0) return;
-
-      if(planImagePickMode.mode === "replace" && planImagePickMode.index >= 0){
-        const idx = planImagePickMode.index;
-        const file = files[0];
-        const src = await fileToDataURL(file);
-        if(!src) return;
-
-        // 置換（scale/boxHは維持）
-        const old = p.planSettings.images[idx] || { src:"", scale:100, boxH:120 };
-        p.planSettings.images[idx] = { src, scale: old.scale ?? 100, boxH: old.boxH ?? 120 };
-
-      }else{
-        // 追加（空いている枠へ詰める、最大2）
-        const slots = p.planSettings.images || [];
-        const canAdd = Math.max(0, 2 - slots.length);
-        const addFiles = files.slice(0, canAdd);
-
-        for(const f of addFiles){
-          const src = await fileToDataURL(f);
-          if(src) slots.push({ src, scale: 100, boxH: 120 });
-        }
-        p.planSettings.images = slots.slice(0,2);
-      }
-
-      updatePlanImagesSlot();
-      saveEditorData();
-
-      // ★追加：溢れたら自動でA4に収める（企画書が表示中のときだけ判定）
-      if(isPlanOverflow()) fitPlanToA4({silent:true});
-
-      toast();
-    });
-  }
-
-  function fileToDataURL(file){
-    return new Promise((resolve)=>{
-      const reader = new FileReader();
-      reader.onload = ()=> resolve(reader.result);
-      reader.onerror = ()=> resolve("");
-      reader.readAsDataURL(file);
-    });
-  }
-
-  function deletePlanImage(index){
-    const p = getCurrentProject();
-    if(!p) return;
-    ensureProjectDefaults(p);
-    p.planSettings.images = (p.planSettings.images || []).filter((_,i)=> i !== index);
-    updatePlanImagesSlot();
-    saveEditorData();
-    if(isPlanOverflow()) fitPlanToA4({silent:true});
-    toast();
-  }
-
-  function setPlanImageScale(index, scale){
-    const p = getCurrentProject();
-    if(!p) return;
-    ensureProjectDefaults(p);
-    const sc = Math.max(50, Math.min(160, parseInt(scale,10) || 100));
-    if(!p.planSettings.images[index]) return;
-    p.planSettings.images[index].scale = sc;
-    updatePlanImagesSlot(false); // 再描画（保存は呼び出し元で）
-  }
-
-  /* ★追加：画像枠（占有サイズ）の高さを変更 */
-  function setPlanImageBoxH(index, h){
-    const p = getCurrentProject();
-    if(!p) return;
-    ensureProjectDefaults(p);
-
-    const bh = Math.max(80, Math.min(260, parseInt(h,10) || 120));
-    if(!p.planSettings.images[index]) return;
-    p.planSettings.images[index].boxH = bh;
-
-    // デフォルト変数も更新（体感安定用）
-    document.documentElement.style.setProperty('--planImgBoxH', bh + 'px');
-    updatePlanImagesSlot(false);
-  }
-
-  function updatePlanImagesSlot(shouldSave=false){
-    const p = getCurrentProject();
-    if(!p) return;
-    ensureProjectDefaults(p);
-
-    const slot = document.getElementById('plan-image-slot');
-    if(!slot) return;
-
-    const imgs = (p.planSettings?.images || []).slice(0,2);
-
-    const boxes = [0,1].map(i=>{
-      const im = imgs[i];
-      if(im && im.src){
-        const sc = Math.max(50, Math.min(160, parseInt(im.scale,10) || 100));
-        const bh = Math.max(80, Math.min(260, parseInt(im.boxH,10) || 120));
-        return `
-          <div class="imgbox" style="height:${bh}px;">
-            <img alt="plan image ${i+1}" src="${im.src}" style="transform: scale(${sc/100});">
-            <div class="img-tools no-print">
-              <div class="row">
-                <span class="lbl">画像${i+1}</span>
-                <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                  <button class="btn-mini" onclick="openPlanImageReplacePicker(${i})">差し替え</button>
-                  <button class="btn-mini danger" onclick="deletePlanImage(${i})">削除</button>
-                </div>
-              </div>
-
-              <div class="row">
-                <span class="lbl">画像サイズ</span>
-                <input type="range" min="50" max="160" step="5" value="${sc}"
-                  oninput="setPlanImageScale(${i}, this.value)"
-                  onchange="saveEditorData(); if(isPlanOverflow()) fitPlanToA4({silent:true}); toast();">
-                <span class="lbl">${sc}%</span>
-              </div>
-
-              <div class="row">
-                <span class="lbl">枠高さ</span>
-                <input type="range" min="80" max="260" step="10" value="${bh}"
-                  oninput="setPlanImageBoxH(${i}, this.value)"
-                  onchange="saveEditorData(); if(isPlanOverflow()) fitPlanToA4({silent:true}); toast();">
-                <span class="lbl">${bh}px</span>
-              </div>
-            </div>
-          </div>
-        `;
-      }
-
-      // 空枠：追加ボタン
-      return `
-        <div class="imgbox" style="flex-direction:column; gap:10px; color:#94a3b8; font-size:11px; font-weight:900;">
-          画像${i+1}（未設定）
-          <button class="btn-mini no-print" onclick="openPlanImagePicker()">＋ 追加</button>
-        </div>
-      `;
-    }).join("");
-
-    slot.innerHTML = `<div class="plan-images">${boxes}</div>`;
-    if(shouldSave) saveEditorData();
-  }
-
-  /* -------------------------
-     ★A4 Fit（オーバーフロー判定 & 自動調整）
-  ------------------------- */
-  function isPlanOverflow(){
-    const page = document.getElementById('tab-plan');
-    if(!page) return false;
-    // 表示されていない状態（display:none）では判定しない
-    if(page.offsetParent === null) return false;
-    return page.scrollHeight > (page.clientHeight + 2);
-  }
-
-  function fitPlanToA4({silent=false} = {}){
-    const p = getCurrentProject();
-    if(!p) return;
-    ensureProjectDefaults(p);
-
-    // 企画書が見えていないなら、無理に判定しない（ボタン押下時は通常表示中）
-    const plan = document.getElementById('tab-plan');
-    if(!plan || plan.offsetParent === null){
-      if(!silent) alert("企画書タブを開いた状態で実行してください。");
-      return;
-    }
-
-    // 現在のUI値を反映
-    const range = document.getElementById('plan-font-range');
-    if(range){
-      const fs = parseInt(range.value,10);
-      if(Number.isFinite(fs)) p.planSettings.fontSize = fs;
-    }
-
-    let fs = p.planSettings.fontSize ?? 11;
-    let lh = p.planSettings.lineHeight ?? 1.45;
-
-    const minFont = 9;
-    const minLine = 1.2;
-    const minBoxH = 80;
-
-    setPlanFontSize(fs, false);
-    setPlanLineHeight(lh, false);
-    updatePlanImagesSlot(false);
-
-    let guard = 0;
-    while(isPlanOverflow() && guard < 80){
-      guard++;
-
-      // 1) 画像枠を縮める（優先）
-      let changed = false;
-      if(Array.isArray(p.planSettings.images)){
-        for(const im of p.planSettings.images){
-          if(im && Number.isFinite(im.boxH) && im.boxH > minBoxH){
-            im.boxH = Math.max(minBoxH, im.boxH - 10);
-            changed = true;
-          }
-        }
-        if(changed){
-          updatePlanImagesSlot(false);
-          continue;
-        }
-      }
-
-      // 2) 文字を縮める
-      if(fs > minFont){
-        fs -= 1;
-        p.planSettings.fontSize = fs;
-        setPlanFontSize(fs, false);
-        continue;
-      }
-
-      // 3) 行間を詰める（最後）
-      if(lh > minLine){
-        lh = Math.max(minLine, Math.round((lh - 0.05) * 100) / 100);
-        p.planSettings.lineHeight = lh;
-        setPlanLineHeight(lh, false);
-        continue;
-      }
-
-      break;
-    }
-
-    saveEditorData();
-    if(!silent) toast();
-  }
-
-  /* -------------------------
-     Plan doc rendering
-  ------------------------- */
-  function fillPlanText(t, f){
-    let s = t;
-
-    if(s.includes("作成日：")) s = s.replace("作成日：20XX年XX月XX日", "作成日：" + (f.createdDate || "20XX年XX月XX日"));
-    s = s.replace("（企業名）", f.companyName || "（企業名）");
-    s = s.replace("（部署名）", f.department || "（部署名）");
-
-    if(s.trim() === "ご担当者様" && f.contactName){
-      s = f.contactName + " 様";
-    }
-
-    s = s.replace("所属：（学校名）（学年）", "所属：" + (f.schoolName || "（学校名）") + (f.grade ? "（" + f.grade + "）" : "（学年）"));
-
-    if(s.startsWith("生徒代表：")){
-      s = "生徒代表：" + (f.studentRep || "　　　　　");
-    }
-    if(s.startsWith("担当教員：")){
-      s = "担当教員：" + (f.teacherRep || "　　　　　");
-    }
-
-    s = s.replace("私たちは（学校名）の探究学習", "私たちは" + (f.schoolName || "（学校名）") + "の探究学習");
-    s = s.replace("（テーマ：　　　　　　　　　）", "（テーマ：" + (f.theme || "　　　　　　　　　") + "）");
-
-    if(s.includes("候補日時：")){
-      const d1 = f.dt1 || "　月　日　　時〜";
-      const d2 = f.dt2 || "　月　日　　時〜";
-      const d3 = f.dt3 || "　月　日　　時〜";
-      s = "候補日時：\n第1希望（" + d1 + "）／第2希望（" + d2 + "）／第3希望（" + d3 + "）";
-    }
-
-    if(s.startsWith("参加者：")){
-      const sc = f.studentsCount || "　";
-      const tc = f.teachersCount || "　";
-      s = `参加者：生徒（${sc}名）＋教員（${tc}名）`;
-    }
-    if(s.startsWith("場所：")){
-      s = "場所：" + (f.place || "／オンライン");
-    }
-
-    if(s.includes("メール：（　　　　　　　　　）")){
-      const em = f.email || "　　　　　　　　　";
-      const ph = f.phone || "　　　　　　　　　";
-      s = `メール：（${em}）\n電話：（${ph}）`;
-    }
-
-    return s;
-  }
-
-  const PLAN_HEADINGS = new Set([
-    "謝辞","取材の目的","取材概要（希望）","内容説明",
-    "お伺いしたい内容（例）","資料や写真について","【連絡先】"
-  ]);
-
-  function formatPlanLine(raw){
-    const t = (raw || "").trim();
-    if(t === "") return { html:"", cls:"" };
-
-    if(t === "取材のお願い"){
-      return { html: `<strong>${escapeHtml(t)}</strong>`, cls:"plan-title" };
-    }
-
-    if(PLAN_HEADINGS.has(t)){
-      return { html: `<strong>${escapeHtml(t)}</strong>`, cls:"plan-heading plan-bullet" };
-    }
-
-    const m = t.match(/^([^：]+)：(.*)$/);
-    if(m){
-      const label = m[1].trim();
-      const rest  = m[2].trim();
-      return { html: `<strong>${escapeHtml(label)}：</strong>${escapeHtml(rest)}`, cls:"plan-bullet" };
-    }
-
-    const bulletCandidates = [
-      "貴社の事業概要","課題に対する取り組み","成果と難しさ","今後の展望","中高生や地域に期待すること"
-    ];
-    if(bulletCandidates.some(k=> t.startsWith(k))){
-      return { html: `・${escapeHtml(t)}`, cls:"plan-bullet" };
-    }
-
-    return { html: escapeHtml(raw), cls:"" };
-  }
-
-  function renderPlanDoc(forceHtml){
-    const p = getCurrentProject();
-    const f = (p && p.fields) ? p.fields : collectFieldsFromUI();
-
-    const area = document.getElementById('plan-doc-area');
-    if(forceHtml){
-      area.innerHTML = forceHtml;
-      area.querySelectorAll('.doc-line[contenteditable="true"]').forEach(line=>{
-        line.addEventListener('input', ()=> saveEditorData());
-      });
-      updatePlanImagesSlot();
-      return;
-    }
-
-    setPlanFontSize(p?.planSettings?.fontSize ?? 11, false);
-    setPlanLineHeight(p?.planSettings?.lineHeight ?? 1.45, false);
-
-    area.innerHTML = PLAN_TEMPLATE.map((row, idx)=>{
-      if(row.text === "__CONTENT_DESC_BLOCK__"){
-        const desc = (f.planDescText || "（例）当日は、事業概要・課題・工夫・今後の展望について伺い、授業成果として発表資料にまとめます。");
-        return `
-          <div class="doc-line" contenteditable="true" data-doc="plan" data-idx="${idx}" style="text-align:left;">
-            ${escapeHtml(desc)}
-          </div>
-          <div id="plan-image-slot" class="doc-line" style="text-align:left; padding-top:4px;"></div>
-        `;
-      }
-
-      const txt = fillPlanText(row.text, f);
-      const { html, cls } = formatPlanLine(txt);
-      const safe = (html || "").replace(/\n/g, "<br>");
-      return `<div class="doc-line ${cls}" contenteditable="true" data-doc="plan" data-idx="${idx}" style="text-align:${row.align};">${safe}</div>`;
-    }).join("");
-
-    area.querySelectorAll('.doc-line[contenteditable="true"]').forEach(line=>{
-      line.addEventListener('input', ()=> saveEditorData());
-    });
-
-    updatePlanImagesSlot();
-  }
-
-  function regenPlan(silent){
-    if(!silent){
-      if(!confirm("入力内容で企画書を再生成します。本文で手直しした内容は上書きされます。よろしいですか？")) return;
-    }
-    const p = getCurrentProject();
-    if(!p) return;
-    p.fields = collectFieldsFromUI();
-    renderPlanDoc("");
-    saveEditorData();
-    if(isPlanOverflow()) fitPlanToA4({silent:true});
-    if(!silent) toast();
-  }
-
-  /* -------------------------
-     Presentation doc rendering
-  ------------------------- */
-  function renderPresDoc(forceHtml){
-    const p = getCurrentProject();
-    const f = (p && p.fields) ? p.fields : collectFieldsFromUI();
-    const flow = Array.from(document.querySelectorAll('.flow-input')).map(el=> el.innerText);
-
-    const area = document.getElementById('pres-doc-area');
-
-    if(forceHtml){
-      area.innerHTML = forceHtml;
-      area.querySelectorAll('.doc-line[contenteditable="true"]').forEach(line=>{
-        line.addEventListener('input', ()=> saveEditorData());
-      });
-      return;
-    }
-
-    const slots = [
-      f.teamName || "",
-      f.presTopic || flow[0] || "",
-      f.theme || flow[2] || "",
-      f.fieldAction1 || "（例：インタビュー）",
-      f.insight1 || "（気づき）",
-      f.research2 || "（調査）",
-      f.fact2 || "（事実）",
-      f.coreProblem || flow[2] || "",
-      f.hypCause || "",
-      f.hypReason || "",
-      f.hypSolution || "",
-      f.ideaName || flow[3] || "",
-      f.concept || "",
-      f.feature1 || "",
-      f.feature2 || "",
-      f.verifyMethod || flow[4] || "",
-      f.verifyStep1 || "",
-      f.verifyCheck || "",
-      f.doDate || "",
-      f.doPlace || "",
-      f.target || "",
-      f.doWhat || "",
-      f.data1 || "",
-      f.learned || "",
-      f.conclusion || "",
-      f.discussion || "",
-      "（課題）",
-      f.nextNeed || "",
-      (f.future || flow[5] || "") + "という"
-    ];
-    let slotIdx = 0;
-
-    const blocks = [];
-    for(const line of PRES_RAW){
-      if(line === "------------------------"){
-        blocks.push({ type:"sep" });
-        continue;
-      }
-      const isHeading = (line.length <= 6 && !line.includes("。") && !line.includes("、"));
-      if(isHeading){
-        blocks.push({ type:"heading", text: line });
-      }else{
-        let txt = line;
-        while(txt.includes("「」") && slotIdx < slots.length){
-          txt = txt.replace("「」", "「" + (slots[slotIdx] || "") + "」");
-          slotIdx++;
-        }
-        blocks.push({ type:"p", text: txt });
-      }
-    }
-
-    area.innerHTML = blocks.map((b, i)=>{
-      if(b.type==="sep"){
-        return `<div class="doc-line" style="text-align:left; color:#9ca3af; font-weight:900;">------------------------</div>`;
-      }
-      if(b.type==="heading"){
-        return `<div class="doc-line" contenteditable="true" data-doc="pres" data-idx="${i}" style="text-align:left; font-weight:1000;">${escapeHtml(b.text)}</div>`;
-      }
-      return `<div class="doc-line" contenteditable="true" data-doc="pres" data-idx="${i}" style="text-align:left;">${escapeHtml(b.text)}</div>`;
-    }).join("");
-
-    area.querySelectorAll('.doc-line[contenteditable="true"]').forEach(line=>{
-      line.addEventListener('input', ()=> saveEditorData());
-    });
-  }
-
-  function regenPres(silent){
-    if(!silent){
-      if(!confirm("入力内容でプレゼン台本を再生成します。本文で手直しした内容は上書きされます。よろしいですか？")) return;
-    }
-    const p = getCurrentProject();
-    if(!p) return;
-    p.fields = collectFieldsFromUI();
-    renderPresDoc("");
-    saveEditorData();
-    if(!silent) toast();
-  }
-
-  /* -------------------------
-     Video auto draft（決め台詞→1文ずつ説明→次回予告）
-  ------------------------- */
-  function pick(...vals){
-    return vals.find(v => (v||"").toString().trim() !== "") || "";
-  }
-
-  function buildEpisodeCuts(ep, ctx){
-    const { flow, f, catchphrase } = ctx;
-
-    const team = pick(f.teamName, "（チーム名）");
-    const goal = pick(flow[0], f.presTopic, "（目標）");
-    const place = pick(f.doPlace, "（場所）");
-    const theme = pick(f.theme, "（テーマ）");
-    const problem = pick(f.coreProblem, "（課題）");
-    const action1 = pick(f.fieldAction1, "（現場でやったこと）");
-    const idea = pick(f.ideaName, "（作戦）");
-    const concept = pick(f.concept, "");
-    const next = pick(f.nextNeed, "（次の展開）");
-
-    const epLabel = `第${ep}話`;
-
-    const cp = (catchphrase || "").trim() || `私たちは『${goal}』${team}です！`;
-
-    const cuts = [
-      {
-        text: cp,
-        visual: `チーム全員で宣言（タイトルテロップ＋${epLabel}）`
-      },
-      {
-        text: `舞台は${place}、テーマは「${theme}」です。`,
-        visual: `場所の全景（ドローン/引きの画）＋地名テロップ`
-      },
-      {
-        text: `でも今、${problem}という壁があります。`,
-        visual: `困りごとが伝わるカット（静かな街/資料/表情）`
-      },
-      {
-        text: `まず私たちは${action1}から始めました。`,
-        visual: `現場で取材・調査している様子`
-      },
-      {
-        text: `そこで見えたリアルを、1つずつ言語化します。`,
-        visual: `メモ・付箋・ホワイトボードで整理する手元`
-      },
-      {
-        text: `そして作戦は「${idea}」です。`,
-        visual: `作戦名が出るカット（アイデア図・画面・スケッチ）`
-      },
-      {
-        text: concept ? `一言でいうと「${concept}」です。` : `一言でいうと「小さく試して改善」です。`,
-        visual: `コンセプトを象徴する絵（デモ/プロト/体験）`
-      },
-      {
-        text: `次回「${next}」へ！`,
-        visual: `次回予告（向かう背中/移動/扉が開くカット）`
-      },
-    ];
-
-    return cuts;
-  }
-
-  function autoDraftVideo(){
-    const p = getCurrentProject();
-    if(!p) return;
-    const f = p.fields || collectFieldsFromUI();
-    const flow = Array.from(document.querySelectorAll('.flow-input')).map(el=> el.innerText);
-
-    const existingCatch = (p.videoCatchphrase || getCellText('ep1-c1') || "").trim();
-    const ctx = { flow, f, catchphrase: existingCatch };
-
-    const tbody = document.getElementById('video-script-tbody');
-
-    for(let ep=1; ep<=6; ep++){
-      const cuts = buildEpisodeCuts(ep, ctx);
-      for(let cut=1; cut<=LINES_PER_EP; cut++){
-        const tr = tbody.querySelector(`tr[data-rowid="ep${ep}-c${cut}"]`);
-        if(!tr) continue;
-        const tcell = tr.querySelector('[data-vs="text"]');
-        const vcell = tr.querySelector('[data-vs="visual"]');
-        const row = cuts[cut-1] || { text:"", visual:"" };
-
-        // 空欄のみ埋める（既存編集は壊さない）
-        if(tcell && (tcell.innerText || "").trim() === "") tcell.innerText = row.text || "";
-        if(vcell && (vcell.innerText || "").trim() === "") vcell.innerText = row.visual || "";
-      }
-    }
-
-    // ✅ 決め台詞は全話へ同期（空欄でも埋める）
-    applyCatchphraseToAll(existingCatch || getCellText('ep1-c1'));
-
-    saveEditorData();
-    toast();
-  }
-
-  /* -------------------------
-     ✅ Video catchphrase sync
-     - どれかの「各話カット1（c1）」を編集すると全話のc1へ同期
-  ------------------------- */
-  function getCellText(rowid){
-    const tr = document.querySelector(`#video-script-tbody tr[data-rowid="${rowid}"]`);
-    const td = tr?.querySelector('[data-vs="text"]');
-    return td ? td.innerText : "";
-  }
-
-  function setCellText(rowid, text){
-    const tr = document.querySelector(`#video-script-tbody tr[data-rowid="${rowid}"]`);
-    const td = tr?.querySelector('[data-vs="text"]');
-    if(td) td.innerText = text || "";
-  }
-
-  function applyCatchphraseToAll(text){
-    const cp = (text || "").toString();
-    for(let ep=1; ep<=6; ep++){
-      setCellText(`ep${ep}-c1`, cp);
-    }
-    const p = getCurrentProject();
-    if(p){
-      p.videoCatchphrase = cp.trim();
-    }
-  }
-
-  // 入力イベントで同期（video table）
-  document.getElementById('video-script-tbody').addEventListener('input', (e)=>{
-    const td = e.target;
-    if(!td || td.getAttribute('data-vs') !== 'text') return;
-    const tr = td.closest('tr');
-    if(!tr) return;
-
-    // カット1だけ同期
-    const rowid = tr.dataset.rowid || "";
-    if(rowid.endsWith('-c1')){
-      const cp = td.innerText || "";
-      applyCatchphraseToAll(cp);
-      saveEditorData();
-    }else{
-      saveEditorData();
-    }
-  });
-
-  /* -------------------------
-     Bubble logic
-  ------------------------- */
-  function organizePolygon(parentId){
-    const pb = document.getElementById(parentId);
-    const children = Array.from(pb.querySelectorAll('.child-container'));
-    const total = children.length; if(total===0) return;
-    const centerX = pb.offsetWidth/2 - 27;
-    const centerY = pb.offsetHeight/2 - 27;
-    const radius = total === 1 ? 0 : 45;
-    children.forEach((child, i)=>{
-      const angle = (i * 2 * Math.PI / total) - (Math.PI / 2);
-      child.style.left = (centerX + radius * Math.cos(angle)) + 'px';
-      child.style.top  = (centerY + radius * Math.sin(angle)) + 'px';
-    });
-  }
-
-  function createChildDOM(label, text="", size=55, x=0, y=0){
-    const container = document.createElement('div');
-    container.className = 'child-container';
-    container.innerHTML = `
-      <div class="child-label-wrap">
-        <div class="child-label" contenteditable="true">${escapeHtml(label)}</div>
-        <button class="child-del-btn no-print" onclick="deleteChildBubble(this)">×</button>
-      </div>
-      <div class="child-bubble" style="width:${size}px; height:${size}px;" data-size="${size}">
-        <input class="child-text" value="${escapeAttr(text)}">
-        <div class="resize-handle"></div>
-      </div>
-    `;
-    container.style.left = x + 'px';
-    container.style.top  = y + 'px';
-
-    container.oncontextmenu = (e)=>{ e.preventDefault(); deleteChildBubble(container.querySelector('.child-del-btn')); };
-
-    const startAction = (e)=>{
-      const coords = getClientCoords(e);
-      if(e.target.classList.contains('resize-handle')){
-        resizeElem = container.querySelector('.child-bubble');
-        e.stopPropagation();
-        return;
-      }
-      if(e.target.hasAttribute('contenteditable') || e.target.tagName === 'INPUT' || e.target.classList.contains('child-del-btn')) return;
-      activeElem = container; e.stopPropagation();
-      const r = container.getBoundingClientRect();
-      offset.x = coords.x - r.left; offset.y = coords.y - r.top;
-      container.style.transition = 'none';
-    };
-    container.onmousedown = startAction;
-    container.ontouchstart = startAction;
-
-    const labelEl = container.querySelector('.child-label');
-    const textEl  = container.querySelector('.child-text');
-    labelEl.addEventListener('input', ()=> saveEditorData());
-    textEl.addEventListener('input', ()=> saveEditorData());
-
-    return container;
-  }
-
-  function deleteChildBubble(btn){
-    const container = btn.closest('.child-container');
-    const parentId = container.parentElement.id;
-    container.remove();
-    if(parentId) organizePolygon(parentId);
-    saveEditorData();
-  }
-
-  function smartAdd(parentId){
-    const pb = document.getElementById(parentId);
-    const existingLabels = Array.from(pb.querySelectorAll('.child-label')).map(el=> el.innerText);
-    const label = masterConfig[parentId].find(l=> !existingLabels.includes(l)) || '新規';
-    pb.appendChild(createChildDOM(label, "", 55, 50, 50));
-    organizePolygon(parentId);
-    saveEditorData();
-  }
-
-  const globalStart = (e)=>{
-    const coords = getClientCoords(e);
-    if(e.target.classList.contains('resize-handle')){
-      resizeElem = e.target.parentElement;
-      e.stopPropagation(); return;
-    }
-    const pb = e.target.closest('.parent-bubble');
-    if(pb && !e.target.classList.contains('quick-add-btn')){
-      activeElem = pb;
-      const r = pb.getBoundingClientRect();
-      offset.x = coords.x - r.left;
-      offset.y = coords.y - r.top;
-    }
-  };
-  document.onmousedown = globalStart;
-  document.ontouchstart = globalStart;
-
-  const globalMove = (e)=>{
-    if(!activeElem && !resizeElem) return;
-    const coords = getClientCoords(e);
-    if(resizeElem){
-      const r = resizeElem.getBoundingClientRect();
-      const newSize = Math.max(40, coords.x - r.left);
-      resizeElem.style.width = resizeElem.style.height = newSize + 'px';
-      if(resizeElem.classList && resizeElem.classList.contains('child-bubble')){
-        resizeElem.dataset.size = String(Math.round(newSize));
-      }
-      e.preventDefault();
-      return;
-    }
-    const canvas = document.getElementById('canvas').getBoundingClientRect();
-    if(activeElem.classList.contains('child-container')){
-      const p = activeElem.parentElement.getBoundingClientRect();
-      activeElem.style.left = (coords.x - p.left - offset.x) + 'px';
-      activeElem.style.top  = (coords.y - p.top  - offset.y) + 'px';
-    }else{
-      activeElem.style.left = (coords.x - canvas.left - offset.x) + 'px';
-      activeElem.style.top  = (coords.y - canvas.top  - offset.y) + 'px';
-    }
-    e.preventDefault();
-  };
-  document.onmousemove = globalMove;
-  document.ontouchmove = globalMove;
-
-  document.onmouseup = document.ontouchend = ()=>{
-    if(activeElem || resizeElem) saveEditorData();
-    activeElem = null; resizeElem = null;
-  };
-
-  /* -------------------------
-     HTML escape
-  ------------------------- */
-  function escapeHtml(str){
-    return (str ?? "").toString()
-      .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;").replaceAll("'","&#039;");
-  }
-  function escapeAttr(str){
-    return escapeHtml(str).replaceAll("\n"," ");
-  }
-
-  /* -------------------------
-     Initial load
-  ------------------------- */
-  window.onload = ()=>{
-    if(data.folders.length === 0) createNewFolder();
-    renderDashboard();
+    if(data.folders.length===0) createNewFolder(); else renderDashboard();
     setPlanFontSize(11, false);
     setPlanLineHeight(1.45, false);
-  };
+    runSelfTests();
+  });
 </script>
-
-<!-- ✅追加：SheetJS（Excel .xlsx 出力用） -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </body>
 </html>
