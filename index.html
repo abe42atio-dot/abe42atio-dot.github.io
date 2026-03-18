@@ -98,6 +98,1634 @@
   .scenario-ep-term select,.scenario-ep-date input{ width:100%; border:1px solid #d1d5db; border-radius:10px; padding:8px; font-size:12px; }
 
   .workflow-playful{ border:2px solid #111; border-radius:20px; overflow:hidden; background:linear-gradient(180deg,#fffef8 0%,#f8fbff 100%); }
+  .workflow-resizable{ width:100%; max-width:none; transition:width .18s ease; }
+  .workflow-titlebar{ padding:14px; background:linear-gradient(180deg,#ffe680 0%,#f5c400 100%); border-bottom:2px solid #111; text-align:center; font-size:24px; font-weight:1000; }
+  .workflow-scroll{ padding:12px; border-bottom:2px solid #111; overflow-x:auto; }
+  .flow-track{ display:flex; flex-direction:column; gap:14px; min-width:1200px; }
+  .flow-node-wrap{ display:flex; flex-direction:column; gap:8px; }
+  .flow-arrow{ font-size:22px; font-weight:1000; color:#64748b; text-align:center; line-height:1; }
+  .flow-node{ width:100%; border:2px solid #111; border-radius:16px; overflow:hidden; background:#fff; box-shadow:0 8px 20px rgba(17,24,39,.06); }
+  .flow-node[data-cat="1"] .flow-node-head{ background:var(--fun1); }
+  .flow-node[data-cat="2"] .flow-node-head{ background:var(--fun2); }
+  .flow-node[data-cat="3"] .flow-node-head{ background:var(--fun3); }
+  .flow-node[data-cat="4"] .flow-node-head{ background:var(--fun4); }
+  .flow-node[data-cat="5"] .flow-node-head{ background:var(--fun5); }
+  .flow-node[data-cat="6"] .flow-node-head{ background:var(--fun6); }
+  .flow-node-head{ padding:12px; font-weight:1000; display:flex; align-items:center; justify-content:space-between; gap:8px; cursor:pointer; }
+  .flow-node-title{ font-size:14px; }
+  .flow-node-toggle{ font-size:12px; border:1px solid #111; background:#fff; border-radius:999px; padding:4px 8px; }
+  .flow-node-body{ display:none; padding:10px; border-top:2px solid #111; background:#fff; }
+  .flow-node.open .flow-node-body{ display:block; }
+  .folder-list-wrap{ display:flex; flex-direction:column; gap:10px; }
+  .wf-folder{ border:2px dashed #cbd5e1; border-radius:14px; background:#f8fafc; padding:10px; }
+  .wf-folder-head{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px; }
+  .wf-folder-title{ width:100%; border:1px solid #d1d5db; border-radius:10px; padding:8px 10px; font-size:12px; font-weight:1000; background:#fff; }
+  .wf-folder-tools{ display:flex; gap:6px; flex-wrap:wrap; }
+  .wf-folder-desc{ font-size:11px; color:#64748b; line-height:1.6; margin:0 0 8px; }
+  .wf-folder-table{ width:100%; border-collapse:collapse; font-size:12px; table-layout:fixed; }
+  .wf-folder-table th,.wf-folder-table td{ border:1px solid #d1d5db; padding:10px; vertical-align:top; }
+  .wf-folder-table th{ background:#fffdf0; font-weight:1000; }
+  .wf-folder-table textarea,.wf-folder-table input,.wf-folder-table select{ width:100%; border:1px solid #d1d5db; border-radius:10px; padding:8px 10px; font-size:12px; background:#fff; }
+  .wf-folder-table textarea{ min-height:88px; resize:vertical; line-height:1.6; }
+  .drag-chip{ cursor:grab; border:1px solid #111; background:#fff; border-radius:999px; padding:4px 8px; font-size:11px; font-weight:1000; }
+  .tool-sheet{ display:flex; flex-direction:column; gap:10px; }
+  .tool-sheet-card{ border:2px dashed #cbd5e1; border-radius:14px; background:#f8fafc; padding:12px; }
+  .tool-sheet-title{ font-size:13px; font-weight:1000; margin-bottom:6px; }
+  .tool-sheet-desc{ font-size:11px; color:#64748b; line-height:1.7; margin-bottom:10px; }
+  .tool-sheet-grid{ display:grid; grid-template-columns:160px 1fr; gap:8px; }
+  .tool-sheet-grid label{ font-size:11px; color:#64748b; font-weight:1000; align-self:center; }
+  .tool-sheet-grid input,.tool-sheet-grid textarea,.tool-sheet-grid select{ width:100%; border:1px solid #d1d5db; border-radius:10px; padding:8px 10px; font-size:12px; background:#fff; }
+  .tool-sheet-grid textarea{ min-height:72px; resize:vertical; }
+  .todo-summary-wrap{ padding:12px; }
+  .todo-summary-head{ display:flex; justify-content:space-between; gap:10px; align-items:flex-start; margin-bottom:10px; }
+  .todo-summary-head h3{ margin:0; font-size:16px; }
+  .todo-summary-grid{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+  .todo-summary-card{ border:2px solid #111; border-radius:14px; overflow:hidden; background:#fff; }
+  .todo-summary-card h4{ margin:0; padding:10px 12px; background:#fff4b8; border-bottom:2px solid #111; font-size:14px; }
+  .todo-summary-body{ padding:10px; display:flex; flex-direction:column; gap:8px; }
+  .todo-item{ border:1px solid #d1d5db; border-radius:12px; background:#fff; padding:8px; font-size:12px; line-height:1.6; }
+  .todo-empty{ color:#94a3b8; font-size:11px; padding:6px 2px; }
+  .todo-badge{ display:inline-block; padding:2px 8px; font-size:10px; border-radius:999px; background:#111827; color:#fff; font-weight:1000; margin-bottom:6px; }
+
+  #tab-plan .doc-area{ padding:8px; }
+  #tab-plan .doc-line{ font-size:var(--planFont); line-height:var(--planLine); padding:1px 0; }
+  #tab-plan .plan-heading{ font-weight:1000; font-size:calc(var(--planFont) + 1px); margin-top:6px; }
+  #tab-plan .plan-title{ font-weight:1000; font-size:calc(var(--planFont) + 4px); letter-spacing:.02em; margin:4px 0 8px; }
+  #tab-plan .plan-bullet strong{ font-weight:1000; }
+  .plan-images{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px; }
+  .plan-images .imgbox{ border:1px dashed #cbd5e1; border-radius:12px; height:var(--planImgBoxH); background:#f8fafc; display:flex; align-items:center; justify-content:center; overflow:hidden; position:relative; }
+  .plan-images img{ width:100%; height:100%; object-fit:cover; display:block; transform-origin:center center; }
+  .img-tools{ position:absolute; left:8px; right:8px; bottom:8px; display:flex; flex-direction:column; gap:6px; background:rgba(255,255,255,.86); border:1px solid rgba(226,232,240,.9); border-radius:12px; padding:8px; backdrop-filter:blur(4px); }
+  .img-tools .row{ display:flex; gap:8px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+  .img-tools .btn-mini{ border:1px solid #e5e7eb; background:#fff; border-radius:999px; padding:6px 10px; font-weight:1000; font-size:11px; cursor:pointer; }
+  .img-tools .btn-mini.danger{ border-color:#fecaca; color:#b91c1c; }
+  .img-tools .lbl{ font-size:11px; color:var(--muted); font-weight:900; }
+  .img-tools input[type="range"]{ width:140px; }
+  .fontctl{ display:flex; align-items:center; gap:8px; border:1px solid var(--line); border-radius:999px; padding:6px 10px; background:#fff; }
+  .fontctl span{ font-size:11px; color:var(--muted); font-weight:900; }
+  .fontctl input[type="range"]{ width:110px; }
+  .video-script-table td{ vertical-align:middle; }
+  .status-select{ width:100%; border:1px solid #e5e7eb; border-radius:8px; padding:4px 6px; font-size:10px; outline:none; background:#fff; }
+  .video-script-table{ font-size:12px; width:100%; border-collapse:separate; border-spacing:2px; }
+  .video-script-table th{ padding:10px 8px; background:#f8fafc; }
+  .video-script-table td{ padding:10px 8px; background:#fff; border:1px solid #f1f5f9; border-radius:4px; }
+  .video-script-table td[contenteditable]{ line-height:1.6; min-height:34px; }
+  .video-script-table tr[data-ep] td:first-child{ border-left:8px solid #e5e7eb; }
+  .video-script-table tr[data-ep="1"] td:first-child{ border-left-color:var(--p1); }
+  .video-script-table tr[data-ep="2"] td:first-child{ border-left-color:var(--p5); }
+  .video-script-table tr[data-ep="3"] td:first-child{ border-left-color:var(--p1); }
+  .video-script-table tr[data-ep="4"] td:first-child{ border-left-color:var(--p3); }
+  .video-script-table tr[data-ep="5"] td:first-child{ border-left-color:var(--p2); }
+  .video-script-table tr[data-ep="6"] td:first-child{ border-left-color:#111827; }
+  .video-script-table tr[data-ep-start="true"] td{ border-top:2px solid #cbd5e1; background:#f8fafc; }
+  .print-spec-bar{ border:2px solid #111; border-radius:14px; background:#fff; padding:10px 12px; display:flex; justify-content:space-between; gap:10px; align-items:center; font-size:12px; flex-wrap:wrap; }
+  .page-size-tools{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .page-size-tools label{ font-size:11px; font-weight:1000; color:#475569; }
+  .page-size-tools select,.page-size-tools input{ border:1px solid #d1d5db; border-radius:10px; padding:6px 8px; font-size:12px; background:#fff; }
+  .episode-row-tools{ display:flex; gap:6px; flex-wrap:wrap; align-items:center; justify-content:flex-end; margin:4px 0 8px; }
+  .episode-row-tools .mini-note{ font-size:11px; color:#64748b; font-weight:1000; }
+  .print-spec-title{ font-weight:1000; }
+  .print-spec-meta{ color:#475569; }
+  .video-script-actions-row{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .page-a4-block{ width:100%; }
+  body.print-section .primary-content,body.print-section .sub-content{ display:none !important; }
+  body.print-section .print-target{ display:block !important; }
+  body.print-section .print-target .no-print{ display:none !important; }
+  #toast{ position:fixed; bottom:20px; right:20px; background:#111827; color:#fff; padding:10px 16px; border-radius:999px; font-size:12px; opacity:0; transition:.5s; z-index:1000; }
+
+  @media (max-width:780px){
+    #dashboard{ padding:18px 12px; }
+    .page{ width:calc(100vw - 16px); min-height:auto; padding:14px; border-radius:16px; }
+    .topbar,.primary-tabbar{ max-width:calc(100vw - 16px); }
+    .fields-grid,.guide-grid,.scenario-draft-grid,.todo-summary-grid,.tool-sheet-grid{ grid-template-columns:1fr; }
+    .scenario-episode-card{ grid-template-columns:1fr; }
+    .plan-images{ grid-template-columns:1fr; }
+    .flow-track{ min-width:100%; }
+  }
+
+  @media print{
+    @page{ size:A4 portrait; margin:10mm; }
+    body{ background:#fff; }
+    .no-print{ display:none !important; }
+    .page{ width:100%; min-height:auto; box-shadow:none; margin:0; border:none; border-radius:0; page-break-after:always; break-after:page; }
+    .primary-content,.sub-content{ display:block !important; }
+    .scenario-template,.workflow-playful,.doc-area,.video-script-table,.print-spec-bar{ break-inside:avoid-page; }
+    body.print-single .primary-content,body.print-single .sub-content{ display:none !important; }
+    body.print-single #product-create{ display:block !important; }
+    body.print-single #tab-plan{ display:block !important; }
+    body.print-single #product-create > .page > .page-title{ display:none !important; }
+    body.print-section .primary-content,body.print-section .sub-content{ display:none !important; }
+    body.print-section .print-target{ display:block !important; }
+    body.print-section .print-target .workflow-playful,
+    body.print-section .print-target .scenario-template,
+    body.print-section .print-target .doc-area,
+    body.print-section .print-target .video-script-table,
+    body.print-section .print-target .print-spec-bar{ width:100%; break-inside:avoid-page; }
+    body.print-section .print-target,
+    body.print-single #tab-plan{
+      width:190mm !important;
+      min-height:auto !important;
+      margin:0 auto !important;
+    }
+    body.print-a3 .print-target,
+    body.print-a3 #tab-canvas,
+    body.print-a3 #tab-video-workflow,
+    body.print-a3 #tab-pres-workflow{
+      width:400mm !important;
+      max-width:none !important;
+      margin:0 auto !important;
+    }
+  }
+  }
+</style>
+</head>
+<body>
+<div id="toast">保存しました ✅</div>
+
+<div id="dashboard">
+  <div class="dash-header">
+    <h1>📁 Projects Maker 1ki2</h1>
+    <div class="dash-sub">フォルダ → プロジェクト → 3カテゴリ（動画作成 / プレゼン作成 / ツール開発）</div>
+    <button id="new-folder-btn" type="button" class="add-btn-main">📁 新しいフォルダを作成</button>
+  </div>
+  <div id="folder-list"></div>
+</div>
+
+<div id="editor">
+  <div class="topbar no-print">
+    <button class="back-btn" id="back-btn">← ダッシュボードへ戻る</button>
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <button class="save-btn" id="manual-save-btn">💾 保存</button>
+      <button class="save-btn secondary" id="print-all-btn">🖨️ すべて印刷</button>
+      <button class="save-btn secondary" id="print-plan-only-btn">🖨️ 企画書を印刷</button>
+    </div>
+  </div>
+
+  <div class="primary-tabbar no-print">
+    <button class="primary-tab active" data-primary="video-create">① 動画作成</button>
+    <button class="primary-tab" data-primary="presentation-create">② プレゼン作成</button>
+    <button class="primary-tab" data-primary="product-create">③ ツール開発</button>
+  </div>
+
+  <div class="primary-content" id="video-create" style="display:block;">
+    <div class="page">
+      <h1 id="editable-title" class="page-title" contenteditable="true">Project Name</h1>
+      <div class="sub-tabbar no-print" data-group="video-create">
+        <button class="sub-tab active" data-sub="tab-canvas">🎞️ シナリオ</button>
+        <button class="sub-tab" data-sub="tab-video-workflow">🎬 動画用ワークフロー</button>
+        <button class="sub-tab" data-sub="tab-video">🎬 動画台本</button>
+      </div>
+
+      <div class="sub-content" id="tab-canvas" style="display:block;">
+        <div class="print-spec-bar no-print"><div class="print-spec-title">印刷設定</div><div class="print-spec-meta">想定サイズ：A3 横 / このページを印刷で適用</div></div>
+        <input id="story-image-input" class="no-print" type="file" accept="image/*" style="display:none">
+        <div class="scenario-template">
+          <div class="scenario-headbar"><div class="title">シナリオ</div></div>
+          <div class="scenario-synopsis-box"><label>あらすじ</label><textarea id="scenario-synopsis" placeholder="この動画全体のあらすじを入力"></textarea></div>
+          <div class="scenario-draft-box">
+            <div class="scenario-draft-title">穴埋め下書き</div>
+            <div class="scenario-draft-grid">
+              <input id="draft-who" placeholder="誰が">
+              <input id="draft-problem" placeholder="どんな問題を">
+              <input id="draft-method" placeholder="どんな方法で解決しようとし">
+              <input id="draft-interviewee" placeholder="誰に話を聞き">
+              <input id="draft-actions" placeholder="何をしていくのか">
+              <input id="draft-answer" placeholder="たどりつく答えとは">
+            </div>
+            <div class="doc-actions no-print" style="margin-top:10px;">
+              <button class="mini-btn primary" id="apply-scenario-draft-btn">🔄 反映</button>
+              <button class="mini-btn" id="auto-fill-scenario-btn">✨ 話数も下書き</button>
+            </div>
+            <div id="scenario-draft-preview" class="scenario-draft-preview">ここに完成イメージが表示されます。</div>
+          </div>
+          <div id="scenario-episode-list" class="scenario-episode-list"></div>
+        </div>
+      </div>
+
+      <div class="sub-content" id="tab-video-workflow" style="display:none;">
+        <div class="print-spec-bar no-print"><div><div class="print-spec-title">印刷設定</div><div class="print-spec-meta">想定サイズ：A3 横 / このページを印刷で適用</div></div><div class="page-size-tools"><label>横幅</label><input id="video-workflow-width" type="range" min="260" max="520" step="10" value="400"><label>mm</label><input id="video-workflow-width-val" type="text" value="400" readonly style="width:64px;"><label>向き</label><select id="video-workflow-orientation"><option value="landscape" selected>横</option><option value="portrait">縦</option></select></div></div>
+        <div id="video-workflow-resizable" class="workflow-playful workflow-resizable page-a4-block">
+          <div class="workflow-titlebar">動画用ワークフロー</div>
+          <div class="storyboard-info" style="margin:12px 12px 0;">各話ごとに必要な準備・実行・フォローを整理できます。</div>
+          <div class="workflow-scroll"><div id="video-episode-flow-track" class="flow-track"></div></div>
+          <div class="todo-summary-wrap">
+            <div class="todo-summary-head">
+              <div><h3>ToDoリストまとめ</h3></div>
+              <div class="doc-actions no-print" style="margin-top:0;">
+                <button class="mini-btn" id="copy-video-workflow-btn">📋 ToDoをコピー</button>
+                <button class="mini-btn primary" id="export-video-workflow-btn">⬇️ Excel出力</button>
+                <button class="mini-btn" data-print-section="tab-video-workflow">🖨️ このページを印刷</button>
+              </div>
+            </div>
+            <div id="video-episode-todo-summary" class="todo-summary-grid"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-content" id="tab-video" style="display:none;">
+        <div class="print-spec-bar no-print"><div class="print-spec-title">印刷設定</div><div class="print-spec-meta">想定サイズ：A4 縦 / このページを印刷で適用</div></div>
+        <div id="episode-row-tool-wrap" class="no-print"></div>
+        <div class="doc-actions no-print video-script-actions-row">
+          <button class="mini-btn primary" id="auto-draft-video-btn">🔄 自動下書き</button>
+          <button class="mini-btn" id="manual-save-btn-2">💾 保存</button>
+          <button class="mini-btn" id="add-video-row-btn">＋ 行追加</button>
+          <button class="mini-btn" id="delete-video-row-btn">－ 最終行削除</button>
+          <button class="mini-btn" id="export-video-telops-btn">⬇️ Excel（テロップ）</button>
+          <button class="mini-btn" data-print-section="tab-video">🖨️ このページを印刷</button>
+        </div>
+        <table class="video-script-table">
+          <thead>
+            <tr>
+              <th style="width:44px;">話</th>
+              <th style="width:58px;">カット</th>
+              <th>テロップ（1文）</th>
+              <th>映像イメージ</th>
+              <th style="width:90px;">撮影</th>
+              <th style="width:90px;">編集</th>
+            </tr>
+          </thead>
+          <tbody id="video-script-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="primary-content" id="presentation-create">
+    <div class="page">
+      <h1 class="page-title">🎤 プレゼン作成</h1>
+      <div class="sub-tabbar no-print" data-group="presentation-create">
+        <button class="sub-tab active" data-sub="tab-pres-guide">🧠 流れの解説</button>
+        <button class="sub-tab" data-sub="tab-pres-workflow">🗺️ プレゼン用ワークフロー</button>
+        <button class="sub-tab" data-sub="tab-pres">🎤 プレゼン台本</button>
+      </div>
+
+      <div class="sub-content" id="tab-pres-guide" style="display:block;">
+        <div class="storyboard-info">①〜⑥のプレゼンの流れをここで整理します。ここで入力した内容は、プレゼン台本にも反映されます。</div>
+        <div id="guide-grid" class="guide-grid"></div>
+      </div>
+
+      <div class="sub-content" id="tab-pres-workflow" style="display:none;">
+        <div class="print-spec-bar no-print"><div><div class="print-spec-title">印刷設定</div><div class="print-spec-meta">想定サイズ：A3 横 / このページを印刷で適用</div></div><div class="page-size-tools"><label>横幅</label><input id="pres-workflow-width" type="range" min="260" max="520" step="10" value="400"><label>mm</label><input id="pres-workflow-width-val" type="text" value="400" readonly style="width:64px;"><label>向き</label><select id="pres-workflow-orientation"><option value="landscape" selected>横</option><option value="portrait">縦</option></select></div></div>
+        <div id="pres-workflow-resizable" class="workflow-playful workflow-resizable page-a4-block">
+          <div class="workflow-titlebar">プレゼン用ワークフロー</div>
+          <div class="storyboard-info" style="margin:12px 12px 0;">タイトル→導入→現状分析→解決策→検証→まとめの流れで整理します。</div>
+          <div class="workflow-scroll"><div id="workflow-flow-track" class="flow-track"></div></div>
+          <div class="todo-summary-wrap">
+            <div class="todo-summary-head">
+              <div><h3>ToDoリストまとめ</h3></div>
+              <div class="doc-actions no-print" style="margin-top:0;">
+                <button class="mini-btn" id="copy-workflow-btn">📋 ToDoをコピー</button>
+                <button class="mini-btn primary" id="export-workflow-btn">⬇️ Excel出力</button>
+                <button class="mini-btn" data-print-section="tab-pres-workflow">🖨️ このページを印刷</button>
+              </div>
+            </div>
+            <div id="workflow-todo-summary" class="todo-summary-grid"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-content" id="tab-pres" style="display:none;">
+        <div class="print-spec-bar no-print"><div class="print-spec-title">印刷設定</div><div class="print-spec-meta">想定サイズ：A4 縦 / このページを印刷で適用</div></div>
+        <div class="inputbar no-print">
+          <div class="left"><div class="title">🧩 穴埋め入力</div><div class="desc">必要項目→「台本に反映」／本文は印刷で単体ページ化</div></div>
+          <div class="right">
+            <button class="mini-btn" data-toggle-drawer="pres-input">🧩 入力を開く/閉じる</button>
+            <button class="mini-btn primary" id="regen-pres-btn">🔄 台本に反映</button>
+            <button class="mini-btn" data-copy-doc="pres-doc-area">📋 台本をコピー</button>
+            <button class="mini-btn" data-print-section="tab-pres">🖨️ このページを印刷</button>
+          </div>
+        </div>
+        <div class="inputdrawer no-print" id="pres-input">
+          <div class="fields-grid">
+            <div>
+              <div class="field"><label>チーム名</label><input data-field="teamName"></div>
+              <div class="field"><label>発表テーマ</label><input data-field="presTopic"></div>
+              <div class="field"><label>現場で実施①</label><input data-field="fieldAction1"></div>
+              <div class="field"><label>気づき①</label><input data-field="insight1"></div>
+              <div class="field"><label>調査②</label><input data-field="research2"></div>
+              <div class="field"><label>事実②</label><input data-field="fact2"></div>
+              <div class="field"><label>本当の問題</label><input data-field="coreProblem"></div>
+              <div class="field"><label>仮説（原因）</label><input data-field="hypCause"></div>
+              <div class="field"><label>仮説（理由）</label><input data-field="hypReason"></div>
+              <div class="field"><label>仮説（有効策）</label><input data-field="hypSolution"></div>
+            </div>
+            <div>
+              <div class="field"><label>アイデア名</label><input data-field="ideaName"></div>
+              <div class="field"><label>コンセプト</label><input data-field="concept"></div>
+              <div class="field"><label>特徴①</label><input data-field="feature1"></div>
+              <div class="field"><label>特徴②</label><input data-field="feature2"></div>
+              <div class="field"><label>検証方法</label><input data-field="verifyMethod"></div>
+              <div class="field"><label>検証手順①</label><input data-field="verifyStep1"></div>
+              <div class="field"><label>確認項目</label><input data-field="verifyCheck"></div>
+              <div class="field"><label>実施日</label><input data-field="doDate"></div>
+              <div class="field"><label>実施場所</label><input data-field="doPlace"></div>
+              <div class="field"><label>対象</label><input data-field="target"></div>
+              <div class="field"><label>実施内容</label><input data-field="doWhat"></div>
+              <div class="field"><label>データ①</label><input data-field="data1"></div>
+              <div class="field"><label>分かったこと</label><input data-field="learned"></div>
+              <div class="field"><label>結論</label><input data-field="conclusion"></div>
+              <div class="field"><label>考察</label><textarea data-field="discussion"></textarea></div>
+              <div class="field"><label>今後必要</label><input data-field="nextNeed"></div>
+              <div class="field"><label>未来</label><input data-field="future"></div>
+            </div>
+          </div>
+        </div>
+        <div class="doc-area">
+          <p class="hint no-print">✅ 本文は完成文として編集できます。</p>
+          <div id="pres-doc-area"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="primary-content" id="product-create">
+    <div class="page">
+      <h1 class="page-title">🛠️ ツール開発</h1>
+      <div class="sub-tabbar no-print" data-group="product-create">
+        <button class="sub-tab active" data-sub="tab-plan">📄 企画書</button>
+        <button class="sub-tab" data-sub="tab-tool-dev">🛠️ ツール開発</button>
+      </div>
+      <div class="sub-content" id="tab-plan" style="display:block;">
+        <div class="print-spec-bar no-print"><div class="print-spec-title">印刷設定</div><div class="print-spec-meta">想定サイズ：A4 縦 / このページを印刷で適用</div></div>
+        <h1 class="page-title">📄 企画書（取材のお願い）</h1>
+        <input id="plan-image-input" class="no-print" type="file" accept="image/*" multiple style="display:none">
+        <div class="inputbar no-print">
+          <div class="left"><div class="title">🧩 穴埋め入力</div><div class="desc">必要項目を入力して企画書へ反映</div></div>
+          <div class="right">
+            <div class="fontctl"><span>文字</span><input id="plan-font-range" type="range" min="9" max="14" step="1" value="11"><span id="plan-font-val">11px</span></div>
+            <button class="mini-btn" id="fit-plan-btn">🪄 A4に収める</button>
+            <button class="mini-btn" data-toggle-drawer="plan-input">🧩 入力を開く/閉じる</button>
+            <button class="mini-btn primary" id="regen-plan-btn">🔄 企画書に反映</button>
+            <button class="mini-btn" id="open-plan-image-btn">🖼️ 画像追加（最大2）</button>
+            <button class="mini-btn" data-copy-doc="plan-doc-area">📋 企画書をコピー</button>
+            <button class="mini-btn" data-print-section="tab-plan">🖨️ このページを印刷</button>
+          </div>
+        </div>
+        <div class="inputdrawer no-print" id="plan-input">
+          <div class="fields-grid">
+            <div>
+              <div class="field"><label>作成日</label><input data-field="createdDate"></div>
+              <div class="field"><label>企業名</label><input data-field="companyName"></div>
+              <div class="field"><label>部署名</label><input data-field="department"></div>
+              <div class="field"><label>ご担当者</label><input data-field="contactName"></div>
+              <div class="field"><label>学校名</label><input data-field="schoolName"></div>
+              <div class="field"><label>学年</label><input data-field="grade"></div>
+              <div class="field"><label>生徒代表</label><input data-field="studentRep"></div>
+              <div class="field"><label>担当教員</label><input data-field="teacherRep"></div>
+            </div>
+            <div>
+              <div class="field"><label>テーマ</label><input data-field="theme"></div>
+              <div class="field"><label>第1希望</label><input data-field="dt1"></div>
+              <div class="field"><label>第2希望</label><input data-field="dt2"></div>
+              <div class="field"><label>第3希望</label><input data-field="dt3"></div>
+              <div class="field"><label>生徒人数</label><input data-field="studentsCount"></div>
+              <div class="field"><label>教員人数</label><input data-field="teachersCount"></div>
+              <div class="field"><label>場所</label><input data-field="place"></div>
+              <div class="field"><label>内容説明</label><textarea data-field="planDescText"></textarea></div>
+              <div class="field"><label>メール</label><input data-field="email"></div>
+              <div class="field"><label>電話</label><input data-field="phone"></div>
+            </div>
+          </div>
+        </div>
+        <div class="doc-area"><p class="hint no-print">✅ 本文はそのまま編集できます。</p><div id="plan-doc-area"></div></div>
+      </div>
+      <div class="sub-content" id="tab-tool-dev" style="display:none;">
+        <div class="print-spec-bar no-print"><div class="print-spec-title">印刷設定</div><div class="print-spec-meta">想定サイズ：A4 縦 / このページを印刷で適用</div></div>
+        <div class="workflow-playful page-a4-block">
+          <div class="workflow-titlebar">ツール開発</div>
+          <div class="workflow-scroll"><div id="tooldev-flow-track" class="flow-track"></div></div>
+          <div class="todo-summary-wrap">
+            <div class="todo-summary-head">
+              <div><h3>ToDoリストまとめ</h3></div>
+              <div class="doc-actions no-print" style="margin-top:0;">
+                <button class="mini-btn" id="copy-tooldev-btn">📋 ToDoをコピー</button>
+                <button class="mini-btn primary" id="export-tooldev-btn">⬇️ Excel出力</button>
+                <button class="mini-btn" data-print-section="tab-tool-dev">🖨️ このページを印刷</button>
+              </div>
+            </div>
+            <div id="tooldev-todo-summary" class="todo-summary-grid"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const STORAGE_KEY = 'bubbleStrategyV17';
+  const GUIDE_LABELS = ['① タイトル','② 導入','③ 現状分析','④ 解決策','⑤ 検証','⑥ ビジョン'];
+  const GUIDE_HINTS = ['発表全体のタイトルと、伝えたい核を整理します。','なぜこのテーマに取り組むのか、背景やきっかけを整理します。','今の課題や現状の構造、見えてきた事実をまとめます。','どんな方法やツールで解決するのかを整理します。','どう試し、何を確かめるのかを整理します。','今後どう広げたいか、未来像を整理します。'];
+  const VIDEO_FLOW_LABELS = ['① タイトル','② 導入','③ 現状分析','④ 解決策','⑤ 検証','⑥ まとめ'];
+  const TOOL_FLOW_LABELS = ['① 経費の計算','② 必要予算の算出','③ 予算確保の方法','④ 商品・サービス販売の方法','⑤ 実施方法','⑥ 会計報告'];
+  const FLOW_PHASES = ['①準備','②実行','③フォロー'];
+  const PRES_RAW = ['表題','みなさん、こんにちは。チーム「」です。本日は「」について発表します。','------------------------','導入','突然ですが、皆さんは日常の中で「これ、おかしいな？」と思った経験はありませんか？私たちが今回注目したのは、「」というテーマです。','------------------------','現状分析','私たちは現場へ足を運びました。まず「」を行ってみると、意外なことに「」だと気づいたのです。そこで気になって「」も調べてみました。すると、「」という衝撃的な事実が見えてきました。つまり、本当の問題は「」だったのです。','------------------------','仮説','現状分析から、私たちは「」が原因ではないかと考えました。そこで、「」という理由から、「」が有効であるという仮説を立てました。','------------------------','解決策','この仮説を実現するために私たちが考案したのが、「」です。コンセプトはズバリ、「」。具体的には「」や「」といった特徴で、新しい価値を提供します。','------------------------','検証計画','続いて、このアイデアが本当に有効かを確かめるために、「」という検証を計画しました。まず「」を行い、実際に「」を確認することにしました。','------------------------','実施報告','実際の検証は、「」に「」で行いました。対象は「」です。写真にあるように、私たちは「」を実施しました。','------------------------','結果','実施した結果、まず「」というデータが得られました。また、「」ということも分かりました。これらの結果から、私たちは「」という結論に至りました。','------------------------','考察','この結果に対する考察です。「」ということが言えます。しかし、同時に「」という課題も見えてきました。今後は「」が必要だと考えます。','------------------------','展望','最後に、私たちのビジョンです。もしこのアイデアが広まれば、「」未来になると信じています。。ご清聴ありがとうございました。','------------------------'];
+  const LINES_PER_EP = 8;
+  const A3_SECTION_IDS = new Set(['tab-canvas','tab-video-workflow','tab-pres-workflow']);
+  const DEFAULT_PAGE_PRINT_SETTINGS = {
+    'tab-video-workflow': { width:400, orientation:'landscape' },
+    'tab-pres-workflow': { width:400, orientation:'landscape' }
+  };
+
+  let data = safeLoad();
+  let currentId = null;
+  let storyImagePickIndex = -1;
+  let planImagePickMode = { mode:'append', index:-1 };
+
+  function uid(){ return 'id-' + Math.random().toString(36).slice(2,10); }
+  function safeLoad(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return { folders: [] };
+      const parsed = JSON.parse(raw);
+      if(!parsed || typeof parsed !== 'object') return { folders: [] };
+      if(!Array.isArray(parsed.folders)) parsed.folders = [];
+      return parsed;
+    }catch(e){
+      return { folders: [] };
+    }
+  }
+  function saveToStorage(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+  function toast(){ const t=document.getElementById('toast'); t.style.opacity='1'; setTimeout(function(){ t.style.opacity='0'; }, 1500); }
+  function escapeHtml(str){ return (str ?? '').toString().replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
+  function escapeAttr(str){ return escapeHtml(str).replaceAll('\n',' '); }
+
+  function defaultFields(){
+    return { createdDate:'', companyName:'', department:'', contactName:'', schoolName:'', grade:'', studentRep:'', teacherRep:'', theme:'', dt1:'', dt2:'', dt3:'', studentsCount:'', teachersCount:'', place:'', planDescText:'', email:'', phone:'', teamName:'', presTopic:'', fieldAction1:'', insight1:'', research2:'', fact2:'', coreProblem:'', hypCause:'', hypReason:'', hypSolution:'', ideaName:'', concept:'', feature1:'', feature2:'', verifyMethod:'', verifyStep1:'', verifyCheck:'', doDate:'', doPlace:'', target:'', doWhat:'', data1:'', learned:'', conclusion:'', discussion:'', nextNeed:'', future:'' };
+  }
+  function defaultPresentationGuide(){ return GUIDE_LABELS.map(function(label, i){ return { label, hint: GUIDE_HINTS[i], text:'' }; }); }
+  function defaultStoryboardPanels(){
+    return Array.from({length:6}, function(_, i){
+      return { episode:'第'+(i+1)+'話', title:'', subtitle:'', image:'', desc:'', term:'１学期', shotDate:'' };
+    });
+  }
+  function defaultScenarioMeta(){ return { synopsis:'', draft:{ who:'', problem:'', method:'', interviewee:'', actions:'', answer:'' } }; }
+  function defaultFlowItem(phase){ return { phase:phase || '①準備', date:'', what:'', who:'', where:'', why:'', how:'', note:'', budget:'', fundMethod:'', salesMethod:'', reportTo:'' }; }
+  function defaultFolder(title){ return { id:uid(), title:title || '①準備', items:[defaultFlowItem(title || '①準備')] }; }
+  function defaultFlowState(labels){
+    return labels.map(function(label, i){
+      return { id:uid(), label:label, order:i, open:false, folders:[defaultFolder('①準備'), defaultFolder('②実行'), defaultFolder('③フォロー')] };
+    });
+  }
+  function defaultPlanSettings(){ return { fontSize:11, lineHeight:1.45, images:[] }; }
+  function folderDescription(title){
+    if(title==='①準備') return '何を準備するのか、誰に相談するのか、必要な情報や素材を整理します。';
+    if(title==='②実行') return '実際に動く内容、いつどこで誰が行うか、当日の段取りを整理します。';
+    if(title==='③フォロー') return '実施後の確認、改善、連絡、記録、次につなげる行動を整理します。';
+    return 'このフォルダで必要な作業を整理します。';
+  }
+
+  function ensureProjectDefaults(p){
+    if(!p.fields) p.fields = defaultFields();
+    if(!Array.isArray(p.presentationGuide) || p.presentationGuide.length !== GUIDE_LABELS.length) p.presentationGuide = defaultPresentationGuide();
+    if(!Array.isArray(p.storyboardPanels) || p.storyboardPanels.length !== 6) p.storyboardPanels = defaultStoryboardPanels();
+    p.storyboardPanels = p.storyboardPanels.map(function(row, i){
+      return { episode:row?.episode || '第'+(i+1)+'話', title:row?.title || '', subtitle:row?.subtitle || '', image:row?.image || '', desc:row?.desc || '', term:row?.term || '１学期', shotDate:row?.shotDate || '' };
+    });
+    if(!p.scenarioMeta) p.scenarioMeta = defaultScenarioMeta();
+    if(!Array.isArray(p.videoFlowState) || p.videoFlowState.length !== 6) p.videoFlowState = defaultFlowState(VIDEO_FLOW_LABELS);
+    if(!Array.isArray(p.videoEpisodeFlowState) || p.videoEpisodeFlowState.length !== 6) p.videoEpisodeFlowState = defaultFlowState(p.storyboardPanels.map(function(r, i){ return ('第'+(i+1)+'話 ' + (r.title || '')).trim(); }));
+    if(!Array.isArray(p.toolFlowState) || p.toolFlowState.length !== 6) p.toolFlowState = defaultFlowState(TOOL_FLOW_LABELS);
+    normalizeFlowState(p.videoFlowState, VIDEO_FLOW_LABELS);
+    normalizeFlowState(p.videoEpisodeFlowState, p.storyboardPanels.map(function(r, i){ return ('第'+(i+1)+'話 ' + (r.title || '')).trim(); }));
+    normalizeFlowState(p.toolFlowState, TOOL_FLOW_LABELS);
+    if(!p.planSettings) p.planSettings = defaultPlanSettings();
+    if(!Array.isArray(p.planSettings.images)) p.planSettings.images = [];
+    if(typeof p.videoCatchphrase !== 'string') p.videoCatchphrase = '';
+    if(!Array.isArray(p.videoScriptRows)) p.videoScriptRows = [];
+    if(!Array.isArray(p.videoRowsPerEpisode) || p.videoRowsPerEpisode.length !== 6) p.videoRowsPerEpisode = [LINES_PER_EP,LINES_PER_EP,LINES_PER_EP,LINES_PER_EP,LINES_PER_EP,LINES_PER_EP];
+    if(!p.pagePrintSettings) p.pagePrintSettings = JSON.parse(JSON.stringify(DEFAULT_PAGE_PRINT_SETTINGS));
+    ['tab-video-workflow','tab-pres-workflow'].forEach(function(key){
+      if(!p.pagePrintSettings[key]) p.pagePrintSettings[key] = { ...DEFAULT_PAGE_PRINT_SETTINGS[key] };
+      if(!p.pagePrintSettings[key].width) p.pagePrintSettings[key].width = DEFAULT_PAGE_PRINT_SETTINGS[key].width;
+      if(!p.pagePrintSettings[key].orientation) p.pagePrintSettings[key].orientation = DEFAULT_PAGE_PRINT_SETTINGS[key].orientation;
+    });
+    if(typeof p.planHtml !== 'string') p.planHtml = '';
+    if(typeof p.presHtml !== 'string') p.presHtml = '';
+  }
+
+  function normalizeFlowState(state, labels){
+    state.forEach(function(node, i){
+      node.id = node.id || uid();
+      node.label = labels[i] || node.label || ('項目' + (i+1));
+      if(!Array.isArray(node.folders) || !node.folders.length) node.folders = [defaultFolder('①準備'), defaultFolder('②実行'), defaultFolder('③フォロー')];
+      node.folders = node.folders.map(function(f, fi){
+        const title = f?.title || FLOW_PHASES[fi] || ('フォルダ' + (fi+1));
+        const items = Array.isArray(f?.items) && f.items.length ? f.items.map(function(item){
+          return { phase:FLOW_PHASES.includes(item?.phase) ? item.phase : title, date:item?.date || '', what:item?.what || '', who:item?.who || '', where:item?.where || '', why:item?.why || '', how:item?.how || '', note:item?.note || '', budget:item?.budget || '', fundMethod:item?.fundMethod || '', salesMethod:item?.salesMethod || '', reportTo:item?.reportTo || '' };
+        }) : [defaultFlowItem(title)];
+        return { id:f?.id || uid(), title:title, items:items };
+      });
+      FLOW_PHASES.forEach(function(phase, pi){ if(!node.folders[pi]) node.folders[pi] = defaultFolder(phase); });
+    });
+  }
+
+  function buildVideoScriptTable(){
+    const p = getCurrentProject();
+    const tbody = document.getElementById('video-script-tbody');
+    tbody.innerHTML = '';
+    const rowsByEp = Array.from({length:6}, function(){ return LINES_PER_EP; });
+    if(p && Array.isArray(p.videoRowsPerEpisode) && p.videoRowsPerEpisode.length===6){
+      p.videoRowsPerEpisode.forEach(function(n, i){ rowsByEp[i] = Math.max(1, parseInt(n,10) || LINES_PER_EP); });
+    }
+    for(let ep=1; ep<=6; ep++){
+      for(let cut=1; cut<=rowsByEp[ep-1]; cut++){
+        const rid = 'ep'+ep+'-c'+cut;
+        const isEpStart = cut===1;
+        tbody.innerHTML += '<tr data-rowid="'+rid+'" data-ep="'+ep+'" data-ep-start="'+isEpStart+'"><td style="text-align:center; font-weight:1000;">'+ep+'</td><td style="text-align:center; color:#64748b; font-weight:1000;">'+cut+'</td><td contenteditable data-vs="text"></td><td contenteditable data-vs="visual"></td><td><select class="status-select" data-vs="shoot"><option>未着手</option><option>準備中</option><option>撮影中</option><option>撮影済</option></select></td><td><select class="status-select" data-vs="edit"><option>未着手</option><option>編集中</option><option>仮完成</option><option>完成</option></select></td></tr>';
+      }
+    }
+  }
+
+  function createNewFolder(){
+    data.folders.push({ id:uid(), name:'新しいフォルダ', color:'#4facfe', projects:[], isOpen:true });
+    saveToStorage();
+    renderDashboard();
+  }
+
+  function renderDashboard(){
+    const list = document.getElementById('folder-list');
+    list.innerHTML = '';
+    data.folders.forEach(function(folder){
+      const wrap = document.createElement('div');
+      wrap.className = 'folder-container';
+      wrap.style.borderLeftColor = folder.color;
+      wrap.innerHTML = '<div class="folder-header"><span class="folder-icon">'+(folder.isOpen ? '📂' : '📁')+'</span><div class="folder-name" contenteditable="true">'+escapeHtml(folder.name)+'</div><div class="folder-controls"><input type="color" class="color-picker" value="'+folder.color+'"><button class="delete-item">フォルダ削除</button></div></div><div class="project-grid" style="display:'+(folder.isOpen ? 'grid' : 'none')+'"></div>';
+      const header = wrap.querySelector('.folder-header');
+      const nameEl = wrap.querySelector('.folder-name');
+      const colorEl = wrap.querySelector('.color-picker');
+      const delBtn = wrap.querySelector('.delete-item');
+      const grid = wrap.querySelector('.project-grid');
+
+      header.addEventListener('click', function(){ folder.isOpen = !folder.isOpen; saveToStorage(); renderDashboard(); });
+      nameEl.addEventListener('click', function(e){ e.stopPropagation(); });
+      nameEl.addEventListener('blur', function(){ folder.name = (nameEl.innerText || '').trim() || '新しいフォルダ'; saveToStorage(); });
+      colorEl.addEventListener('click', function(e){ e.stopPropagation(); });
+      colorEl.addEventListener('input', function(){ folder.color = colorEl.value; saveToStorage(); renderDashboard(); });
+      delBtn.addEventListener('click', function(e){
+        e.stopPropagation();
+        if(!confirm('フォルダ内のすべてのプロジェクトも削除されます。よろしいですか？')) return;
+        data.folders = data.folders.filter(function(f){ return f.id !== folder.id; });
+        saveToStorage();
+        renderDashboard();
+      });
+
+      folder.projects.forEach(function(p){
+        const card = document.createElement('div');
+        card.className = 'project-card';
+        card.innerHTML = '<button class="delete-item" style="position:absolute; top:6px; right:8px;">削除</button><div style="font-weight:1000; font-size:14px; margin-top:10px;">'+escapeHtml(p.title || '（無題）')+'</div>';
+        card.addEventListener('click', function(){ openProject(p.id); });
+        card.querySelector('.delete-item').addEventListener('click', function(e){
+          e.stopPropagation();
+          if(!confirm('プロジェクトを削除しますか？')) return;
+          data.folders.forEach(function(f){ f.projects = f.projects.filter(function(x){ return x.id !== p.id; }); });
+          saveToStorage();
+          renderDashboard();
+        });
+        grid.appendChild(card);
+      });
+
+      const add = document.createElement('div');
+      add.className = 'add-project-in-folder';
+      add.textContent = '+ 新規作成';
+      add.addEventListener('click', function(){ createNewProject(folder.id); });
+      grid.appendChild(add);
+      list.appendChild(wrap);
+    });
+  }
+
+  function createNewProject(folderId){
+    const folder = data.folders.find(function(f){ return f.id === folderId; });
+    if(!folder) return;
+    const id = uid();
+    const proj = {
+      id,
+      title:'新規プロジェクト',
+      fields:defaultFields(),
+      presentationGuide:defaultPresentationGuide(),
+      storyboardPanels:defaultStoryboardPanels(),
+      scenarioMeta:defaultScenarioMeta(),
+      videoFlowState:defaultFlowState(VIDEO_FLOW_LABELS),
+      videoEpisodeFlowState:defaultFlowState(defaultStoryboardPanels().map(function(r, i){ return '第'+(i+1)+'話'; })),
+      toolFlowState:defaultFlowState(TOOL_FLOW_LABELS),
+      planHtml:'',
+      presHtml:'',
+      videoScriptRows:[],
+      planSettings:defaultPlanSettings(),
+      videoCatchphrase:''
+    };
+    folder.projects.push(proj);
+    folder.isOpen = true;
+    currentId = id;
+    saveToStorage();
+    openProject(id);
+  }
+
+  function getCurrentProject(){
+    if(!currentId) return null;
+    for(const f of data.folders){
+      const p = f.projects.find(function(x){ return x.id === currentId; });
+      if(p){ ensureProjectDefaults(p); return p; }
+    }
+    return null;
+  }
+
+  function showEditor(){ document.getElementById('dashboard').style.display='none'; document.getElementById('editor').style.display='block'; }
+  function showDashboard(){ document.getElementById('dashboard').style.display='block'; document.getElementById('editor').style.display='none'; renderDashboard(); }
+  function goBackToDashboard(){ saveEditorData(); showDashboard(); }
+
+  function openProject(id){
+    currentId = id;
+    const p = getCurrentProject();
+    if(!p) return;
+    showEditor();
+    document.getElementById('editable-title').innerText = p.title;
+    setFieldsToUI(p.fields);
+    buildVideoScriptTable();
+    restoreVideoRows(p);
+    renderPresentationGuide();
+    renderScenario();
+    renderVideoFlow();
+    renderVideoEpisodeFlow();
+    renderToolFlow();
+    renderPlanDoc(p.planHtml || '');
+    renderPresDoc(p.presHtml || '');
+    renderEpisodeRowTools();
+    activatePrimary('video-create');
+    activateSub('video-create','tab-canvas');
+  }
+
+  function activatePrimary(primaryId){
+    document.querySelectorAll('.primary-content').forEach(function(el){ el.style.display='none'; });
+    document.getElementById(primaryId).style.display='block';
+    document.querySelectorAll('.primary-tab').forEach(function(btn){ btn.classList.toggle('active', btn.dataset.primary===primaryId); });
+  }
+
+  function activateSub(groupId, subId){
+    const group = document.getElementById(groupId);
+    if(!group) return;
+    group.querySelectorAll('.sub-content').forEach(function(el){ el.style.display='none'; });
+    const target = group.querySelector('#'+subId);
+    if(target) target.style.display='block';
+    group.querySelectorAll('.sub-tab').forEach(function(btn){ btn.classList.toggle('active', btn.dataset.sub===subId); });
+    if(subId==='tab-canvas') renderScenario();
+    if(subId==='tab-video-workflow') renderVideoEpisodeFlow();
+    if(subId==='tab-pres-guide') renderPresentationGuide();
+    if(subId==='tab-pres-workflow') renderVideoFlow();
+    if(subId==='tab-pres') renderPresDoc();
+    if(subId==='tab-plan') renderPlanDoc();
+    if(subId==='tab-tool-dev') renderToolFlow();
+  }
+
+  function collectFieldsFromUI(){
+    const p = getCurrentProject();
+    const base = (p && p.fields) ? { ...p.fields } : defaultFields();
+    document.querySelectorAll('[data-field]').forEach(function(el){ base[el.dataset.field] = el.value || ''; });
+    return base;
+  }
+  function setFieldsToUI(fields){ document.querySelectorAll('[data-field]').forEach(function(el){ el.value = fields?.[el.dataset.field] || ''; }); }
+
+  document.addEventListener('input', function(e){ if(e.target.matches('[data-field]')) saveEditorData(); });
+
+  function collectPresentationGuideFromUI(){
+    return Array.from(document.querySelectorAll('[data-guide-index]')).map(function(el, i){
+      return { label:GUIDE_LABELS[i], hint:GUIDE_HINTS[i], text:el.value || '' };
+    });
+  }
+
+  function renderPresentationGuide(){
+    const p = getCurrentProject();
+    if(!p) return;
+    const grid = document.getElementById('guide-grid');
+    grid.innerHTML = p.presentationGuide.map(function(item, i){
+      return '<div class="guide-card"><h3>'+GUIDE_LABELS[i]+'</h3><p>'+GUIDE_HINTS[i]+'</p><textarea data-guide-index="'+i+'">'+escapeHtml(item.text || '')+'</textarea></div>';
+    }).join('');
+    grid.querySelectorAll('[data-guide-index]').forEach(function(el){ el.addEventListener('input', function(){ saveEditorData(); renderPresDoc(); }); });
+  }
+
+  function collectScenarioMetaFromUI(){
+    const p = getCurrentProject();
+    const base = JSON.parse(JSON.stringify(p?.scenarioMeta || defaultScenarioMeta()));
+    const syn = document.getElementById('scenario-synopsis');
+    if(syn) base.synopsis = syn.value || '';
+    ['who','problem','method','interviewee','actions','answer'].forEach(function(k){
+      const el = document.getElementById('draft-'+k);
+      if(el) base.draft[k] = el.value || '';
+    });
+    return base;
+  }
+
+  function scenarioSentenceFromDraft(d){
+    return (d.who || '誰か') + 'が、' + (d.problem || 'ある問題') + 'を、' + (d.method || 'ある方法') + 'で解決しようとし、' + (d.interviewee || '誰か') + 'に話を聞き、' + (d.actions || '行動') + 'を重ね、やがて' + (d.answer || 'ひとつの答え') + 'にたどりつく。';
+  }
+
+  function applyScenarioDraft(){
+    const p = getCurrentProject();
+    if(!p) return;
+    p.scenarioMeta = collectScenarioMetaFromUI();
+    const sentence = scenarioSentenceFromDraft(p.scenarioMeta.draft);
+    const syn = document.getElementById('scenario-synopsis');
+    if(syn && !syn.value.trim()) syn.value = sentence;
+    document.getElementById('scenario-draft-preview').innerText = sentence;
+    saveEditorData();
+    toast();
+  }
+
+  function autoFillScenarioEpisodes(){
+    const p = getCurrentProject();
+    if(!p) return;
+    const d = collectScenarioMetaFromUI().draft;
+    const drafts = [
+      (d.who || '主人公')+'が、'+(d.problem || '向き合う課題')+'に気づく。',
+      (d.interviewee || '話を聞く相手')+'に会いに行く。',
+      (d.actions || '行動')+'を始めて現状を知る。',
+      (d.method || '解決方法')+'を試し、課題が見えてくる。',
+      '結果を整理し、必要な改善を考える。',
+      '最終的に、'+(d.answer || 'たどりついた答え')+'へたどりつく。'
+    ];
+    p.storyboardPanels.forEach(function(panel, i){
+      if(!panel.title) panel.title = '第'+(i+1)+'話';
+      if(!panel.subtitle) panel.subtitle = 'サブタイトル'+(i+1);
+      if(!panel.desc) panel.desc = drafts[i];
+    });
+    renderScenario();
+    saveEditorData();
+    toast();
+  }
+
+  function collectStoryboardFromUI(){
+    return Array.from(document.querySelectorAll('.scenario-episode-card')).map(function(card, i){
+      return {
+        episode:'第'+(i+1)+'話',
+        title:card.querySelector('[data-story="title"]')?.value || '',
+        subtitle:card.querySelector('[data-story="subtitle"]')?.value || '',
+        image:card.querySelector('[data-story-image]')?.getAttribute('data-story-image') || '',
+        desc:card.querySelector('[data-story="desc"]')?.value || '',
+        term:card.querySelector('[data-story="term"]')?.value || '１学期',
+        shotDate:card.querySelector('[data-story="shotDate"]')?.value || ''
+      };
+    });
+  }
+
+  function renderScenario(){
+    const p = getCurrentProject();
+    if(!p) return;
+    const meta = p.scenarioMeta || defaultScenarioMeta();
+    document.getElementById('scenario-synopsis').value = meta.synopsis || '';
+    ['who','problem','method','interviewee','actions','answer'].forEach(function(k){
+      const el = document.getElementById('draft-'+k);
+      if(el) el.value = meta.draft[k] || '';
+    });
+    document.getElementById('scenario-draft-preview').innerText = scenarioSentenceFromDraft(meta.draft || defaultScenarioMeta().draft);
+    const list = document.getElementById('scenario-episode-list');
+    list.innerHTML = p.storyboardPanels.map(function(row, i){
+      const arrow = i>0 ? '<div class="scenario-episode-arrow">▼</div>' : '';
+      const img = row.image ? '<img src="'+row.image+'" alt="ep image" data-story-image="'+row.image+'" style="width:100%; max-height:110px; object-fit:cover; border-radius:10px; border:1px solid #d1d5db;">' : '';
+      return arrow + '<div class="scenario-episode-card"><div class="scenario-ep-label">第'+(i+1)+'話</div><div class="scenario-ep-main"><input class="scenario-ep-title2" data-story="subtitle" value="'+escapeAttr(row.subtitle || '')+'" placeholder="各話のタイトル"><input class="scenario-ep-title" data-story="title" value="'+escapeAttr(row.title || '')+'" placeholder="タイトル"><textarea class="scenario-ep-desc" data-story="desc" placeholder="テロップの流れ・内容を入力">'+escapeHtml(row.desc || '')+'</textarea><div class="doc-actions no-print" style="margin-top:0;"><button class="mini-btn" data-story-image-pick="'+i+'">🖼️ 画像</button><button class="mini-btn" data-story-image-delete="'+i+'">削除</button></div>'+img+'</div><div class="scenario-ep-term"><div class="scenario-cell-title">学期</div><select data-story="term"><option '+(row.term==='１学期'?'selected':'')+'>１学期</option><option '+(row.term==='２学期'?'selected':'')+'>２学期</option><option '+(row.term==='３学期'?'selected':'')+'>３学期</option></select></div><div class="scenario-ep-date"><div class="scenario-cell-title">撮影日</div><input type="date" data-story="shotDate" value="'+escapeAttr(row.shotDate || '')+'"></div></div>';
+    }).join('');
+    list.querySelectorAll('[data-story]').forEach(function(el){ el.addEventListener('input', saveEditorData); });
+    list.querySelectorAll('[data-story-image-pick]').forEach(function(btn){ btn.addEventListener('click', function(){ openStoryImagePicker(parseInt(btn.dataset.storyImagePick,10)); }); });
+    list.querySelectorAll('[data-story-image-delete]').forEach(function(btn){ btn.addEventListener('click', function(){ deleteStoryImage(parseInt(btn.dataset.storyImageDelete,10)); }); });
+    document.getElementById('scenario-synopsis').oninput = saveEditorData;
+    ['who','problem','method','interviewee','actions','answer'].forEach(function(k){
+      document.getElementById('draft-'+k).oninput = function(){
+        document.getElementById('scenario-draft-preview').innerText = scenarioSentenceFromDraft(collectScenarioMetaFromUI().draft);
+        saveEditorData();
+      };
+    });
+  }
+
+  function openStoryImagePicker(index){
+    storyImagePickIndex = index;
+    const inp = document.getElementById('story-image-input');
+    inp.value = '';
+    inp.click();
+  }
+
+  function deleteStoryImage(index){
+    const p = getCurrentProject();
+    if(!p) return;
+    p.storyboardPanels[index].image = '';
+    renderScenario();
+    saveEditorData();
+  }
+
+  document.getElementById('story-image-input').addEventListener('change', async function(){
+    const p = getCurrentProject();
+    if(!p) return;
+    const file = (document.getElementById('story-image-input').files || [])[0];
+    if(!file || storyImagePickIndex < 0) return;
+    const src = await fileToDataURL(file);
+    p.storyboardPanels[storyImagePickIndex].image = src;
+    renderScenario();
+    saveEditorData();
+    toast();
+  });
+
+  function getFlowState(type){
+    const p = getCurrentProject();
+    if(!p) return [];
+    if(type==='video') return p.videoFlowState;
+    if(type==='tool') return p.toolFlowState;
+    if(type==='videoEpisode') return p.videoEpisodeFlowState;
+    return [];
+  }
+  function setFlowState(type, state){
+    const p = getCurrentProject();
+    if(!p) return;
+    if(type==='video') p.videoFlowState = state;
+    if(type==='tool') p.toolFlowState = state;
+    if(type==='videoEpisode') p.videoEpisodeFlowState = state;
+  }
+
+  function renderFlow(type, labels, trackId, summaryId, isTool){
+    const state = getFlowState(type);
+    const track = document.getElementById(trackId);
+    if(!track) return;
+    track.innerHTML = state.map(function(node, i){
+      const folders = node.folders.map(function(folder, fi){ return isTool ? renderToolFolderHtml(type, i, fi, folder, node.label) : renderNormalFolderHtml(type, i, fi, folder); }).join('');
+      return '<div class="flow-node-wrap">'+(i>0 ? '<div class="flow-arrow">▼</div>' : '')+'<div class="flow-node '+(node.open ? 'open' : '')+'" data-cat="'+((i%6)+1)+'"><div class="flow-node-head" data-flow-toggle="'+type+'|'+i+'"><div class="flow-node-title">'+escapeHtml(labels[i] || node.label)+'</div><div style="display:flex; gap:6px; align-items:center;"><span class="drag-chip no-print">↕</span><span class="flow-node-toggle">'+(node.open ? '閉じる' : '開く')+'</span></div></div><div class="flow-node-body"><div class="folder-list-wrap">'+folders+'</div></div></div></div>';
+    }).join('');
+    track.querySelectorAll('[data-flow-toggle]').forEach(function(el){
+      el.addEventListener('click', function(){
+        const parts = el.dataset.flowToggle.split('|');
+        toggleFlowNode(parts[0], parseInt(parts[1], 10));
+      });
+    });
+    renderFlowSummary(type, summaryId, isTool);
+  }
+
+  function renderNormalFolderHtml(type, nodeIndex, folderIndex, folder){
+    return '<div class="wf-folder"><div class="wf-folder-head"><input class="wf-folder-title" value="'+escapeAttr(folder.title || '')+'" data-folder-title="'+type+'|'+nodeIndex+'|'+folderIndex+'"><div class="wf-folder-tools no-print"><button class="mini-btn" data-add-flow-item="'+type+'|'+nodeIndex+'|'+folderIndex+'">＋ ToDo</button></div></div><p class="wf-folder-desc">'+escapeHtml(folderDescription(folder.title || ''))+'</p><table class="wf-folder-table"><thead><tr><th style="width:90px;">分類</th><th style="width:130px;">日付</th><th style="width:28%;">内容</th><th style="width:16%;">誰と</th><th style="width:16%;">どこで</th><th style="width:16%;">なぜ</th><th style="width:18%;">どうやる</th><th class="no-print" style="width:70px;">操作</th></tr></thead><tbody>'+
+      folder.items.map(function(item, ii){
+        return '<tr><td><select data-flow-field="'+type+'|'+nodeIndex+'|'+folderIndex+'|'+ii+'|phase">'+FLOW_PHASES.map(function(ph){ return '<option '+(item.phase===ph?'selected':'')+'>'+ph+'</option>'; }).join('')+'</select></td><td><input type="date" value="'+escapeAttr(item.date || '')+'" data-flow-field="'+type+'|'+nodeIndex+'|'+folderIndex+'|'+ii+'|date"></td><td><textarea data-flow-field="'+type+'|'+nodeIndex+'|'+folderIndex+'|'+ii+'|what">'+escapeHtml(item.what || '')+'</textarea></td><td><textarea data-flow-field="'+type+'|'+nodeIndex+'|'+folderIndex+'|'+ii+'|who">'+escapeHtml(item.who || '')+'</textarea></td><td><textarea data-flow-field="'+type+'|'+nodeIndex+'|'+folderIndex+'|'+ii+'|where">'+escapeHtml(item.where || '')+'</textarea></td><td><textarea data-flow-field="'+type+'|'+nodeIndex+'|'+folderIndex+'|'+ii+'|why">'+escapeHtml(item.why || '')+'</textarea></td><td><textarea data-flow-field="'+type+'|'+nodeIndex+'|'+folderIndex+'|'+ii+'|how">'+escapeHtml(item.how || '')+'</textarea></td><td class="no-print"><button class="mini-btn" data-delete-flow-item="'+type+'|'+nodeIndex+'|'+folderIndex+'|'+ii+'">削除</button></td></tr>';
+      }).join('')+
+      '</tbody></table></div>';
+  }
+
+  function toolFieldTemplates(stepLabel){
+    if(stepLabel.includes('経費の計算')) return [{key:'what',label:'何にお金がかかる？',desc:'必要なモノ・サービス・移動費などを整理します。',placeholder:'例）試作品材料、交通費、印刷費'},{key:'budget',label:'金額の見込み',desc:'だいたいの金額を書きます。',placeholder:'例）15,000円'},{key:'why',label:'なぜ必要？',desc:'この費用が必要な理由を書きます。',placeholder:'例）試作品を作るため'}];
+    if(stepLabel.includes('必要予算の算出')) return [{key:'what',label:'予算の内訳',desc:'合計予算を出すための内訳を書きます。',placeholder:'例）材料費＋広報費＋運営費'},{key:'budget',label:'合計いくら必要？',desc:'全体で必要な金額を書きます。',placeholder:'例）80,000円'},{key:'note',label:'計算メモ',desc:'見積もりの考え方を書きます。',placeholder:'例）1回分×5回で算出'}];
+    if(stepLabel.includes('予算確保の方法')) return [{key:'fundMethod',label:'どうやって資金を集める？',desc:'助成金、協賛、販売など方法を書きます。',placeholder:'例）企業協賛を3社集める'},{key:'who',label:'誰にお願いする？',desc:'相談先や候補相手を書きます。',placeholder:'例）地域企業、学校、保護者会'},{key:'how',label:'どんな手順で動く？',desc:'お願いの仕方や流れを書きます。',placeholder:'例）資料作成→訪問→提案'}];
+    if(stepLabel.includes('商品・サービス販売の方法')) return [{key:'salesMethod',label:'どうやって売る？',desc:'販売方法や提供方法を書きます。',placeholder:'例）学校イベントで販売'},{key:'where',label:'どこで売る？',desc:'販売場所やチャネルを書きます。',placeholder:'例）文化祭、SNS、EC'},{key:'who',label:'誰に届ける？',desc:'ターゲットを書く欄です。',placeholder:'例）高校生、地域の親子'}];
+    if(stepLabel.includes('実施方法')) return [{key:'how',label:'どう実施する？',desc:'当日の段取りや役割分担を書きます。',placeholder:'例）受付→体験→販売→記録'},{key:'note',label:'必要な準備',desc:'事前にやることを書きます。',placeholder:'例）机、POP、つり銭を準備'},{key:'why',label:'ねらい',desc:'何のために実施するのかを書きます。',placeholder:'例）利用者の反応を確かめる'}];
+    return [{key:'reportTo',label:'誰に報告する？',desc:'会計報告や共有先を書きます。',placeholder:'例）先生、会計担当、協賛先'},{key:'note',label:'何をまとめる？',desc:'売上・支出・反省などを書きます。',placeholder:'例）売上、支出、利益、改善点'},{key:'how',label:'どう記録する？',desc:'記録方法を書きます。',placeholder:'例）スプレッドシートで管理'}];
+  }
+
+  function renderToolFolderHtml(type, nodeIndex, folderIndex, folder, stepLabel){
+    const cards = folder.items.map(function(item, ii){
+      const fields = toolFieldTemplates(stepLabel).map(function(t){
+        return '<label>'+escapeHtml(t.label)+'<br><span style="font-size:10px;color:#94a3b8;font-weight:400;">'+escapeHtml(t.desc)+'</span></label>' +
+        (t.key==='budget'
+          ? '<input value="'+escapeAttr(item[t.key] || '')+'" placeholder="'+escapeAttr(t.placeholder || '')+'" data-flow-field="'+type+'|'+nodeIndex+'|'+folderIndex+'|'+ii+'|'+t.key+'">'
+          : '<textarea placeholder="'+escapeAttr(t.placeholder || '')+'" data-flow-field="'+type+'|'+nodeIndex+'|'+folderIndex+'|'+ii+'|'+t.key+'">'+escapeHtml(item[t.key] || '')+'</textarea>');
+      }).join('');
+      return '<div class="tool-sheet-card"><div class="tool-sheet-title">記入欄 '+(ii+1)+'</div><div class="tool-sheet-desc">'+escapeHtml(folderDescription(folder.title || ''))+'</div><div class="tool-sheet-grid"><label>分類</label><select data-flow-field="'+type+'|'+nodeIndex+'|'+folderIndex+'|'+ii+'|phase">'+FLOW_PHASES.map(function(ph){ return '<option '+(item.phase===ph?'selected':'')+'>'+ph+'</option>'; }).join('')+'</select><label>日付</label><input type="date" value="'+escapeAttr(item.date || '')+'" data-flow-field="'+type+'|'+nodeIndex+'|'+folderIndex+'|'+ii+'|date">'+fields+'<label>ひとことで言うと</label><textarea data-flow-field="'+type+'|'+nodeIndex+'|'+folderIndex+'|'+ii+'|what">'+escapeHtml(item.what || '')+'</textarea></div><div class="doc-actions no-print" style="margin-top:10px;"><button class="mini-btn" data-delete-flow-item="'+type+'|'+nodeIndex+'|'+folderIndex+'|'+ii+'">削除</button></div></div>';
+    }).join('');
+    return '<div class="wf-folder"><div class="wf-folder-head"><input class="wf-folder-title" value="'+escapeAttr(folder.title || '')+'" data-folder-title="'+type+'|'+nodeIndex+'|'+folderIndex+'"><div class="wf-folder-tools no-print"><button class="mini-btn" data-add-flow-item="'+type+'|'+nodeIndex+'|'+folderIndex+'">＋ 記入欄</button></div></div><p class="wf-folder-desc">'+escapeHtml(folderDescription(folder.title || ''))+'</p><div class="tool-sheet">'+cards+'</div></div>';
+  }
+
+  function toggleFlowNode(type, index){
+    const state = getFlowState(type);
+    state[index].open = !state[index].open;
+    setFlowState(type, state);
+    saveEditorData();
+    rerenderFlow(type);
+  }
+  function updateFlowFolderTitle(type, nodeIndex, folderIndex, value){
+    const state = getFlowState(type);
+    state[nodeIndex].folders[folderIndex].title = value || '';
+    state[nodeIndex].folders[folderIndex].items.forEach(function(item){ if(FLOW_PHASES.includes(value)) item.phase = value; });
+    setFlowState(type, state);
+    saveEditorData();
+  }
+  function addFlowItem(type, nodeIndex, folderIndex){
+    const state = getFlowState(type);
+    const phase = state[nodeIndex].folders[folderIndex].title || '①準備';
+    state[nodeIndex].folders[folderIndex].items.push(defaultFlowItem(phase));
+    setFlowState(type, state);
+    saveEditorData();
+    rerenderFlow(type);
+  }
+  function deleteFlowItem(type, nodeIndex, folderIndex, itemIndex){
+    const state = getFlowState(type);
+    const items = state[nodeIndex].folders[folderIndex].items;
+    if(items.length<=1) state[nodeIndex].folders[folderIndex].items = [defaultFlowItem(state[nodeIndex].folders[folderIndex].title || '①準備')];
+    else items.splice(itemIndex, 1);
+    setFlowState(type, state);
+    saveEditorData();
+    rerenderFlow(type);
+  }
+  function updateFlowItemField(type, nodeIndex, folderIndex, itemIndex, key, value){
+    const state = getFlowState(type);
+    state[nodeIndex].folders[folderIndex].items[itemIndex][key] = value;
+    setFlowState(type, state);
+    saveEditorData();
+    rerenderFlowSummary(type);
+  }
+  function rerenderFlow(type){ if(type==='video') renderVideoFlow(); if(type==='tool') renderToolFlow(); if(type==='videoEpisode') renderVideoEpisodeFlow(); }
+  function flattenFlow(state){
+    const out = [];
+    state.forEach(function(node){
+      node.folders.forEach(function(folder){
+        folder.items.forEach(function(item){
+          if(item.phase || item.date || item.what || item.who || item.where || item.why || item.how || item.note || item.budget || item.fundMethod || item.salesMethod || item.reportTo){
+            out.push({ step:node.label, folder:folder.title, phase:item.phase, date:item.date, what:item.what, who:item.who, where:item.where, why:item.why, how:item.how, note:item.note, budget:item.budget, fundMethod:item.fundMethod, salesMethod:item.salesMethod, reportTo:item.reportTo });
+          }
+        });
+      });
+    });
+    return out;
+  }
+  function sortDateValue(v){ if(!v) return Number.MAX_SAFE_INTEGER; const t = new Date(v).getTime(); return Number.isNaN(t) ? Number.MAX_SAFE_INTEGER : t; }
+  function termFromDate(v){ if(!v) return '未設定'; const m = new Date(v).getMonth()+1; if([4,5,6,7,8].includes(m)) return '1学期'; if([9,10,11,12].includes(m)) return '2学期'; return '3学期'; }
+
+  function renderFlowSummary(type, summaryId, isTool){
+    const grid = document.getElementById(summaryId);
+    if(!grid) return;
+    const flat = flattenFlow(getFlowState(type)).sort(function(a,b){ return sortDateValue(a.date)-sortDateValue(b.date); });
+    const groups = { '1学期':[], '2学期':[], '3学期':[] };
+    flat.forEach(function(item){ const t = termFromDate(item.date); if(groups[t]) groups[t].push(item); });
+    grid.innerHTML = ['1学期','2学期','3学期'].map(function(term){
+      return '<div class="todo-summary-card"><h4>'+term+'</h4><div class="todo-summary-body">'+
+      (groups[term].length ? groups[term].map(function(item){
+        return '<div class="todo-item"><div class="todo-badge">'+escapeHtml(item.step)+'</div><div><strong>'+escapeHtml(item.phase || '')+'</strong> / '+escapeHtml(item.folder || '')+'</div><div>日付：'+escapeHtml(item.date || '未設定')+'</div><div>内容：'+escapeHtml(item.what || item.note || '—')+'</div>' +
+        (isTool
+          ? '<div>補足：'+escapeHtml(item.budget || item.fundMethod || item.salesMethod || item.reportTo || '—')+'</div>'
+          : '<div>誰と：'+escapeHtml(item.who || '—')+' / どこで：'+escapeHtml(item.where || '—')+'</div><div>なぜ：'+escapeHtml(item.why || '—')+'</div><div>どうやる：'+escapeHtml(item.how || '—')+'</div>')+
+        '</div>';
+      }).join('') : '<div class="todo-empty">まだ ToDo はありません。</div>') + '</div></div>';
+    }).join('');
+  }
+
+  function rerenderFlowSummary(type){ if(type==='video') renderFlowSummary('video','workflow-todo-summary',false); if(type==='tool') renderFlowSummary('tool','tooldev-todo-summary',true); if(type==='videoEpisode') renderFlowSummary('videoEpisode','video-episode-todo-summary',false); }
+  function renderVideoFlow(){ renderFlow('video', VIDEO_FLOW_LABELS, 'workflow-flow-track', 'workflow-todo-summary', false); bindFlowControls(document.getElementById('workflow-flow-track')); renderPageSizeTools('tab-pres-workflow','pres-workflow-width','pres-workflow-width-val','pres-workflow-orientation'); }
+  function renderVideoEpisodeFlow(){ const p = getCurrentProject(); if(!p) return; const labels = p.storyboardPanels.map(function(r, i){ return ('第'+(i+1)+'話 ' + (r.title || '')).trim(); }); normalizeFlowState(p.videoEpisodeFlowState, labels); renderFlow('videoEpisode', labels, 'video-episode-flow-track', 'video-episode-todo-summary', false); bindFlowControls(document.getElementById('video-episode-flow-track')); renderPageSizeTools('tab-video-workflow','video-workflow-width','video-workflow-width-val','video-workflow-orientation'); }
+  function renderToolFlow(){ renderFlow('tool', TOOL_FLOW_LABELS, 'tooldev-flow-track', 'tooldev-todo-summary', true); bindFlowControls(document.getElementById('tooldev-flow-track')); }
+
+  function bindFlowControls(scope){
+    if(!scope) return;
+    scope.querySelectorAll('[data-folder-title]').forEach(function(el){
+      el.addEventListener('input', function(){
+        const parts = el.dataset.folderTitle.split('|');
+        updateFlowFolderTitle(parts[0], parseInt(parts[1],10), parseInt(parts[2],10), el.value);
+      });
+    });
+    scope.querySelectorAll('[data-add-flow-item]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        const parts = btn.dataset.addFlowItem.split('|');
+        addFlowItem(parts[0], parseInt(parts[1],10), parseInt(parts[2],10));
+      });
+    });
+    scope.querySelectorAll('[data-delete-flow-item]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        const parts = btn.dataset.deleteFlowItem.split('|');
+        deleteFlowItem(parts[0], parseInt(parts[1],10), parseInt(parts[2],10), parseInt(parts[3],10));
+      });
+    });
+    scope.querySelectorAll('[data-flow-field]').forEach(function(el){
+      const handler = function(){
+        const parts = el.dataset.flowField.split('|');
+        updateFlowItemField(parts[0], parseInt(parts[1],10), parseInt(parts[2],10), parseInt(parts[3],10), parts[4], el.value);
+      };
+      el.addEventListener(el.tagName === 'SELECT' || el.type === 'date' ? 'change' : 'input', handler);
+    });
+  }
+
+  function getCellText(rowid){ const tr=document.querySelector('#video-script-tbody tr[data-rowid="'+rowid+'"]'); return tr?.querySelector('[data-vs="text"]')?.innerText || ''; }
+  function setCellText(rowid, text){ const tr=document.querySelector('#video-script-tbody tr[data-rowid="'+rowid+'"]'); const td=tr?.querySelector('[data-vs="text"]'); if(td) td.innerText=text || ''; }
+  function applyCatchphraseToAll(text){ for(let ep=1; ep<=6; ep++) setCellText('ep'+ep+'-c1', text || ''); const p=getCurrentProject(); if(p) p.videoCatchphrase = (text || '').trim(); }
+  function pick(){ for(const v of arguments){ if((v || '').toString().trim() !== '') return v; } return ''; }
+  function buildEpisodeCuts(ep, ctx){
+    const f = ctx.f, storyboard = ctx.storyboard, guide = ctx.guide;
+    const panel = storyboard[ep-1] || {};
+    const cp = (ctx.catchphrase || '').trim() || ('私たちは『'+pick(f.presTopic, guide[0]?.text, '目標')+'』'+pick(f.teamName, 'チーム')+'です！');
+    return [
+      { text:cp, visual:'冒頭の決めカット' },
+      { text:'第'+ep+'話「'+pick(panel.title, 'テーマ')+'」です。', visual:'タイトル表示' },
+      { text:pick(panel.desc, '課題が見えてくる。'), visual:'課題が伝わるカット' },
+      { text:'舞台は'+pick(f.doPlace, '場所')+'、テーマは「'+pick(f.theme, guide[1]?.text, 'テーマ')+'」です。', visual:'場所とテーマの関係が分かるカット' },
+      { text:'まず私たちは'+pick(f.fieldAction1, '調査')+'から始めました。', visual:'取材・調査' },
+      { text:'そして作戦は「'+pick(f.ideaName, guide[3]?.text, '作戦')+'」です。', visual:'作戦紹介' },
+      { text:pick(f.concept, '') ? '一言でいうと「'+pick(f.concept,'')+'」です。' : '一言でいうと「小さく試して改善」です。', visual:'コンセプトを象徴する絵' },
+      { text:'次回「'+pick(f.nextNeed, guide[5]?.text, '次の展開')+'」へ！', visual:'次回予告' }
+    ];
+  }
+
+  function autoDraftVideo(){
+    const p = getCurrentProject();
+    if(!p) return;
+    const ctx = { f:p.fields, catchphrase:p.videoCatchphrase || getCellText('ep1-c1'), storyboard:p.storyboardPanels, guide:p.presentationGuide };
+    const tbody = document.getElementById('video-script-tbody');
+    for(let ep=1; ep<=6; ep++){
+      const cuts = buildEpisodeCuts(ep, ctx);
+      for(let cut=1; cut<=LINES_PER_EP; cut++){
+        const tr = tbody.querySelector('tr[data-rowid="ep'+ep+'-c'+cut+'"]');
+        if(!tr) continue;
+        const t = tr.querySelector('[data-vs="text"]');
+        const v = tr.querySelector('[data-vs="visual"]');
+        if(!t.innerText.trim()) t.innerText = cuts[cut-1]?.text || '';
+        if(!v.innerText.trim()) v.innerText = cuts[cut-1]?.visual || '';
+      }
+    }
+    applyCatchphraseToAll(ctx.catchphrase || getCellText('ep1-c1'));
+    saveEditorData();
+    toast();
+  }
+
+  function restoreVideoRows(p){
+    if(!p.videoScriptRows?.length) return;
+    p.videoScriptRows.forEach(function(saved){
+      const tr = document.querySelector('#video-script-tbody tr[data-rowid="'+saved.rowid+'"]');
+      if(!tr) return;
+      tr.querySelector('[data-vs="text"]').innerText = saved.text || '';
+      tr.querySelector('[data-vs="visual"]').innerText = saved.visual || '';
+      tr.querySelector('select[data-vs="shoot"]').value = saved.shoot || '未着手';
+      tr.querySelector('select[data-vs="edit"]').value = saved.edit || '未着手';
+    });
+  }
+
+  function addVideoScriptRow(){
+    const p = getCurrentProject();
+    if(!p) return;
+    const activeEp = getActiveVideoEpisode();
+    p.videoRowsPerEpisode[activeEp-1] = (parseInt(p.videoRowsPerEpisode[activeEp-1],10) || LINES_PER_EP) + 1;
+    buildVideoScriptTable();
+    restoreVideoRows(p);
+    saveEditorData();
+    toast();
+  }
+
+  function deleteVideoScriptRow(){
+    const p = getCurrentProject();
+    if(!p) return;
+    const activeEp = getActiveVideoEpisode();
+    const current = Math.max(1, parseInt(p.videoRowsPerEpisode[activeEp-1],10) || LINES_PER_EP);
+    if(current <= 1) return;
+    const rowid = 'ep'+activeEp+'-c'+current;
+    p.videoScriptRows = (p.videoScriptRows || []).filter(function(row){ return row.rowid !== rowid; });
+    p.videoRowsPerEpisode[activeEp-1] = current - 1;
+    buildVideoScriptTable();
+    restoreVideoRows(p);
+    saveEditorData();
+    toast();
+  }
+
+  function getActiveVideoEpisode(){
+    const selected = document.querySelector('#video-script-tbody tr[data-ep]');
+    if(selected) return parseInt(selected.getAttribute('data-ep'),10) || 1;
+    return 1;
+  }
+
+  function addVideoScriptRowForEpisode(ep){
+    const p = getCurrentProject();
+    if(!p) return;
+    p.videoRowsPerEpisode[ep-1] = (parseInt(p.videoRowsPerEpisode[ep-1],10) || LINES_PER_EP) + 1;
+    buildVideoScriptTable();
+    restoreVideoRows(p);
+    renderEpisodeRowTools();
+    saveEditorData();
+    toast();
+  }
+
+  function deleteVideoScriptRowForEpisode(ep){
+    const p = getCurrentProject();
+    if(!p) return;
+    const current = Math.max(1, parseInt(p.videoRowsPerEpisode[ep-1],10) || LINES_PER_EP);
+    if(current <= 1) return;
+    const rowid = 'ep'+ep+'-c'+current;
+    p.videoScriptRows = (p.videoScriptRows || []).filter(function(row){ return row.rowid !== rowid; });
+    p.videoRowsPerEpisode[ep-1] = current - 1;
+    buildVideoScriptTable();
+    restoreVideoRows(p);
+    renderEpisodeRowTools();
+    saveEditorData();
+    toast();
+  }
+
+  function renderEpisodeRowTools(){
+    const wrap = document.getElementById('episode-row-tool-wrap');
+    const p = getCurrentProject();
+    if(!wrap || !p) return;
+    wrap.innerHTML = [1,2,3,4,5,6].map(function(ep){
+      const count = Math.max(1, parseInt(p.videoRowsPerEpisode[ep-1],10) || LINES_PER_EP);
+      return '<div class="episode-row-tools"><span class="mini-note">第'+ep+'話 行数：'+count+'</span><button class="mini-btn" data-add-ep-row="'+ep+'">第'+ep+'話に行追加</button><button class="mini-btn" data-del-ep-row="'+ep+'">第'+ep+'話の最終行削除</button></div>';
+    }).join('');
+    wrap.querySelectorAll('[data-add-ep-row]').forEach(function(btn){ btn.addEventListener('click', function(){ addVideoScriptRowForEpisode(parseInt(btn.dataset.addEpRow,10)); }); });
+    wrap.querySelectorAll('[data-del-ep-row]').forEach(function(btn){ btn.addEventListener('click', function(){ deleteVideoScriptRowForEpisode(parseInt(btn.dataset.delEpRow,10)); }); });
+  }
+
+  function renderPageSizeTools(sectionId, widthId, valueId, orientationId){
+    const p = getCurrentProject();
+    if(!p || !p.pagePrintSettings || !p.pagePrintSettings[sectionId]) return;
+    const widthEl = document.getElementById(widthId);
+    const valueEl = document.getElementById(valueId);
+    const orientationEl = document.getElementById(orientationId);
+    if(!widthEl || !valueEl || !orientationEl) return;
+    const settings = p.pagePrintSettings[sectionId];
+    const targetId = sectionId === 'tab-video-workflow' ? 'video-workflow-resizable' : 'pres-workflow-resizable';
+    const target = document.getElementById(targetId);
+
+    widthEl.value = settings.width;
+    valueEl.value = settings.width;
+    orientationEl.value = settings.orientation;
+
+    applyWorkflowPageVisualSize(sectionId);
+
+    widthEl.oninput = function(){
+      settings.width = parseInt(widthEl.value,10) || DEFAULT_PAGE_PRINT_SETTINGS[sectionId].width;
+      valueEl.value = settings.width;
+      applyWorkflowPageVisualSize(sectionId);
+      saveEditorData();
+    };
+    orientationEl.onchange = function(){
+      settings.orientation = orientationEl.value || DEFAULT_PAGE_PRINT_SETTINGS[sectionId].orientation;
+      applyWorkflowPageVisualSize(sectionId);
+      saveEditorData();
+    };
+
+    if(target){
+      applyWorkflowPageVisualSize(sectionId);
+    }
+  }
+
+  function applyWorkflowPageVisualSize(sectionId){
+    const p = getCurrentProject();
+    if(!p || !p.pagePrintSettings || !p.pagePrintSettings[sectionId]) return;
+    const settings = p.pagePrintSettings[sectionId];
+    const targetId = sectionId === 'tab-video-workflow' ? 'video-workflow-resizable' : 'pres-workflow-resizable';
+    const target = document.getElementById(targetId);
+    if(!target) return;
+
+    const width = parseInt(settings.width,10) || DEFAULT_PAGE_PRINT_SETTINGS[sectionId].width;
+    const px = Math.round(width * 3.78);
+
+    if(settings.orientation === 'landscape'){
+      target.style.width = px + 'px';
+      target.style.minWidth = px + 'px';
+    }else{
+      const portraitPx = Math.min(px, 900);
+      target.style.width = portraitPx + 'px';
+      target.style.minWidth = portraitPx + 'px';
+    }
+  }
+
+  document.getElementById('video-script-tbody').addEventListener('input', function(e){
+    const td = e.target;
+    if(!td || td.getAttribute('data-vs') !== 'text') return;
+    const tr = td.closest('tr');
+    if(!tr) return;
+    if((tr.dataset.rowid || '').endsWith('-c1')) applyCatchphraseToAll(td.innerText || '');
+    saveEditorData();
+  });
+  document.getElementById('video-script-tbody').addEventListener('change', saveEditorData);
+
+  function fillPlanText(t, f){
+    let s = t;
+    if(s.includes('作成日：')) s=s.replace('作成日：20XX年XX月XX日', '作成日：' + (f.createdDate || '20XX年XX月XX日'));
+    s=s.replace('（企業名）', f.companyName || '（企業名）');
+    s=s.replace('（部署名）', f.department || '（部署名）');
+    if(s.trim()==='ご担当者様' && f.contactName) s=f.contactName + ' 様';
+    s=s.replace('所属：（学校名）（学年）', '所属：' + (f.schoolName || '（学校名）') + (f.grade ? '（' + f.grade + '）' : '（学年）'));
+    if(s.startsWith('生徒代表：')) s='生徒代表：' + (f.studentRep || '　　　　　');
+    if(s.startsWith('担当教員：')) s='担当教員：' + (f.teacherRep || '　　　　　');
+    s=s.replace('私たちは（学校名）の探究学習', '私たちは' + (f.schoolName || '（学校名）') + 'の探究学習');
+    s=s.replace('（テーマ：　　　　　　　　　）', '（テーマ：' + (f.theme || '　　　　　　　　　') + '）');
+    if(s.includes('候補日時：')) s='候補日時：\n第1希望（'+(f.dt1 || '　月　日　　時〜')+'）／第2希望（'+(f.dt2 || '　月　日　　時〜')+'）／第3希望（'+(f.dt3 || '　月　日　　時〜')+'）';
+    if(s.startsWith('参加者：')) s='参加者：生徒（'+(f.studentsCount || '　')+'名）＋教員（'+(f.teachersCount || '　')+'名）';
+    if(s.startsWith('場所：')) s='場所：' + (f.place || '／オンライン');
+    if(s.includes('メール：（　　　　　　　　　）')) s='メール：（'+(f.email || '　　　　　　　　　')+'）\n電話：（'+(f.phone || '　　　　　　　　　')+'）';
+    return s;
+  }
+
+  const PLAN_TEMPLATE = [
+    {align:'right',text:'作成日：20XX年XX月XX日'},{align:'center',text:'取材のお願い'},{align:'left',text:'（企業名）（部署名）'},{align:'left',text:'ご担当者様'},{align:'right',text:'所属：（学校名）（学年）'},{align:'right',text:'生徒代表：　　　　　'},{align:'right',text:'担当教員：　　　　　'},{align:'left',text:''},{align:'center',text:'謝辞'},{align:'left',text:''},{align:'left',text:'突然のご連絡失礼いたします。私たちは（学校名）の探究学習の一環として、（テーマ：　　　　　　　　　）について学んでおります。\nつきましては、貴社・貴団体のご業務・お取り組みについて 短時間のインタビュー取材（30分から一時間程度） にご協力いただけないでしょうか。\nご多忙のところ恐縮ですが、ご検討のほど何卒よろしくお願いいたします。'},{align:'left',text:''},{align:'left',text:'取材の目的'},{align:'left',text:'探究テーマに関する「現場の視点・実務の知見」を伺い、学習の質を高めるため'},{align:'left',text:'取材内容は、授業内の成果物（発表・レポート等）に活用します'},{align:'left',text:''},{align:'left',text:'取材概要（希望）'},{align:'left',text:'形式：対面／オンライン（Zoom等）'},{align:'left',text:'所要時間：30分（最大45分）'},{align:'left',text:'候補日時：\n第1希望（　月　日　　時〜）／第2希望（　月　日　　時〜）／第3希望（　月　日　　時〜）'},{align:'left',text:'参加者：生徒（　名）＋教員（　名）'},{align:'left',text:'場所：／オンライン'},{align:'left',text:''},{align:'left',text:'内容説明'},{align:'left',text:'__CONTENT_DESC_BLOCK__'},{align:'left',text:''},{align:'left',text:'お伺いしたい内容（例）'},{align:'left',text:'貴社の事業概要と現在の状況（顧客・市場・課題感）'},{align:'left',text:'課題に対する取り組み（施策・工夫・技術活用等）'},{align:'left',text:'成果と難しさ（効果・障壁・学び）'},{align:'left',text:'今後の展望（次の一手、必要な連携）'},{align:'left',text:'中高生や地域に期待すること（関わり方のヒント）'},{align:'left',text:''},{align:'left',text:'資料や写真について'},{align:'left',text:'当日に頂いた資料や情報、撮影した写真や動画につきましては、学校や部の活動を発信しているSNSアカウントおよび、参加するコンテストでの発表資料として使用させて頂く場合があります。掲載可否・範囲については必ず確認いたします。'},{align:'left',text:''},{align:'right',text:'【連絡先】'},{align:'right',text:'メール：（　　　　　　　　　）\n電話：（　　　　　　　　　）'}
+  ];
+  const PLAN_HEADINGS = new Set(['謝辞','取材の目的','取材概要（希望）','内容説明','お伺いしたい内容（例）','資料や写真について','【連絡先】']);
+
+  function formatPlanLine(raw){
+    const t = (raw || '').trim();
+    if(!t) return { html:'', cls:'' };
+    if(t==='取材のお願い') return { html:'<strong>'+escapeHtml(t)+'</strong>', cls:'plan-title' };
+    if(PLAN_HEADINGS.has(t)) return { html:'<strong>'+escapeHtml(t)+'</strong>', cls:'plan-heading plan-bullet' };
+    const m = t.match(/^([^：]+)：(.*)$/);
+    if(m) return { html:'<strong>'+escapeHtml(m[1].trim())+'：</strong>'+escapeHtml(m[2].trim()), cls:'plan-bullet' };
+    return { html:escapeHtml(raw), cls:'' };
+  }
+
+  function renderPlanDoc(forceHtml){
+    const p = getCurrentProject();
+    if(!p) return;
+    const area = document.getElementById('plan-doc-area');
+    if(forceHtml){
+      area.innerHTML = forceHtml;
+      area.querySelectorAll('.doc-line[contenteditable="true"]').forEach(function(line){ line.addEventListener('input', saveEditorData); });
+      updatePlanImagesSlot();
+      return;
+    }
+    area.innerHTML = PLAN_TEMPLATE.map(function(row, idx){
+      if(row.text==='__CONTENT_DESC_BLOCK__'){
+        return '<div class="doc-line" contenteditable="true" data-doc="plan" data-idx="'+idx+'" style="text-align:left;">'+escapeHtml(p.fields.planDescText || '')+'</div><div id="plan-image-slot" class="doc-line" style="text-align:left; padding-top:4px;"></div>';
+      }
+      const txt = fillPlanText(row.text, p.fields);
+      const f = formatPlanLine(txt);
+      return '<div class="doc-line '+f.cls+'" contenteditable="true" data-doc="plan" data-idx="'+idx+'" style="text-align:'+row.align+';">'+f.html.replace(/\n/g,'<br>')+'</div>';
+    }).join('');
+    area.querySelectorAll('.doc-line[contenteditable="true"]').forEach(function(line){ line.addEventListener('input', saveEditorData); });
+    updatePlanImagesSlot();
+  }
+
+  function regenPlan(silent){
+    const p = getCurrentProject();
+    if(!p) return;
+    if(!silent && !confirm('入力内容で企画書を再生成します。本文の手直しは上書きされます。よろしいですか？')) return;
+    p.fields = collectFieldsFromUI();
+    renderPlanDoc();
+    saveEditorData();
+    if(!silent) toast();
+  }
+
+  function toggleDrawer(id){ const el=document.getElementById(id); if(el) el.classList.toggle('open'); }
+
+  function renderPresDoc(forceHtml){
+    const p = getCurrentProject();
+    if(!p) return;
+    const area = document.getElementById('pres-doc-area');
+    if(forceHtml){
+      area.innerHTML = forceHtml;
+      area.querySelectorAll('.doc-line[contenteditable="true"]').forEach(function(line){ line.addEventListener('input', saveEditorData); });
+      return;
+    }
+    const f = p.fields, g = p.presentationGuide;
+    const slots = [f.teamName || '', f.presTopic || g[0]?.text || '', g[1]?.text || f.theme || '', f.fieldAction1 || '', f.insight1 || '', f.research2 || '', f.fact2 || '', f.coreProblem || g[2]?.text || '', f.hypCause || '', f.hypReason || '', f.hypSolution || '', f.ideaName || g[3]?.text || '', f.concept || '', f.feature1 || '', f.feature2 || '', f.verifyMethod || g[4]?.text || '', f.verifyStep1 || '', f.verifyCheck || '', f.doDate || '', f.doPlace || '', f.target || '', f.doWhat || '', f.data1 || '', f.learned || '', f.conclusion || '', f.discussion || '', '（課題）', f.nextNeed || '', (f.future || g[5]?.text || '') + 'という'];
+    let slotIdx = 0;
+    const blocks = [];
+    PRES_RAW.forEach(function(line){
+      if(line==='------------------------') blocks.push({type:'sep'});
+      else if(line.length<=6 && !line.includes('。') && !line.includes('、')) blocks.push({type:'heading', text:line});
+      else{
+        let txt = line;
+        while(txt.includes('「」') && slotIdx<slots.length){ txt = txt.replace('「」','「'+(slots[slotIdx] || '')+'」'); slotIdx++; }
+        blocks.push({type:'p', text:txt});
+      }
+    });
+    area.innerHTML = blocks.map(function(b, i){
+      return b.type==='sep'
+        ? '<div class="doc-line" style="text-align:left; color:#9ca3af; font-weight:900;">------------------------</div>'
+        : '<div class="doc-line" contenteditable="true" data-doc="pres" data-idx="'+i+'" style="text-align:left;'+(b.type==='heading'?' font-weight:1000;':'')+'">'+escapeHtml(b.text)+'</div>';
+    }).join('');
+    area.querySelectorAll('.doc-line[contenteditable="true"]').forEach(function(line){ line.addEventListener('input', saveEditorData); });
+  }
+
+  function regenPres(silent){
+    const p = getCurrentProject();
+    if(!p) return;
+    if(!silent && !confirm('入力内容でプレゼン台本を再生成します。本文の手直しは上書きされます。よろしいですか？')) return;
+    p.fields = collectFieldsFromUI();
+    p.presentationGuide = collectPresentationGuideFromUI();
+    renderPresDoc();
+    saveEditorData();
+    if(!silent) toast();
+  }
+
+  function setPlanFontSize(size, shouldSave){
+    const fs = Math.max(9, Math.min(14, parseInt(size,10) || 11));
+    document.documentElement.style.setProperty('--planFont', fs + 'px');
+    document.getElementById('plan-font-range').value = String(fs);
+    document.getElementById('plan-font-val').innerText = fs+'px';
+    const p = getCurrentProject();
+    if(p){ p.planSettings.fontSize = fs; if(shouldSave !== false) saveEditorData(); }
+  }
+
+  function setPlanLineHeight(v, shouldSave){
+    const lh = Math.max(1.2, Math.min(1.65, parseFloat(v) || 1.45));
+    document.documentElement.style.setProperty('--planLine', String(lh));
+    const p = getCurrentProject();
+    if(p){ p.planSettings.lineHeight = lh; if(shouldSave !== false) saveEditorData(); }
+  }
+
+  document.getElementById('plan-font-range').addEventListener('input', function(){ setPlanFontSize(document.getElementById('plan-font-range').value, false); });
+  document.getElementById('plan-font-range').addEventListener('change', function(){ setPlanFontSize(document.getElementById('plan-font-range').value, true); toast(); });
+
+  function openPlanImagePicker(){ planImagePickMode = { mode:'append', index:-1 }; const inp=document.getElementById('plan-image-input'); inp.value=''; inp.click(); }
+  function openPlanImageReplacePicker(index){ planImagePickMode = { mode:'replace', index:index }; const inp=document.getElementById('plan-image-input'); inp.value=''; inp.click(); }
+
+  document.getElementById('plan-image-input').addEventListener('change', async function(){
+    const p = getCurrentProject();
+    if(!p) return;
+    const files = Array.from(document.getElementById('plan-image-input').files || []);
+    if(!files.length) return;
+    if(planImagePickMode.mode==='replace' && planImagePickMode.index>=0){
+      const idx = planImagePickMode.index;
+      const src = await fileToDataURL(files[0]);
+      const old = p.planSettings.images[idx] || { src:'', scale:100, boxH:120 };
+      p.planSettings.images[idx] = { src:src, scale:old.scale ?? 100, boxH:old.boxH ?? 120 };
+    }else{
+      const slots = p.planSettings.images || [];
+      const canAdd = Math.max(0, 2 - slots.length);
+      for(const f of files.slice(0, canAdd)){
+        const src = await fileToDataURL(f);
+        slots.push({ src:src, scale:100, boxH:120 });
+      }
+      p.planSettings.images = slots.slice(0,2);
+    }
+    updatePlanImagesSlot();
+    saveEditorData();
+    toast();
+  });
+
+  function fileToDataURL(file){
+    return new Promise(function(resolve){
+      const reader = new FileReader();
+      reader.onload = function(){ resolve(reader.result); };
+      reader.onerror = function(){ resolve(''); };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function deletePlanImage(index){
+    const p = getCurrentProject();
+    if(!p) return;
+    p.planSettings.images = (p.planSettings.images || []).filter(function(_, i){ return i !== index; });
+    updatePlanImagesSlot();
+    saveEditorData();
+  }
+  function setPlanImageScale(index, scale){
+    const p = getCurrentProject();
+    if(!p || !p.planSettings.images[index]) return;
+    p.planSettings.images[index].scale = Math.max(50, Math.min(160, parseInt(scale,10) || 100));
+    updatePlanImagesSlot(false);
+  }
+  function setPlanImageBoxH(index, h){
+    const p = getCurrentProject();
+    if(!p || !p.planSettings.images[index]) return;
+    p.planSettings.images[index].boxH = Math.max(80, Math.min(260, parseInt(h,10) || 120));
+    document.documentElement.style.setProperty('--planImgBoxH', p.planSettings.images[index].boxH + 'px');
+    updatePlanImagesSlot(false);
+  }
+
+  function updatePlanImagesSlot(shouldSave){
+    const p = getCurrentProject();
+    if(!p) return;
+    const slot = document.getElementById('plan-image-slot');
+    if(!slot) return;
+    const imgs = (p.planSettings?.images || []).slice(0,2);
+    slot.innerHTML = '<div class="plan-images">'+[0,1].map(function(i){
+      const im = imgs[i];
+      if(im && im.src){
+        const sc = Math.max(50, Math.min(160, parseInt(im.scale,10) || 100));
+        const bh = Math.max(80, Math.min(260, parseInt(im.boxH,10) || 120));
+        return '<div class="imgbox" style="height:'+bh+'px;"><img alt="plan image '+(i+1)+'" src="'+im.src+'" style="transform:scale('+(sc/100)+');"><div class="img-tools no-print"><div class="row"><span class="lbl">画像'+(i+1)+'</span><div style="display:flex; gap:6px; flex-wrap:wrap;"><button class="btn-mini" data-plan-image-replace="'+i+'">差し替え</button><button class="btn-mini danger" data-plan-image-delete="'+i+'">削除</button></div></div><div class="row"><span class="lbl">画像サイズ</span><input type="range" min="50" max="160" step="5" value="'+sc+'" data-plan-image-scale="'+i+'"><span class="lbl">'+sc+'%</span></div><div class="row"><span class="lbl">枠高さ</span><input type="range" min="80" max="260" step="10" value="'+bh+'" data-plan-image-boxh="'+i+'"><span class="lbl">'+bh+'px</span></div></div></div>';
+      }
+      return '<div class="imgbox" style="flex-direction:column; gap:10px; color:#94a3b8; font-size:11px; font-weight:900;">画像'+(i+1)+'（未設定）<button class="btn-mini no-print" id="plan-add-image-inline-'+i+'">＋ 追加</button></div>';
+    }).join('')+'</div>';
+
+    slot.querySelectorAll('[data-plan-image-replace]').forEach(function(btn){ btn.addEventListener('click', function(){ openPlanImageReplacePicker(parseInt(btn.dataset.planImageReplace,10)); }); });
+    slot.querySelectorAll('[data-plan-image-delete]').forEach(function(btn){ btn.addEventListener('click', function(){ deletePlanImage(parseInt(btn.dataset.planImageDelete,10)); }); });
+    slot.querySelectorAll('[data-plan-image-scale]').forEach(function(range){ range.addEventListener('input', function(){ setPlanImageScale(parseInt(range.dataset.planImageScale,10), range.value); }); });
+    slot.querySelectorAll('[data-plan-image-boxh]').forEach(function(range){ range.addEventListener('input', function(){ setPlanImageBoxH(parseInt(range.dataset.planImageBoxh,10), range.value); }); });
+    slot.querySelectorAll('[id^="plan-add-image-inline-"]').forEach(function(btn){ btn.addEventListener('click', openPlanImagePicker); });
+    if(shouldSave) saveEditorData();
+  }
+
+  function fitPlanToA4(){ toast(); }
+
+  function saveEditorData(){
+    const p = getCurrentProject();
+    if(!p) return;
+    p.title = document.getElementById('editable-title').innerText;
+    p.fields = collectFieldsFromUI();
+    p.presentationGuide = collectPresentationGuideFromUI();
+    try{ p.storyboardPanels = collectStoryboardFromUI(); }catch(e){}
+    try{ p.scenarioMeta = collectScenarioMetaFromUI(); }catch(e){}
+    p.planHtml = document.getElementById('plan-doc-area').innerHTML;
+    p.presHtml = document.getElementById('pres-doc-area').innerHTML;
+    p.videoScriptRows = Array.from(document.querySelectorAll('#video-script-tbody tr')).map(function(tr){
+      return { rowid:tr.dataset.rowid, text:tr.querySelector('[data-vs="text"]')?.innerText || '', visual:tr.querySelector('[data-vs="visual"]')?.innerText || '', shoot:tr.querySelector('select[data-vs="shoot"]')?.value || '未着手', edit:tr.querySelector('select[data-vs="edit"]')?.value || '未着手' };
+    });
+    p.videoCatchphrase = (getCellText('ep1-c1') || '').trim();
+    p.videoRowsPerEpisode = [1,2,3,4,5,6].map(function(ep){ return document.querySelectorAll('#video-script-tbody tr[data-ep="'+ep+'"]').length || LINES_PER_EP; });
+    saveToStorage();
+  }
+
+  function manualSave(){ saveEditorData(); toast(); }
+  function printPlanOnly(){
+    activatePrimary('product-create');
+    activateSub('product-create','tab-plan');
+    document.body.classList.add('print-single');
+    const cleanup = function(){
+      document.body.classList.remove('print-single');
+      window.removeEventListener('afterprint', cleanup);
+    };
+    window.addEventListener('afterprint', cleanup);
+    window.print();
+  }
+  function printSection(sectionId){
+    const target = document.getElementById(sectionId);
+    if(!target) return;
+    saveEditorData();
+    document.querySelectorAll('.print-target').forEach(function(el){ el.classList.remove('print-target'); el.style.width=''; el.style.maxWidth=''; });
+    target.classList.add('print-target');
+    document.body.classList.add('print-section');
+    if(A3_SECTION_IDS.has(sectionId)) document.body.classList.add('print-a3');
+    const p = getCurrentProject();
+    if(p && p.pagePrintSettings && p.pagePrintSettings[sectionId]){
+      const settings = p.pagePrintSettings[sectionId];
+      const width = parseInt(settings.width,10) || DEFAULT_PAGE_PRINT_SETTINGS[sectionId]?.width || 190;
+      target.style.width = width + 'mm';
+      target.style.maxWidth = 'none';
+      if(settings.orientation === 'portrait') document.body.classList.remove('print-a3');
+      if(settings.orientation === 'landscape' && A3_SECTION_IDS.has(sectionId)) document.body.classList.add('print-a3');
+    }
+    const cleanup = function(){
+      document.body.classList.remove('print-section');
+      document.body.classList.remove('print-a3');
+      target.classList.remove('print-target');
+      target.style.width='';
+      target.style.maxWidth='';
+      window.removeEventListener('afterprint', cleanup);
+    };
+    window.addEventListener('afterprint', cleanup);
+    window.print();
+  }
+
+  function exportVideoTelopsXlsx(){
+    if(typeof XLSX==='undefined'){ alert('Excel出力ライブラリが読み込めていません。'); return; }
+    const title = (document.getElementById('editable-title')?.innerText || 'project').trim() || 'project';
+    const rows = [['話','カット','テロップ（1文）']];
+    document.querySelectorAll('#video-script-tbody tr').forEach(function(tr){ rows.push([tr.getAttribute('data-ep') || '', (tr.querySelectorAll('td')[1]?.innerText || '').trim(), (tr.querySelector('[data-vs="text"]')?.innerText || '').trim()]); });
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'テロップ');
+    XLSX.writeFile(wb, title+'_telops.xlsx');
+  }
+
+  function exportWorkflowTodoXlsx(){ exportFlowXlsx('video', 'workflow_todo', false); }
+  function exportVideoWorkflowTodoXlsx(){ exportFlowXlsx('videoEpisode', 'video_workflow', false); }
+  function exportToolDevTodoXlsx(){ exportFlowXlsx('tool', 'tooldev_todo', true); }
+
+  function exportFlowXlsx(type, suffix, isTool){
+    if(typeof XLSX==='undefined'){ alert('Excel出力ライブラリが読み込めていません。'); return; }
+    const flat = flattenFlow(getFlowState(type)).sort(function(a,b){ return sortDateValue(a.date)-sortDateValue(b.date); });
+    const headers = isTool ? ['学期','ステップ','フォルダ','分類','日付','内容','説明','必要金額','資金確保','販売方法','報告先'] : ['学期','ステップ','フォルダ','分類','日付','内容','誰と','どこで','なぜ','どうやる'];
+    const rows = [headers].concat(flat.map(function(item){
+      return isTool
+        ? [termFromDate(item.date),item.step,item.folder,item.phase,item.date,item.what || item.note,item.note,item.budget,item.fundMethod,item.salesMethod,item.reportTo]
+        : [termFromDate(item.date),item.step,item.folder,item.phase,item.date,item.what,item.who,item.where,item.why,item.how];
+    }));
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols'] = isTool
+      ? [{wch:10},{wch:18},{wch:14},{wch:10},{wch:14},{wch:24},{wch:24},{wch:14},{wch:20},{wch:20},{wch:18}]
+      : [{wch:10},{wch:18},{wch:14},{wch:10},{wch:14},{wch:28},{wch:18},{wch:18},{wch:20},{wch:22}];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'ToDo');
+    const title = (document.getElementById('editable-title')?.innerText || 'project').trim() || 'project';
+    XLSX.writeFile(wb, title+'_'+suffix+'.xlsx');
+  }
+
+  function copyWorkflowTodoText(){ copyFlowText('video', false); }
+  function copyVideoWorkflowTodoText(){ copyFlowText('videoEpisode', false); }
+  function copyToolDevTodoText(){ copyFlowText('tool', true); }
+
+  function copyFlowText(type, isTool){
+    const flat = flattenFlow(getFlowState(type)).sort(function(a,b){ return sortDateValue(a.date)-sortDateValue(b.date); });
+    const text = flat.length ? flat.map(function(item){
+      return isTool
+        ? '['+termFromDate(item.date)+'] '+item.step+' / '+item.folder+'\n'+item.phase+'\n日付: '+(item.date || '未設定')+'\n内容: '+(item.what || item.note || '—')+'\n補足: '+(item.budget || item.fundMethod || item.salesMethod || item.reportTo || '—')
+        : '['+termFromDate(item.date)+'] '+item.step+' / '+item.folder+'\n'+item.phase+'\n日付: '+(item.date || '未設定')+'\n内容: '+(item.what || '—')+'\n誰と: '+(item.who || '—')+'\nどこで: '+(item.where || '—')+'\nなぜ: '+(item.why || '—')+'\nどうやる: '+(item.how || '—');
+    }).join('\n\n') : 'ToDo はありません。';
+    navigator.clipboard.writeText(text).then(function(){ toast(); }).catch(function(){ alert('コピーに失敗しました'); });
+  }
+
+  function copyDoc(areaId){
+    const el = document.getElementById(areaId);
+    if(!el) return;
+    const text = el.innerText || el.textContent || '';
+    navigator.clipboard.writeText(text).then(function(){ toast(); }).catch(function(){ alert('コピーに失敗しました'); });
+  }
+
+  function bindTabs(){
+    document.querySelectorAll('.primary-tab').forEach(function(btn){ btn.addEventListener('click', function(){ activatePrimary(btn.dataset.primary); }); });
+    document.querySelectorAll('[data-group]').forEach(function(group){
+      const gid = group.dataset.group;
+      group.querySelectorAll('.sub-tab').forEach(function(btn){ btn.addEventListener('click', function(){ activateSub(gid, btn.dataset.sub); }); });
+    });
+  }
+
+  function bindToolbar(){
+    const btn = document.getElementById('new-folder-btn');
+    if(btn){ btn.onclick = null; btn.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); createNewFolder(); }); }
+    document.getElementById('back-btn').addEventListener('click', goBackToDashboard);
+    document.getElementById('manual-save-btn').addEventListener('click', manualSave);
+    document.getElementById('manual-save-btn-2').addEventListener('click', manualSave);
+    document.getElementById('print-all-btn').addEventListener('click', function(){ window.print(); });
+    document.getElementById('print-plan-only-btn').addEventListener('click', printPlanOnly);
+    document.getElementById('apply-scenario-draft-btn').addEventListener('click', applyScenarioDraft);
+    document.getElementById('auto-fill-scenario-btn').addEventListener('click', autoFillScenarioEpisodes);
+    document.getElementById('auto-draft-video-btn').addEventListener('click', autoDraftVideo);
+    document.getElementById('add-video-row-btn').addEventListener('click', function(){ addVideoScriptRowForEpisode(1); });
+    document.getElementById('delete-video-row-btn').addEventListener('click', function(){ deleteVideoScriptRowForEpisode(1); });
+    document.getElementById('export-video-telops-btn').addEventListener('click', exportVideoTelopsXlsx);
+    document.getElementById('copy-video-workflow-btn').addEventListener('click', copyVideoWorkflowTodoText);
+    document.getElementById('export-video-workflow-btn').addEventListener('click', exportVideoWorkflowTodoXlsx);
+    document.getElementById('copy-workflow-btn').addEventListener('click', copyWorkflowTodoText);
+    document.getElementById('export-workflow-btn').addEventListener('click', exportWorkflowTodoXlsx);
+    document.getElementById('copy-tooldev-btn').addEventListener('click', copyToolDevTodoText);
+    document.getElementById('export-tooldev-btn').addEventListener('click', exportToolDevTodoXlsx);
+    document.getElementById('regen-pres-btn').addEventListener('click', function(){ regenPres(false); });
+    document.getElementById('regen-plan-btn').addEventListener('click', function(){ regenPlan(false); });
+    document.getElementById('fit-plan-btn').addEventListener('click', fitPlanToA4);
+    document.getElementById('open-plan-image-btn').addEventListener('click', openPlanImagePicker);
+    document.querySelectorAll('[data-toggle-drawer]').forEach(function(btn){ btn.addEventListener('click', function(){ toggleDrawer(btn.dataset.toggleDrawer); }); });
+    document.querySelectorAll('[data-copy-doc]').forEach(function(btn){ btn.addEventListener('click', function(){ copyDoc(btn.dataset.copyDoc); }); });
+    document.querySelectorAll('[data-print-section]').forEach(function(btn){ btn.addEventListener('click', function(){ printSection(btn.dataset.printSection); }); });
+  }
+
+  function runSelfTests(){
+    console.assert(typeof createNewFolder==='function', 'createNewFolder exists');
+    console.assert(typeof renderDashboard==='function', 'renderDashboard exists');
+    console.assert(typeof printSection==='function', 'printSection exists');
+    console.assert(typeof renderVideoEpisodeFlow==='function', 'renderVideoEpisodeFlow exists');
+    console.assert(scenarioSentenceFromDraft({who:'A',problem:'B',method:'C',interviewee:'D',actions:'E',answer:'F'}).includes('A'), 'scenario sentence ok');
+  }
+
+  window.addEventListener('DOMContentLoaded', function(){
+    bindToolbar();
+    bindTabs();
+    buildVideoScriptTable();
+    if(data.folders.length===0) createNewFolder(); else renderDashboard();
+    setPlanFontSize(11, false);
+    setPlanLineHeight(1.45, false);
+    runSelfTests();
+  });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+</body>
+</html>
+  .back-btn{ cursor:pointer; background:none; border:none; color:var(--p1); font-weight:900; }
+  .save-btn{ background:#111827; color:#fff; border:none; padding:10px 16px; border-radius:999px; font-weight:900; cursor:pointer; font-size:12px; }
+  .save-btn.secondary{ background:#6b7280; }
+  .primary-tabbar{ max-width:210mm; margin:0 auto 8px; display:flex; gap:8px; flex-wrap:wrap; }
+  .primary-tab{ border:1px solid var(--line); background:#fff; color:#111827; padding:10px 14px; border-radius:999px; font-weight:900; cursor:pointer; font-size:12px; }
+  .primary-tab.active{ border-color:rgba(79,172,254,.65); box-shadow:0 6px 16px rgba(79,172,254,.12); }
+  .sub-tabbar{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px; }
+  .sub-tab{ border:1px solid var(--line); background:#fff; color:#111827; padding:8px 12px; border-radius:999px; font-weight:900; cursor:pointer; font-size:12px; }
+  .sub-tab.active{ border-color:rgba(79,172,254,.65); box-shadow:0 6px 16px rgba(79,172,254,.12); }
+  .primary-content,.sub-content{ display:none; }
+  .page{ width:210mm; min-height:297mm; background:var(--paper); padding:10mm; margin:0 auto 12px; box-shadow:0 0 50px rgba(0,0,0,0.10); display:flex; flex-direction:column; gap:14px; border-radius:6px; border:1px solid var(--line); }
+  .page-title{ text-align:center; outline:none; margin:0; font-size:22px; font-weight:1000; }
+  .storyboard-info{ font-size:12px; color:var(--muted); line-height:1.7; background:#fff; border:1px solid var(--line); border-radius:14px; padding:10px 12px; }
+  .doc-actions{ display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+  .mini-btn{ border:1px solid var(--line); background:#fff; padding:8px 12px; border-radius:999px; font-weight:1000; cursor:pointer; font-size:12px; }
+  .mini-btn.primary{ border-color:rgba(79,172,254,.55); box-shadow:0 10px 20px rgba(79,172,254,.12); }
+  .guide-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .guide-card{ border:1px solid #eef2f7; border-radius:16px; background:#fff; padding:12px; box-shadow:0 6px 18px rgba(17,24,39,.04); }
+  .guide-card h3{ margin:0 0 6px; font-size:14px; font-weight:1000; }
+  .guide-card p{ margin:0 0 8px; color:var(--muted); font-size:11px; line-height:1.6; }
+  .guide-card textarea{ width:100%; min-height:110px; border:1px solid #e5e7eb; border-radius:12px; padding:10px; font-size:12px; outline:none; resize:vertical; background:#fff; }
+  .doc-area{ border:1px solid #eef2f7; border-radius:14px; padding:10px; background:#fff; }
+  .doc-area .hint{ font-size:11px; color:var(--muted); margin:0 0 8px; }
+  .doc-line{ font-size:12px; line-height:1.65; padding:2px 0; white-space:pre-wrap; }
+  .doc-line[contenteditable="true"]:focus{ outline:2px solid rgba(79,172,254,.25); border-radius:8px; }
+  .inputbar{ border:1px solid var(--line); border-radius:14px; background:#fff; padding:10px; display:flex; align-items:center; justify-content:space-between; gap:10px; box-shadow:0 6px 18px rgba(17,24,39,.04); }
+  .inputbar .left{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .inputbar .title{ font-size:12px; font-weight:1000; color:#111827; }
+  .inputbar .desc{ font-size:11px; color:var(--muted); }
+  .inputbar .right{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .inputdrawer{ margin-top:10px; border:1px solid #eef2f7; border-radius:14px; background:#fff; padding:10px; display:none; }
+  .inputdrawer.open{ display:block; }
+  .fields-grid{ display:grid; grid-template-columns:repeat(2, minmax(220px, 1fr)); gap:10px; }
+  .field{ display:grid; grid-template-columns:110px 1fr; gap:8px; align-items:center; padding:6px 0; border-bottom:1px dashed #eef2f7; }
+  .field:last-child{ border-bottom:none; }
+  .field label{ font-size:11px; color:var(--muted); font-weight:900; }
+  .field input,.field textarea,.field select{ width:100%; border:1px solid #e5e7eb; border-radius:10px; padding:8px 10px; font-size:12px; outline:none; background:#fff; }
+  .field textarea{ min-height:64px; resize:vertical; }
+
+  .scenario-template{ border:2px solid #111; border-radius:18px; overflow:hidden; background:#fff; }
+  .scenario-headbar{ padding:12px; background:linear-gradient(180deg,#ffe680,#f5c400); border-bottom:2px solid #111; text-align:center; }
+  .scenario-headbar .title{ font-size:24px; font-weight:1000; }
+  .scenario-synopsis-box{ padding:10px 12px; border-bottom:2px solid #111; background:#fffef5; }
+  .scenario-synopsis-box label{ display:block; font-size:12px; font-weight:1000; margin-bottom:6px; }
+  .scenario-synopsis-box textarea{ width:100%; min-height:90px; border:1px solid #d1d5db; border-radius:12px; padding:10px; font-size:12px; line-height:1.7; resize:vertical; }
+  .scenario-draft-box{ padding:12px; border-bottom:2px solid #111; background:#f8fafc; }
+  .scenario-draft-title{ font-size:13px; font-weight:1000; margin-bottom:8px; }
+  .scenario-draft-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .scenario-draft-grid input{ width:100%; border:1px solid #d1d5db; border-radius:10px; padding:9px 10px; font-size:12px; }
+  .scenario-draft-preview{ margin-top:10px; border:1px dashed #cbd5e1; border-radius:12px; background:#fff; padding:10px; font-size:12px; line-height:1.8; }
+  .scenario-episode-list{ padding:12px; display:flex; flex-direction:column; gap:8px; }
+  .scenario-episode-arrow{ text-align:center; font-size:22px; font-weight:1000; color:#64748b; }
+  .scenario-episode-card{ display:grid; grid-template-columns:74px 1fr 120px 120px; gap:8px; align-items:stretch; border:2px solid #111; border-radius:14px; overflow:hidden; background:#fff; }
+  .scenario-ep-label{ background:linear-gradient(180deg,#fff4b8,#ffe680); border-right:2px solid #111; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:1000; padding:10px; }
+  .scenario-ep-main{ padding:10px; display:flex; flex-direction:column; gap:8px; }
+  .scenario-ep-title2,.scenario-ep-title{ width:100%; border:1px solid #d1d5db; border-radius:10px; padding:8px 10px; }
+  .scenario-ep-title2{ font-size:12px; background:#fffef8; }
+  .scenario-ep-title{ font-size:14px; font-weight:1000; }
+  .scenario-ep-desc{ width:100%; min-height:92px; border:1px solid #d1d5db; border-radius:10px; padding:10px; font-size:12px; line-height:1.7; resize:vertical; }
+  .scenario-ep-term,.scenario-ep-date{ padding:10px; border-left:2px solid #111; background:#fffdf0; display:flex; flex-direction:column; gap:8px; justify-content:center; }
+  .scenario-cell-title{ font-size:11px; font-weight:1000; color:#64748b; }
+  .scenario-ep-term select,.scenario-ep-date input{ width:100%; border:1px solid #d1d5db; border-radius:10px; padding:8px; font-size:12px; }
+
+  .workflow-playful{ border:2px solid #111; border-radius:20px; overflow:hidden; background:linear-gradient(180deg,#fffef8 0%,#f8fbff 100%); }
   .workflow-titlebar{ padding:14px; background:linear-gradient(180deg,#ffe680 0%,#f5c400 100%); border-bottom:2px solid #111; text-align:center; font-size:24px; font-weight:1000; }
   .workflow-scroll{ padding:12px; border-bottom:2px solid #111; overflow-x:auto; }
   .flow-track{ display:flex; flex-direction:column; gap:14px; min-width:1200px; }
