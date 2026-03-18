@@ -177,6 +177,10 @@
   .video-script-table tr[data-ep="5"] td:first-child{ border-left-color:var(--p2); }
   .video-script-table tr[data-ep="6"] td:first-child{ border-left-color:#111827; }
   .video-script-table tr[data-ep-start="true"] td{ border-top:2px solid #cbd5e1; background:#f8fafc; }
+  .print-spec-bar{ border:2px solid #111; border-radius:14px; background:#fff; padding:10px 12px; display:flex; justify-content:space-between; gap:10px; align-items:center; font-size:12px; }
+  .print-spec-title{ font-weight:1000; }
+  .print-spec-meta{ color:#475569; }
+  .video-script-actions-row{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
   .page-a4-block{ width:100%; }
   body.print-section .primary-content,body.print-section .sub-content{ display:none !important; }
   body.print-section .print-target{ display:block !important; }
@@ -199,7 +203,7 @@
     .no-print{ display:none !important; }
     .page{ width:100%; min-height:auto; box-shadow:none; margin:0; border:none; border-radius:0; page-break-after:always; break-after:page; }
     .primary-content,.sub-content{ display:block !important; }
-    .scenario-template,.workflow-playful,.doc-area,.video-script-table{ break-inside:avoid-page; }
+    .scenario-template,.workflow-playful,.doc-area,.video-script-table,.print-spec-bar{ break-inside:avoid-page; }
     body.print-single .primary-content,body.print-single .sub-content{ display:none !important; }
     body.print-single #product-create{ display:block !important; }
     body.print-single #tab-plan{ display:block !important; }
@@ -208,11 +212,20 @@
     body.print-section .print-target .workflow-playful,
     body.print-section .print-target .scenario-template,
     body.print-section .print-target .doc-area,
-    body.print-section .print-target .video-script-table{ width:100%; break-inside:avoid-page; }
+    body.print-section .print-target .video-script-table,
+    body.print-section .print-target .print-spec-bar{ width:100%; break-inside:avoid-page; }
     body.print-section .print-target,
     body.print-single #tab-plan{
       width:190mm !important;
       min-height:auto !important;
+      margin:0 auto !important;
+    }
+    body.print-a3 .print-target,
+    body.print-a3 #tab-canvas,
+    body.print-a3 #tab-video-workflow,
+    body.print-a3 #tab-pres-workflow{
+      width:400mm !important;
+      max-width:none !important;
       margin:0 auto !important;
     }
   }
@@ -257,6 +270,7 @@
       </div>
 
       <div class="sub-content" id="tab-canvas" style="display:block;">
+        <div class="print-spec-bar no-print"><div class="print-spec-title">印刷設定</div><div class="print-spec-meta">想定サイズ：A3 横 / このページを印刷で適用</div></div>
         <input id="story-image-input" class="no-print" type="file" accept="image/*" style="display:none">
         <div class="scenario-template">
           <div class="scenario-headbar"><div class="title">シナリオ</div></div>
@@ -282,6 +296,7 @@
       </div>
 
       <div class="sub-content" id="tab-video-workflow" style="display:none;">
+        <div class="print-spec-bar no-print"><div class="print-spec-title">印刷設定</div><div class="print-spec-meta">想定サイズ：A3 横 / このページを印刷で適用</div></div>
         <div class="workflow-playful page-a4-block">
           <div class="workflow-titlebar">動画用ワークフロー</div>
           <div class="storyboard-info" style="margin:12px 12px 0;">各話ごとに必要な準備・実行・フォローを整理できます。</div>
@@ -301,9 +316,12 @@
       </div>
 
       <div class="sub-content" id="tab-video" style="display:none;">
-        <div class="doc-actions no-print">
+        <div class="print-spec-bar no-print"><div class="print-spec-title">印刷設定</div><div class="print-spec-meta">想定サイズ：A4 縦 / このページを印刷で適用</div></div>
+        <div class="doc-actions no-print video-script-actions-row">
           <button class="mini-btn primary" id="auto-draft-video-btn">🔄 自動下書き</button>
           <button class="mini-btn" id="manual-save-btn-2">💾 保存</button>
+          <button class="mini-btn" id="add-video-row-btn">＋ 行追加</button>
+          <button class="mini-btn" id="delete-video-row-btn">－ 最終行削除</button>
           <button class="mini-btn" id="export-video-telops-btn">⬇️ Excel（テロップ）</button>
           <button class="mini-btn" data-print-section="tab-video">🖨️ このページを印刷</button>
         </div>
@@ -339,6 +357,7 @@
       </div>
 
       <div class="sub-content" id="tab-pres-workflow" style="display:none;">
+        <div class="print-spec-bar no-print"><div class="print-spec-title">印刷設定</div><div class="print-spec-meta">想定サイズ：A3 横 / このページを印刷で適用</div></div>
         <div class="workflow-playful page-a4-block">
           <div class="workflow-titlebar">プレゼン用ワークフロー</div>
           <div class="storyboard-info" style="margin:12px 12px 0;">タイトル→導入→現状分析→解決策→検証→まとめの流れで整理します。</div>
@@ -358,6 +377,7 @@
       </div>
 
       <div class="sub-content" id="tab-pres" style="display:none;">
+        <div class="print-spec-bar no-print"><div class="print-spec-title">印刷設定</div><div class="print-spec-meta">想定サイズ：A4 縦 / このページを印刷で適用</div></div>
         <div class="inputbar no-print">
           <div class="left"><div class="title">🧩 穴埋め入力</div><div class="desc">必要項目→「台本に反映」／本文は印刷で単体ページ化</div></div>
           <div class="right">
@@ -418,6 +438,7 @@
         <button class="sub-tab" data-sub="tab-tool-dev">🛠️ ツール開発</button>
       </div>
       <div class="sub-content" id="tab-plan" style="display:block;">
+        <div class="print-spec-bar no-print"><div class="print-spec-title">印刷設定</div><div class="print-spec-meta">想定サイズ：A4 縦 / このページを印刷で適用</div></div>
         <h1 class="page-title">📄 企画書（取材のお願い）</h1>
         <input id="plan-image-input" class="no-print" type="file" accept="image/*" multiple style="display:none">
         <div class="inputbar no-print">
@@ -461,6 +482,7 @@
         <div class="doc-area"><p class="hint no-print">✅ 本文はそのまま編集できます。</p><div id="plan-doc-area"></div></div>
       </div>
       <div class="sub-content" id="tab-tool-dev" style="display:none;">
+        <div class="print-spec-bar no-print"><div class="print-spec-title">印刷設定</div><div class="print-spec-meta">想定サイズ：A4 縦 / このページを印刷で適用</div></div>
         <div class="workflow-playful page-a4-block">
           <div class="workflow-titlebar">ツール開発</div>
           <div class="workflow-scroll"><div id="tooldev-flow-track" class="flow-track"></div></div>
@@ -490,6 +512,7 @@
   const FLOW_PHASES = ['①準備','②実行','③フォロー'];
   const PRES_RAW = ['表題','みなさん、こんにちは。チーム「」です。本日は「」について発表します。','------------------------','導入','突然ですが、皆さんは日常の中で「これ、おかしいな？」と思った経験はありませんか？私たちが今回注目したのは、「」というテーマです。','------------------------','現状分析','私たちは現場へ足を運びました。まず「」を行ってみると、意外なことに「」だと気づいたのです。そこで気になって「」も調べてみました。すると、「」という衝撃的な事実が見えてきました。つまり、本当の問題は「」だったのです。','------------------------','仮説','現状分析から、私たちは「」が原因ではないかと考えました。そこで、「」という理由から、「」が有効であるという仮説を立てました。','------------------------','解決策','この仮説を実現するために私たちが考案したのが、「」です。コンセプトはズバリ、「」。具体的には「」や「」といった特徴で、新しい価値を提供します。','------------------------','検証計画','続いて、このアイデアが本当に有効かを確かめるために、「」という検証を計画しました。まず「」を行い、実際に「」を確認することにしました。','------------------------','実施報告','実際の検証は、「」に「」で行いました。対象は「」です。写真にあるように、私たちは「」を実施しました。','------------------------','結果','実施した結果、まず「」というデータが得られました。また、「」ということも分かりました。これらの結果から、私たちは「」という結論に至りました。','------------------------','考察','この結果に対する考察です。「」ということが言えます。しかし、同時に「」という課題も見えてきました。今後は「」が必要だと考えます。','------------------------','展望','最後に、私たちのビジョンです。もしこのアイデアが広まれば、「」未来になると信じています。。ご清聴ありがとうございました。','------------------------'];
   const LINES_PER_EP = 8;
+  const A3_SECTION_IDS = new Set(['tab-canvas','tab-video-workflow','tab-pres-workflow']);
 
   let data = safeLoad();
   let currentId = null;
@@ -557,6 +580,7 @@
     if(!Array.isArray(p.planSettings.images)) p.planSettings.images = [];
     if(typeof p.videoCatchphrase !== 'string') p.videoCatchphrase = '';
     if(!Array.isArray(p.videoScriptRows)) p.videoScriptRows = [];
+    if(!Array.isArray(p.videoRowsPerEpisode) || p.videoRowsPerEpisode.length !== 6) p.videoRowsPerEpisode = [LINES_PER_EP,LINES_PER_EP,LINES_PER_EP,LINES_PER_EP,LINES_PER_EP,LINES_PER_EP];
     if(typeof p.planHtml !== 'string') p.planHtml = '';
     if(typeof p.presHtml !== 'string') p.presHtml = '';
   }
@@ -578,10 +602,15 @@
   }
 
   function buildVideoScriptTable(){
+    const p = getCurrentProject();
     const tbody = document.getElementById('video-script-tbody');
     tbody.innerHTML = '';
+    const rowsByEp = Array.from({length:6}, function(){ return LINES_PER_EP; });
+    if(p && Array.isArray(p.videoRowsPerEpisode) && p.videoRowsPerEpisode.length===6){
+      p.videoRowsPerEpisode.forEach(function(n, i){ rowsByEp[i] = Math.max(1, parseInt(n,10) || LINES_PER_EP); });
+    }
     for(let ep=1; ep<=6; ep++){
-      for(let cut=1; cut<=LINES_PER_EP; cut++){
+      for(let cut=1; cut<=rowsByEp[ep-1]; cut++){
         const rid = 'ep'+ep+'-c'+cut;
         const isEpStart = cut===1;
         tbody.innerHTML += '<tr data-rowid="'+rid+'" data-ep="'+ep+'" data-ep-start="'+isEpStart+'"><td style="text-align:center; font-weight:1000;">'+ep+'</td><td style="text-align:center; color:#64748b; font-weight:1000;">'+cut+'</td><td contenteditable data-vs="text"></td><td contenteditable data-vs="visual"></td><td><select class="status-select" data-vs="shoot"><option>未着手</option><option>準備中</option><option>撮影中</option><option>撮影済</option></select></td><td><select class="status-select" data-vs="edit"><option>未着手</option><option>編集中</option><option>仮完成</option><option>完成</option></select></td></tr>';
@@ -1096,6 +1125,38 @@
     });
   }
 
+  function addVideoScriptRow(){
+    const p = getCurrentProject();
+    if(!p) return;
+    const activeEp = getActiveVideoEpisode();
+    p.videoRowsPerEpisode[activeEp-1] = (parseInt(p.videoRowsPerEpisode[activeEp-1],10) || LINES_PER_EP) + 1;
+    buildVideoScriptTable();
+    restoreVideoRows(p);
+    saveEditorData();
+    toast();
+  }
+
+  function deleteVideoScriptRow(){
+    const p = getCurrentProject();
+    if(!p) return;
+    const activeEp = getActiveVideoEpisode();
+    const current = Math.max(1, parseInt(p.videoRowsPerEpisode[activeEp-1],10) || LINES_PER_EP);
+    if(current <= 1) return;
+    const rowid = 'ep'+activeEp+'-c'+current;
+    p.videoScriptRows = (p.videoScriptRows || []).filter(function(row){ return row.rowid !== rowid; });
+    p.videoRowsPerEpisode[activeEp-1] = current - 1;
+    buildVideoScriptTable();
+    restoreVideoRows(p);
+    saveEditorData();
+    toast();
+  }
+
+  function getActiveVideoEpisode(){
+    const selected = document.querySelector('#video-script-tbody tr[data-ep]');
+    if(selected) return parseInt(selected.getAttribute('data-ep'),10) || 1;
+    return 1;
+  }
+
   document.getElementById('video-script-tbody').addEventListener('input', function(e){
     const td = e.target;
     if(!td || td.getAttribute('data-vs') !== 'text') return;
@@ -1330,6 +1391,7 @@
       return { rowid:tr.dataset.rowid, text:tr.querySelector('[data-vs="text"]')?.innerText || '', visual:tr.querySelector('[data-vs="visual"]')?.innerText || '', shoot:tr.querySelector('select[data-vs="shoot"]')?.value || '未着手', edit:tr.querySelector('select[data-vs="edit"]')?.value || '未着手' };
     });
     p.videoCatchphrase = (getCellText('ep1-c1') || '').trim();
+    p.videoRowsPerEpisode = [1,2,3,4,5,6].map(function(ep){ return document.querySelectorAll('#video-script-tbody tr[data-ep="'+ep+'"]').length || LINES_PER_EP; });
     saveToStorage();
   }
 
@@ -1352,8 +1414,10 @@
     document.querySelectorAll('.print-target').forEach(function(el){ el.classList.remove('print-target'); });
     target.classList.add('print-target');
     document.body.classList.add('print-section');
+    if(A3_SECTION_IDS.has(sectionId)) document.body.classList.add('print-a3');
     const cleanup = function(){
       document.body.classList.remove('print-section');
+      document.body.classList.remove('print-a3');
       target.classList.remove('print-target');
       window.removeEventListener('afterprint', cleanup);
     };
@@ -1435,6 +1499,8 @@
     document.getElementById('apply-scenario-draft-btn').addEventListener('click', applyScenarioDraft);
     document.getElementById('auto-fill-scenario-btn').addEventListener('click', autoFillScenarioEpisodes);
     document.getElementById('auto-draft-video-btn').addEventListener('click', autoDraftVideo);
+    document.getElementById('add-video-row-btn').addEventListener('click', addVideoScriptRow);
+    document.getElementById('delete-video-row-btn').addEventListener('click', deleteVideoScriptRow);
     document.getElementById('export-video-telops-btn').addEventListener('click', exportVideoTelopsXlsx);
     document.getElementById('copy-video-workflow-btn').addEventListener('click', copyVideoWorkflowTodoText);
     document.getElementById('export-video-workflow-btn').addEventListener('click', exportVideoWorkflowTodoXlsx);
@@ -1473,4 +1539,3 @@
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </body>
 </html>
-
