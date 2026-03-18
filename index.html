@@ -122,10 +122,10 @@
   .wf-folder-tools{ display:flex; gap:6px; flex-wrap:wrap; }
   .wf-folder-desc{ font-size:11px; color:#64748b; line-height:1.6; margin:0 0 8px; }
   .wf-folder-table{ width:100%; border-collapse:collapse; font-size:12px; }
-  .wf-folder-table th,.wf-folder-table td{ border:1px solid #d1d5db; padding:8px; vertical-align:top; }
+  .wf-folder-table th,.wf-folder-table td{ border:1px solid #d1d5db; padding:10px; vertical-align:top; }
   .wf-folder-table th{ background:#fffdf0; font-weight:1000; }
   .wf-folder-table textarea,.wf-folder-table input,.wf-folder-table select{ width:100%; border:1px solid #d1d5db; border-radius:10px; padding:8px 10px; font-size:12px; background:#fff; }
-  .wf-folder-table textarea{ min-height:56px; resize:vertical; }
+  .wf-folder-table textarea{ min-height:88px; resize:vertical; line-height:1.6; }
   .drag-chip{ cursor:grab; border:1px solid #111; background:#fff; border-radius:999px; padding:4px 8px; font-size:11px; font-weight:1000; }
   .tool-sheet{ display:flex; flex-direction:column; gap:10px; }
   .tool-sheet-card{ border:2px dashed #cbd5e1; border-radius:14px; background:#f8fafc; padding:12px; }
@@ -195,10 +195,18 @@
   @media print{
     body{ background:#fff; }
     .no-print{ display:none !important; }
-    .page{ box-shadow:none; margin:0; border:none; border-radius:0; }
+    .page{ width:210mm; min-height:297mm; box-shadow:none; margin:0; border:none; border-radius:0; page-break-after:always; break-after:page; }
     .primary-content,.sub-content{ display:block !important; }
+    .scenario-template,.workflow-playful,.doc-area,.video-script-table{ break-inside:avoid-page; }
     body.print-single .primary-content, body.print-single .sub-content{ display:none !important; }
+    body.print-single #product-create{ display:block !important; }
     body.print-single #tab-plan{ display:block !important; }
+    body.print-section .primary-content, body.print-section .sub-content{ display:none !important; }
+    body.print-section .print-target{ display:block !important; }
+    body.print-section .print-target .workflow-playful,
+    body.print-section .print-target .scenario-template,
+    body.print-section .print-target .doc-area,
+    body.print-section .print-target .video-script-table{ width:100%; break-inside:avoid-page; }
   }
 </style>
 </head>
@@ -438,7 +446,30 @@
   function getFlowState(type){ const p=getCurrentProject(); if(!p) return []; if(type==='video') return p.videoFlowState; if(type==='tool') return p.toolFlowState; if(type==='videoEpisode') return p.videoEpisodeFlowState; return []; }
   function setFlowState(type,state){ const p=getCurrentProject(); if(!p) return; if(type==='video') p.videoFlowState=state; if(type==='tool') p.toolFlowState=state; if(type==='videoEpisode') p.videoEpisodeFlowState=state; }
   function renderFlow(type, labels, trackId, summaryId, isTool){ const state=getFlowState(type); const track=document.getElementById(trackId); if(!track) return; track.innerHTML = state.map((node,i)=>{ const folders=node.folders.map((folder,fi)=> isTool ? renderToolFolderHtml(type,i,fi,folder,node.label) : renderNormalFolderHtml(type,i,fi,folder)).join(''); return '<div class="flow-node-wrap">'+(i>0?'<div class="flow-arrow">▼</div>':'')+'<div class="flow-node '+(node.open ? 'open' : '')+'" data-cat="'+((i%6)+1)+'"><div class="flow-node-head" onclick="toggleFlowNode(\''+type+'\','+i+')"><div class="flow-node-title">'+escapeHtml(labels[i] || node.label)+'</div><div style="display:flex; gap:6px; align-items:center;"><span class="drag-chip no-print">↕</span><span class="flow-node-toggle">'+(node.open ? '閉じる' : '開く')+'</span></div></div><div class="flow-node-body"><div class="folder-list-wrap">'+folders+'</div></div></div></div>'; }).join(''); renderFlowSummary(type, summaryId, isTool); }
-  function renderNormalFolderHtml(type,nodeIndex,folderIndex,folder){ return '<div class="wf-folder"><div class="wf-folder-head"><input class="wf-folder-title" value="'+escapeAttr(folder.title || '')+'" oninput="updateFlowFolderTitle(\''+type+'\','+nodeIndex+','+folderIndex+', this.value)"><div class="wf-folder-tools no-print"><button class="mini-btn" onclick="addFlowItem(\''+type+'\','+nodeIndex+','+folderIndex+')">＋ ToDo</button></div></div><p class="wf-folder-desc">'+escapeHtml(folderDescription(folder.title || ''))+'</p><table class="wf-folder-table"><thead><tr><th style="width:100px;">分類</th><th style="width:120px;">日付</th><th>内容</th><th>Who</th><th>Where</th><th>When</th><th>Why</th><th>How</th><th class="no-print">操作</th></tr></thead><tbody>'+folder.items.map((item,ii)=>'<tr><td><select onchange="updateFlowItemField(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+',\'phase\', this.value)">'+FLOW_PHASES.map(ph=>'<option '+(item.phase===ph?'selected':'')+'>'+ph+'</option>').join('')+'</select></td><td><input type="date" value="'+escapeAttr(item.date || '')+'" onchange="updateFlowItemField(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+',\'date\', this.value)"></td><td><textarea oninput="updateFlowItemField(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+',\'what\', this.value)">'+escapeHtml(item.what || '')+'</textarea></td><td><textarea oninput="updateFlowItemField(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+',\'who\', this.value)">'+escapeHtml(item.who || '')+'</textarea></td><td><textarea oninput="updateFlowItemField(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+',\'where\', this.value)">'+escapeHtml(item.where || '')+'</textarea></td><td><textarea oninput="updateFlowItemField(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+',\'when\', this.value)">'+escapeHtml(item.when || '')+'</textarea></td><td><textarea oninput="updateFlowItemField(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+',\'why\', this.value)">'+escapeHtml(item.why || '')+'</textarea></td><td><textarea oninput="updateFlowItemField(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+',\'how\', this.value)">'+escapeHtml(item.how || '')+'</textarea></td><td class="no-print"><button class="mini-btn" onclick="deleteFlowItem(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+')">削除</button></td></tr>').join('')+'</tbody></table></div>'; }
+  function renderNormalFolderHtml(type,nodeIndex,folderIndex,folder){
+    return '<div class="wf-folder">'
+      + '<div class="wf-folder-head">'
+      + '<input class="wf-folder-title" value="'+escapeAttr(folder.title || '')+'" oninput="updateFlowFolderTitle(\''+type+'\','+nodeIndex+','+folderIndex+', this.value)">'
+      + '<div class="wf-folder-tools no-print"><button class="mini-btn" onclick="addFlowItem(\''+type+'\','+nodeIndex+','+folderIndex+')">＋ ToDo</button></div>'
+      + '</div>'
+      + '<p class="wf-folder-desc">'+escapeHtml(folderDescription(folder.title || ''))+'</p>'
+      + '<table class="wf-folder-table">'
+      + '<thead><tr><th style="width:90px;">分類</th><th style="width:130px;">日付</th><th style="width:28%;">内容</th><th style="width:16%;">誰と</th><th style="width:16%;">どこで</th><th style="width:16%;">なぜ</th><th style="width:18%;">どうやる</th><th class="no-print" style="width:70px;">操作</th></tr></thead>'
+      + '<tbody>'
+      + folder.items.map(function(item,ii){
+          return '<tr>'
+            + '<td><select onchange="updateFlowItemField(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+',\'phase\', this.value)">'+FLOW_PHASES.map(function(ph){ return '<option '+(item.phase===ph?'selected':'')+'>'+ph+'</option>'; }).join('')+'</select></td>'
+            + '<td><input type="date" value="'+escapeAttr(item.date || '')+'" onchange="updateFlowItemField(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+',\'date\', this.value)"></td>'
+            + '<td><textarea oninput="updateFlowItemField(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+',\'what\', this.value)">'+escapeHtml(item.what || '')+'</textarea></td>'
+            + '<td><textarea oninput="updateFlowItemField(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+',\'who\', this.value)">'+escapeHtml(item.who || '')+'</textarea></td>'
+            + '<td><textarea oninput="updateFlowItemField(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+',\'where\', this.value)">'+escapeHtml(item.where || '')+'</textarea></td>'
+            + '<td><textarea oninput="updateFlowItemField(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+',\'why\', this.value)">'+escapeHtml(item.why || '')+'</textarea></td>'
+            + '<td><textarea oninput="updateFlowItemField(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+',\'how\', this.value)">'+escapeHtml(item.how || '')+'</textarea></td>'
+            + '<td class="no-print"><button class="mini-btn" onclick="deleteFlowItem(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+')">削除</button></td>'
+            + '</tr>';
+        }).join('')
+      + '</tbody></table></div>';
+  }
   function toolFieldTemplates(stepLabel){ if(stepLabel.includes('経費の計算')) return [{key:'what',label:'何にお金がかかる？',desc:'必要なモノ・サービス・移動費などを整理します。',placeholder:'例）試作品材料、交通費、印刷費'},{key:'budget',label:'金額の見込み',desc:'だいたいの金額を書きます。',placeholder:'例）15,000円'},{key:'why',label:'なぜ必要？',desc:'この費用が必要な理由を書きます。',placeholder:'例）試作品を作るため'}]; if(stepLabel.includes('必要予算の算出')) return [{key:'what',label:'予算の内訳',desc:'合計予算を出すための内訳を書きます。',placeholder:'例）材料費＋広報費＋運営費'},{key:'budget',label:'合計いくら必要？',desc:'全体で必要な金額を書きます。',placeholder:'例）80,000円'},{key:'note',label:'計算メモ',desc:'見積もりの考え方を書きます。',placeholder:'例）1回分×5回で算出'}]; if(stepLabel.includes('予算確保の方法')) return [{key:'fundMethod',label:'どうやって資金を集める？',desc:'助成金、協賛、販売など方法を書きます。',placeholder:'例）企業協賛を3社集める'},{key:'who',label:'誰にお願いする？',desc:'相談先や候補相手を書きます。',placeholder:'例）地域企業、学校、保護者会'},{key:'how',label:'どんな手順で動く？',desc:'お願いの仕方や流れを書きます。',placeholder:'例）資料作成→訪問→提案'}]; if(stepLabel.includes('商品・サービス販売の方法')) return [{key:'salesMethod',label:'どうやって売る？',desc:'販売方法や提供方法を書きます。',placeholder:'例）学校イベントで販売'},{key:'where',label:'どこで売る？',desc:'販売場所やチャネルを書きます。',placeholder:'例）文化祭、SNS、EC'},{key:'who',label:'誰に届ける？',desc:'ターゲットを書く欄です。',placeholder:'例）高校生、地域の親子'}]; if(stepLabel.includes('実施方法')) return [{key:'when',label:'いつ行う？',desc:'実施タイミングや流れを書きます。',placeholder:'例）11月の文化祭で実施'},{key:'how',label:'どう実施する？',desc:'当日の段取りや役割分担を書きます。',placeholder:'例）受付→体験→販売→記録'},{key:'note',label:'必要な準備',desc:'事前にやることを書きます。',placeholder:'例）机、POP、つり銭を準備'}]; return [{key:'reportTo',label:'誰に報告する？',desc:'会計報告や共有先を書きます。',placeholder:'例）先生、会計担当、協賛先'},{key:'note',label:'何をまとめる？',desc:'売上・支出・反省などを書きます。',placeholder:'例）売上、支出、利益、改善点'},{key:'how',label:'どう記録する？',desc:'記録方法を書きます。',placeholder:'例）スプレッドシートで管理'}]; }
   function renderToolFolderHtml(type,nodeIndex,folderIndex,folder,stepLabel){ const cards = folder.items.map((item,ii)=>{ const fields=toolFieldTemplates(stepLabel).map(t=>'<label>'+escapeHtml(t.label)+'<br><span style="font-size:10px;color:#94a3b8;font-weight:400;">'+escapeHtml(t.desc)+'</span></label>'+(t.key==='budget' ? '<input value="'+escapeAttr(item[t.key] || '')+'" placeholder="'+escapeAttr(t.placeholder || '')+'" oninput="updateFlowItemField(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+',\''+t.key+'\', this.value)">' : '<textarea placeholder="'+escapeAttr(t.placeholder || '')+'" oninput="updateFlowItemField(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+',\''+t.key+'\', this.value)">'+escapeHtml(item[t.key] || '')+'</textarea>')).join(''); return '<div class="tool-sheet-card"><div class="tool-sheet-title">記入欄 '+(ii+1)+'</div><div class="tool-sheet-desc">'+escapeHtml(folderDescription(folder.title || ''))+'</div><div class="tool-sheet-grid"><label>分類</label><select onchange="updateFlowItemField(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+',\'phase\', this.value)">'+FLOW_PHASES.map(ph=>'<option '+(item.phase===ph?'selected':'')+'>'+ph+'</option>').join('')+'</select><label>日付</label><input type="date" value="'+escapeAttr(item.date || '')+'" onchange="updateFlowItemField(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+',\'date\', this.value)">'+fields+'<label>ひとことで言うと</label><textarea oninput="updateFlowItemField(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+',\'what\', this.value)">'+escapeHtml(item.what || '')+'</textarea></div><div class="doc-actions no-print" style="margin-top:10px;"><button class="mini-btn" onclick="deleteFlowItem(\''+type+'\','+nodeIndex+','+folderIndex+','+ii+')">削除</button></div></div>'; }).join(''); return '<div class="wf-folder"><div class="wf-folder-head"><input class="wf-folder-title" value="'+escapeAttr(folder.title || '')+'" oninput="updateFlowFolderTitle(\''+type+'\','+nodeIndex+','+folderIndex+', this.value)"><div class="wf-folder-tools no-print"><button class="mini-btn" onclick="addFlowItem(\''+type+'\','+nodeIndex+','+folderIndex+')">＋ 記入欄</button></div></div><p class="wf-folder-desc">'+escapeHtml(folderDescription(folder.title || ''))+'</p><div class="tool-sheet">'+cards+'</div></div>'; }
   function toggleFlowNode(type,index){ const state=getFlowState(type); state[index].open=!state[index].open; setFlowState(type,state); saveEditorData(); rerenderFlow(type); }
@@ -450,7 +481,27 @@
   function flattenFlow(state){ const out=[]; state.forEach(node=> node.folders.forEach(folder=> folder.items.forEach(item=>{ if(item.phase || item.date || item.what || item.who || item.where || item.when || item.why || item.how || item.note || item.budget || item.fundMethod || item.salesMethod || item.reportTo){ out.push({ step: node.label, folder: folder.title, phase:item.phase, date:item.date, what:item.what, who:item.who, where:item.where, when:item.when, why:item.why, how:item.how, note:item.note, budget:item.budget, fundMethod:item.fundMethod, salesMethod:item.salesMethod, reportTo:item.reportTo }); } }))); return out; }
   function sortDateValue(v){ if(!v) return Number.MAX_SAFE_INTEGER; const t=new Date(v).getTime(); return Number.isNaN(t) ? Number.MAX_SAFE_INTEGER : t; }
   function termFromDate(v){ if(!v) return '未設定'; const m=new Date(v).getMonth()+1; if([4,5,6,7,8].includes(m)) return '1学期'; if([9,10,11,12].includes(m)) return '2学期'; return '3学期'; }
-  function renderFlowSummary(type, summaryId, isTool){ const grid=document.getElementById(summaryId); if(!grid) return; const flat=flattenFlow(getFlowState(type)).sort((a,b)=> sortDateValue(a.date)-sortDateValue(b.date)); const groups={ '1学期':[], '2学期':[], '3学期':[] }; flat.forEach(item=>{ const t=termFromDate(item.date); if(groups[t]) groups[t].push(item); }); grid.innerHTML=['1学期','2学期','3学期'].map(term=>'<div class="todo-summary-card"><h4>'+term+'</h4><div class="todo-summary-body">'+(groups[term].length ? groups[term].map(item=>'<div class="todo-item"><div class="todo-badge">'+escapeHtml(item.step)+'</div><div><strong>'+escapeHtml(item.phase || '')+'</strong> / '+escapeHtml(item.folder || '')+'</div><div>日付：'+escapeHtml(item.date || '未設定')+'</div><div>内容：'+escapeHtml(item.what || item.note || '—')+'</div>'+(isTool ? '<div>補足：'+escapeHtml(item.budget || item.fundMethod || item.salesMethod || item.reportTo || '—')+'</div>' : '<div>5W1H：Who '+escapeHtml(item.who || '—')+' / Where '+escapeHtml(item.where || '—')+' / When '+escapeHtml(item.when || '—')+' / Why '+escapeHtml(item.why || '—')+' / How '+escapeHtml(item.how || '—')+'</div>')+'</div>').join('') : '<div class="todo-empty">まだ ToDo はありません。</div>')+'</div></div>').join(''); }
+  function renderFlowSummary(type, summaryId, isTool){
+    const grid=document.getElementById(summaryId);
+    if(!grid) return;
+    const flat=flattenFlow(getFlowState(type)).sort(function(a,b){ return sortDateValue(a.date)-sortDateValue(b.date); });
+    const groups={ '1学期':[], '2学期':[], '3学期':[] };
+    flat.forEach(function(item){ const t=termFromDate(item.date); if(groups[t]) groups[t].push(item); });
+    grid.innerHTML=['1学期','2学期','3学期'].map(function(term){
+      return '<div class="todo-summary-card"><h4>'+term+'</h4><div class="todo-summary-body">'
+        + (groups[term].length ? groups[term].map(function(item){
+            return '<div class="todo-item"><div class="todo-badge">'+escapeHtml(item.step)+'</div>'
+              + '<div><strong>'+escapeHtml(item.phase || '')+'</strong> / '+escapeHtml(item.folder || '')+'</div>'
+              + '<div>日付：'+escapeHtml(item.date || '未設定')+'</div>'
+              + '<div>内容：'+escapeHtml(item.what || item.note || '—')+'</div>'
+              + (isTool
+                  ? '<div>補足：'+escapeHtml(item.budget || item.fundMethod || item.salesMethod || item.reportTo || '—')+'</div>'
+                  : '<div>誰と：'+escapeHtml(item.who || '—')+' / どこで：'+escapeHtml(item.where || '—')+'</div><div>なぜ：'+escapeHtml(item.why || '—')+'</div><div>どうやる：'+escapeHtml(item.how || '—')+'</div>')
+              + '</div>';
+          }).join('') : '<div class="todo-empty">まだ ToDo はありません。</div>')
+        + '</div></div>';
+    }).join('');
+  }
   function rerenderFlowSummary(type){ if(type==='video') renderFlowSummary('video','workflow-todo-summary',false); if(type==='tool') renderFlowSummary('tool','tooldev-todo-summary',true); if(type==='videoEpisode') renderFlowSummary('videoEpisode','video-episode-todo-summary',false); }
   function renderVideoFlow(){ renderFlow('video', VIDEO_FLOW_LABELS, 'workflow-flow-track', 'workflow-todo-summary', false); }
   function renderVideoEpisodeFlow(){ const p=getCurrentProject(); if(!p) return; const labels=p.storyboardPanels.map((r,i)=>('第'+(i+1)+'話 '+(r.title || '')).trim()); normalizeFlowState(p.videoEpisodeFlowState, labels); renderFlow('videoEpisode', labels, 'video-episode-flow-track', 'video-episode-todo-summary', false); }
@@ -499,12 +550,49 @@
   function exportWorkflowTodoXlsx(){ exportFlowXlsx('video', 'workflow_todo', false); }
   function exportVideoWorkflowTodoXlsx(){ exportFlowXlsx('videoEpisode', 'video_workflow', false); }
   function exportToolDevTodoXlsx(){ exportFlowXlsx('tool', 'tooldev_todo', true); }
-  function exportFlowXlsx(type, suffix, isTool){ if(typeof XLSX==='undefined'){ alert('Excel出力ライブラリが読み込めていません。'); return; } const flat=flattenFlow(getFlowState(type)).sort((a,b)=> sortDateValue(a.date)-sortDateValue(b.date)); const headers=isTool ? ['学期','ステップ','フォルダ','分類','日付','内容','説明','必要金額','資金確保','販売方法','報告先'] : ['学期','ステップ','フォルダ','分類','日付','内容','Who','Where','When','Why','How']; const rows=[headers].concat(flat.map(item=> isTool ? [termFromDate(item.date),item.step,item.folder,item.phase,item.date,item.what || item.note,item.note,item.budget,item.fundMethod,item.salesMethod,item.reportTo] : [termFromDate(item.date),item.step,item.folder,item.phase,item.date,item.what,item.who,item.where,item.when,item.why,item.how])); const ws=XLSX.utils.aoa_to_sheet(rows); const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'ToDo'); const title=(document.getElementById('editable-title')?.innerText || 'project').trim() || 'project'; XLSX.writeFile(wb, title+'_'+suffix+'.xlsx'); }
+  function exportFlowXlsx(type, suffix, isTool){
+    if(typeof XLSX==='undefined'){ alert('Excel出力ライブラリが読み込めていません。'); return; }
+    const flat=flattenFlow(getFlowState(type)).sort(function(a,b){ return sortDateValue(a.date)-sortDateValue(b.date); });
+    const headers=isTool ? ['学期','ステップ','フォルダ','分類','日付','内容','説明','必要金額','資金確保','販売方法','報告先'] : ['学期','ステップ','フォルダ','分類','日付','内容','誰と','どこで','なぜ','どうやる'];
+    const rows=[headers].concat(flat.map(function(item){
+      return isTool
+        ? [termFromDate(item.date),item.step,item.folder,item.phase,item.date,item.what || item.note,item.note,item.budget,item.fundMethod,item.salesMethod,item.reportTo]
+        : [termFromDate(item.date),item.step,item.folder,item.phase,item.date,item.what,item.who,item.where,item.why,item.how];
+    }));
+    const ws=XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols']=isTool
+      ? [{wch:10},{wch:18},{wch:14},{wch:10},{wch:14},{wch:24},{wch:24},{wch:14},{wch:20},{wch:20},{wch:18}]
+      : [{wch:10},{wch:18},{wch:14},{wch:10},{wch:14},{wch:28},{wch:18},{wch:18},{wch:20},{wch:22}];
+    const wb=XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'ToDo');
+    const title=(document.getElementById('editable-title')?.innerText || 'project').trim() || 'project';
+    XLSX.writeFile(wb, title+'_'+suffix+'.xlsx');
+  }
   function copyWorkflowTodoText(){ copyFlowText('video', false); }
   function copyVideoWorkflowTodoText(){ copyFlowText('videoEpisode', false); }
   function copyToolDevTodoText(){ copyFlowText('tool', true); }
-  function copyFlowText(type, isTool){ const flat=flattenFlow(getFlowState(type)).sort((a,b)=> sortDateValue(a.date)-sortDateValue(b.date)); const text=flat.length ? flat.map(item=> isTool ? '['+termFromDate(item.date)+'] '+item.step+' / '+item.folder+'\n'+item.phase+'\n日付: '+(item.date || '未設定')+'\n内容: '+(item.what || item.note || '—')+'\n補足: '+(item.budget || item.fundMethod || item.salesMethod || item.reportTo || '—') : '['+termFromDate(item.date)+'] '+item.step+' / '+item.folder+'\n'+item.phase+'\n日付: '+(item.date || '未設定')+'\n内容: '+(item.what || '—')+'\nWho: '+(item.who || '—')+' / Where: '+(item.where || '—')+' / When: '+(item.when || '—')+' / Why: '+(item.why || '—')+' / How: '+(item.how || '—')).join('\n\n') : 'ToDo はありません。'; navigator.clipboard.writeText(text).then(()=>toast()).catch(()=>alert('コピーに失敗しました')); }
+  function copyFlowText(type, isTool){
+    const flat=flattenFlow(getFlowState(type)).sort(function(a,b){ return sortDateValue(a.date)-sortDateValue(b.date); });
+    const text=flat.length ? flat.map(function(item){
+      return isTool
+        ? '['+termFromDate(item.date)+'] '+item.step+' / '+item.folder+'
+'+item.phase+'
+日付: '+(item.date || '未設定')+'
+内容: '+(item.what || item.note || '—')+'
+補足: '+(item.budget || item.fundMethod || item.salesMethod || item.reportTo || '—')
+        : '['+termFromDate(item.date)+'] '+item.step+' / '+item.folder+'
+'+item.phase+'
+日付: '+(item.date || '未設定')+'
+内容: '+(item.what || '—')+'
+誰と: '+(item.who || '—')+'
+どこで: '+(item.where || '—')+'
+なぜ: '+(item.why || '—')+'
+どうやる: '+(item.how || '—');
+    }).join('
 
+') : 'ToDo はありません。';
+    navigator.clipboard.writeText(text).then(function(){ toast(); }).catch(function(){ alert('コピーに失敗しました'); });
+  }
   function bindTabs(){ document.querySelectorAll('.primary-tab').forEach(btn=> btn.addEventListener('click', ()=> activatePrimary(btn.dataset.primary))); document.querySelectorAll('[data-group]').forEach(group=>{ const gid=group.dataset.group; group.querySelectorAll('.sub-tab').forEach(btn=> btn.addEventListener('click', ()=> activateSub(gid, btn.dataset.sub))); }); }
   function bindToolbar(){ document.getElementById('new-folder-btn').addEventListener('click', createNewFolder); }
   function runSelfTests(){ console.assert(typeof createNewFolder==='function', 'createNewFolder exists'); console.assert(typeof renderDashboard==='function', 'renderDashboard exists'); console.assert(typeof printSection==='function', 'printSection exists'); console.assert(typeof renderVideoEpisodeFlow==='function', 'renderVideoEpisodeFlow exists'); console.assert(scenarioSentenceFromDraft({who:'A',problem:'B',method:'C',interviewee:'D',actions:'E',answer:'F'}).includes('A'), 'scenario sentence ok'); }
