@@ -194,7 +194,7 @@
   }
 
   @media print{
-    @page{ size:A4 landscape; margin:10mm; }
+    @page{ size:A4 portrait; margin:10mm; }
     body{ background:#fff; }
     .no-print{ display:none !important; }
     .page{ width:100%; min-height:auto; box-shadow:none; margin:0; border:none; border-radius:0; page-break-after:always; break-after:page; }
@@ -209,16 +209,13 @@
     body.print-section .print-target .scenario-template,
     body.print-section .print-target .doc-area,
     body.print-section .print-target .video-script-table{ width:100%; break-inside:avoid-page; }
-    body.print-plan-portrait .page,
-    body.print-plan-portrait #tab-plan,
-    body.print-plan-portrait #tab-plan .doc-area{
-      width:210mm !important;
-      min-height:297mm !important;
+    body.print-section .print-target,
+    body.print-single #tab-plan{
+      width:190mm !important;
+      min-height:auto !important;
+      margin:0 auto !important;
     }
   }
-
-  @media print and (orientation:portrait){
-    @page{ size:A4 portrait; margin:10mm; }
   }
 </style>
 </head>
@@ -239,8 +236,8 @@
     <button class="back-btn" id="back-btn">← ダッシュボードへ戻る</button>
     <div style="display:flex; gap:8px; flex-wrap:wrap;">
       <button class="save-btn" id="manual-save-btn">💾 保存</button>
-      <button class="save-btn secondary" id="print-all-btn">🖨️ 印刷 / PDF</button>
-      <button class="save-btn secondary" id="print-plan-only-btn">🖨️ 企画書だけ印刷</button>
+      <button class="save-btn secondary" id="print-all-btn">🖨️ すべて印刷</button>
+      <button class="save-btn secondary" id="print-plan-only-btn">🖨️ 企画書を印刷</button>
     </div>
   </div>
 
@@ -295,7 +292,7 @@
               <div class="doc-actions no-print" style="margin-top:0;">
                 <button class="mini-btn" id="copy-video-workflow-btn">📋 ToDoをコピー</button>
                 <button class="mini-btn primary" id="export-video-workflow-btn">⬇️ Excel出力</button>
-                <button class="mini-btn" data-print-section="tab-video-workflow">🖨️ 今のページをPDF</button>
+                <button class="mini-btn" data-print-section="tab-video-workflow">🖨️ このページを印刷</button>
               </div>
             </div>
             <div id="video-episode-todo-summary" class="todo-summary-grid"></div>
@@ -308,7 +305,7 @@
           <button class="mini-btn primary" id="auto-draft-video-btn">🔄 自動下書き</button>
           <button class="mini-btn" id="manual-save-btn-2">💾 保存</button>
           <button class="mini-btn" id="export-video-telops-btn">⬇️ Excel（テロップ）</button>
-          <button class="mini-btn" data-print-section="tab-video">🖨️ 今のページをPDF</button>
+          <button class="mini-btn" data-print-section="tab-video">🖨️ このページを印刷</button>
         </div>
         <table class="video-script-table">
           <thead>
@@ -352,7 +349,7 @@
               <div class="doc-actions no-print" style="margin-top:0;">
                 <button class="mini-btn" id="copy-workflow-btn">📋 ToDoをコピー</button>
                 <button class="mini-btn primary" id="export-workflow-btn">⬇️ Excel出力</button>
-                <button class="mini-btn" data-print-section="tab-pres-workflow">🖨️ 今のページをPDF</button>
+                <button class="mini-btn" data-print-section="tab-pres-workflow">🖨️ このページを印刷</button>
               </div>
             </div>
             <div id="workflow-todo-summary" class="todo-summary-grid"></div>
@@ -367,7 +364,7 @@
             <button class="mini-btn" data-toggle-drawer="pres-input">🧩 入力を開く/閉じる</button>
             <button class="mini-btn primary" id="regen-pres-btn">🔄 台本に反映</button>
             <button class="mini-btn" data-copy-doc="pres-doc-area">📋 台本をコピー</button>
-            <button class="mini-btn" data-print-section="tab-pres">🖨️ 今のページをPDF</button>
+            <button class="mini-btn" data-print-section="tab-pres">🖨️ このページを印刷</button>
           </div>
         </div>
         <div class="inputdrawer no-print" id="pres-input">
@@ -432,7 +429,7 @@
             <button class="mini-btn primary" id="regen-plan-btn">🔄 企画書に反映</button>
             <button class="mini-btn" id="open-plan-image-btn">🖼️ 画像追加（最大2）</button>
             <button class="mini-btn" data-copy-doc="plan-doc-area">📋 企画書をコピー</button>
-            <button class="mini-btn" data-print-section="tab-plan">🖨️ 今のページをPDF</button>
+            <button class="mini-btn" data-print-section="tab-plan">🖨️ このページを印刷</button>
           </div>
         </div>
         <div class="inputdrawer no-print" id="plan-input">
@@ -473,7 +470,7 @@
               <div class="doc-actions no-print" style="margin-top:0;">
                 <button class="mini-btn" id="copy-tooldev-btn">📋 ToDoをコピー</button>
                 <button class="mini-btn primary" id="export-tooldev-btn">⬇️ Excel出力</button>
-                <button class="mini-btn" data-print-section="tab-tool-dev">🖨️ 今のページをPDF</button>
+                <button class="mini-btn" data-print-section="tab-tool-dev">🖨️ このページを印刷</button>
               </div>
             </div>
             <div id="tooldev-todo-summary" class="todo-summary-grid"></div>
@@ -1341,10 +1338,8 @@
     activatePrimary('product-create');
     activateSub('product-create','tab-plan');
     document.body.classList.add('print-single');
-    document.body.classList.add('print-plan-portrait');
     const cleanup = function(){
       document.body.classList.remove('print-single');
-      document.body.classList.remove('print-plan-portrait');
       window.removeEventListener('afterprint', cleanup);
     };
     window.addEventListener('afterprint', cleanup);
@@ -1357,10 +1352,8 @@
     document.querySelectorAll('.print-target').forEach(function(el){ el.classList.remove('print-target'); });
     target.classList.add('print-target');
     document.body.classList.add('print-section');
-    if(sectionId === 'tab-plan') document.body.classList.add('print-plan-portrait');
     const cleanup = function(){
       document.body.classList.remove('print-section');
-      document.body.classList.remove('print-plan-portrait');
       target.classList.remove('print-target');
       window.removeEventListener('afterprint', cleanup);
     };
@@ -1480,6 +1473,4 @@
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </body>
 </html>
-
-
 
